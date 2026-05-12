@@ -1,0 +1,15 @@
+.epsilon-home-empty-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: -20px;
+  width: calc(100% + 40px);
+  align-items: stretch;
+
+  .epsilon-empty-message-intro {
+    padding: 2rem 1rem 1rem;
+    color: var(--darker-text-color);
+    text-align: center;
+  }
+}

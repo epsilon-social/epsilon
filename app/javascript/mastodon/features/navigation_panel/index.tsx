@@ -258,13 +258,17 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
         )}
 
         {trendsEnabled && (
+          /* ========================================== */
+          /* EPSILON : DEFAULT EXPLORE TAB TO PEOPLE    */
+          /* ========================================== */
           <ColumnLink
             transparent
-            to='/explore'
+            to='/explore/suggestions'
             icon='explore'
             iconComponent={TrendingUpIcon}
             text={intl.formatMessage(messages.explore)}
           />
+          /* ========================================== */
         )}
 
         {(canViewFeed(signedIn, permissions, localLiveFeedAccess) ||

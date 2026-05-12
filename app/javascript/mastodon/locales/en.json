@@ -1032,5 +1032,6 @@
   "visibility_modal.quote_label": "Who can quote",
   "visibility_modal.quote_nobody": "Just me",
   "visibility_modal.quote_public": "Anyone",
-  "visibility_modal.save": "Save"
+  "visibility_modal.save": "Save",
+  "epsilon.home.empty_message": "Your news feed is empty. Here are some account suggestions to fill it:"
 }

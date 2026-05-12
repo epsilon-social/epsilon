@@ -1032,5 +1032,6 @@
   "visibility_modal.quote_label": "Autoriser les citations pour",
   "visibility_modal.quote_nobody": "Juste moi",
   "visibility_modal.quote_public": "Tout le monde",
-  "visibility_modal.save": "Sauvegarder"
+  "visibility_modal.save": "Sauvegarder",
+  "epsilon.home.empty_message": "Votre fil d'actualité est vide. Voici quelques suggestions de comptes pour le remplir :"
 }

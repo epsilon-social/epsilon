@@ -28,6 +28,12 @@ import { ColumnSettings } from './components/column_settings';
 import { CriticalUpdateBanner } from './components/critical_update_banner';
 import { Announcements } from './components/announcements';
 
+{/* ========================================== */}
+{/* EPSILON : HOME SUGGESTIONS FOR EMPTY FEED  */}
+{/* ========================================== */}
+import { EpsilonHomeEmptyState } from './components/epsilon/home_empty_state';
+{/* ========================================== */}
+
 const messages = defineMessages({
   title: { id: 'column.home', defaultMessage: 'Home' },
   show_announcements: { id: 'home.show_announcements', defaultMessage: 'Show announcements' },
@@ -149,6 +155,14 @@ class HomeTimeline extends PureComponent {
       banners.push(<CriticalUpdateBanner key='critical-update-banner' />);
     }
 
+    let emptyMessage = <FormattedMessage id='empty_column.home' defaultMessage='Your home timeline is empty! Follow more people to fill it up.' />;
+
+    {/* ========================================== */}
+    {/* EPSILON : HOME SUGGESTIONS FOR EMPTY FEED  */}
+    {/* ========================================== */}
+    emptyMessage = <EpsilonHomeEmptyState />;
+    {/* ========================================== */}
+
     return (
       <Column bindToDocument={!multiColumn} ref={this.setRef} label={intl.formatMessage(messages.title)}>
         <ColumnHeader
@@ -175,7 +189,11 @@ class HomeTimeline extends PureComponent {
             scrollKey={`home_timeline-${columnId}`}
             onLoadMore={this.handleLoadMore}
             timelineId='home'
-            emptyMessage={<FormattedMessage id='empty_column.home' defaultMessage='Your home timeline is empty! Follow more people to fill it up.' />}
+            /* ========================================== */
+            /* EPSILON : HOME SUGGESTIONS FOR EMPTY FEED  */
+            /* ========================================== */
+            emptyMessage={emptyMessage}
+            /* ========================================== */
             bindToDocument={!multiColumn}
           />
         ) : <NotSignedInIndicator />}

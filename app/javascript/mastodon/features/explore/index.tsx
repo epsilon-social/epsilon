@@ -52,21 +52,9 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
       </div>
 
       <div className='account__section-headline'>
-        <NavLink exact to='/explore'>
-          <FormattedMessage
-            tagName='div'
-            id='explore.trending_statuses'
-            defaultMessage='Posts'
-          />
-        </NavLink>
-
-        <NavLink exact to='/explore/tags'>
-          <FormattedMessage
-            tagName='div'
-            id='explore.trending_tags'
-            defaultMessage='Hashtags'
-          />
-        </NavLink>
+        {/* ========================================== */}
+        {/* EPSILON : DEFAULT EXPLORE TAB TO PEOPLE    */}
+        {/* ========================================== */}
 
         {signedIn && (
           <NavLink exact to='/explore/suggestions'>
@@ -78,6 +66,14 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
           </NavLink>
         )}
 
+        <NavLink exact to='/explore/tags'>
+          <FormattedMessage
+            tagName='div'
+            id='explore.trending_tags'
+            defaultMessage='Hashtags'
+          />
+        </NavLink>
+
         <NavLink exact to='/explore/links'>
           <FormattedMessage
             tagName='div'
@@ -85,12 +81,21 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
             defaultMessage='News'
           />
         </NavLink>
+
+        <NavLink exact to='/explore'>
+          <FormattedMessage
+            tagName='div'
+            id='explore.trending_statuses'
+            defaultMessage='Posts'
+          />
+        </NavLink>
+        {/* ========================================== */}
       </div>
 
       <Switch>
+        <Route path='/explore/suggestions' component={Suggestions} />
         <Route path='/explore/tags' component={Tags} />
         <Route path='/explore/links' component={Links} />
-        <Route path='/explore/suggestions' component={Suggestions} />
         <Route exact path={['/explore', '/explore/posts']}>
           <Statuses multiColumn={multiColumn} />
         </Route>

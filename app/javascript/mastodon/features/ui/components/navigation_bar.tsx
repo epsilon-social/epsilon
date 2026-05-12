@@ -177,11 +177,15 @@ export const NavigationBar: React.FC = () => {
               icon={<Icon id='' icon={HomeIcon} />}
               activeIcon={<Icon id='' icon={HomeActiveIcon} />}
             />
+            {/* ========================================== */}
+            {/* EPSILON : DEFAULT EXPLORE TAB TO PEOPLE    */}
+            {/* ========================================== */}
             <IconLabelButton
               title={intl.formatMessage(messages.search)}
-              to='/explore'
+              to='/explore/suggestions'
               icon={<Icon id='' icon={SearchIcon} />}
             />
+            {/* ========================================== */}
             <IconLabelButton
               title={intl.formatMessage(messages.publish)}
               to='/publish'

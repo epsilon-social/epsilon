@@ -26,6 +26,7 @@
 stats.html
 .env
 .env.production
+.env.development
 node_modules/
 /build/
 
@@ -79,3 +80,6 @@ docker-compose.override.yml
 
 *storybook.log
 storybook-static
+
+.aider*
+instructions.txt
