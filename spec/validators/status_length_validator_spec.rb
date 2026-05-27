@@ -4,7 +4,10 @@ require 'rails_helper'
 
 RSpec.describe StatusLengthValidator do
   describe '#validate' do
-    before { stub_const("#{described_class}::MAX_CHARS", 500) } # Example values below are relative to this baseline
+    # ==========================================
+    # EPSILON : EXTENDED POST LIMITS
+    before { stub_const("#{described_class}::MAX_CHARS", 1000) } # Example values below are relative to this baseline
+    # ==========================================
 
     it 'does not add errors onto remote statuses' do
       status = instance_double(Status, local?: false)
@@ -25,19 +28,28 @@ RSpec.describe StatusLengthValidator do
     end
 
     it 'adds an error when content warning is over character limit' do
-      status = status_double(spoiler_text: 'a' * 520)
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      status = status_double(spoiler_text: 'a' * 1020)
+      # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
     end
 
     it 'adds an error when text is over character limit' do
-      status = status_double(text: 'a' * 520)
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      status = status_double(text: 'a' * 1020)
+      # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
     end
 
     it 'adds an error when text and content warning are over character limit total' do
-      status = status_double(spoiler_text: 'a' * 250, text: 'b' * 251)
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      status = status_double(spoiler_text: 'a' * 1000, text: 'b' * 1001)
+      # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
     end
@@ -59,14 +71,20 @@ RSpec.describe StatusLengthValidator do
     end
 
     it 'does not reduce calculated length of count overly long URLs' do
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
       text = "http://example.com/valid?#{'#foo?' * 1000}"
+      # ==========================================
       status = status_double(text: text)
       subject.validate(status)
       expect(status.errors).to have_received(:add)
     end
 
     it 'counts only the front part of remote usernames' do
-      text   = ('a' * 475) + " @alice@#{'b' * 30}.com"
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      text   = ('a' * 975) + " @alice@#{'b' * 30}.com"
+      # ==========================================
       status = status_double(text: text)
 
       subject.validate(status)
@@ -74,7 +92,10 @@ RSpec.describe StatusLengthValidator do
     end
 
     it 'does count both parts of remote usernames for overly long domains' do
-      text   = "@alice@#{'b' * 500}.com"
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      text   = "@alice@#{'b' * 1000}.com"
+      # ==========================================
       status = status_double(text: text)
 
       subject.validate(status)
@@ -82,7 +103,10 @@ RSpec.describe StatusLengthValidator do
     end
 
     it 'counts multi byte emoji as single character' do
-      text = '✨' * 500
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      text = '✨' * 1000
+      # ==========================================
       status = status_double(text: text)
 
       subject.validate(status)
@@ -90,7 +114,10 @@ RSpec.describe StatusLengthValidator do
     end
 
     it 'counts ZWJ sequence emoji as single character' do
-      text = '🏳️‍⚧️' * 500
+      # ==========================================
+      # EPSILON : EXTENDED POST LIMITS
+      text = '🏳️‍⚧️' * 1000
+      # ==========================================
       status = status_double(text: text)
 
       subject.validate(status)
@@ -101,7 +128,10 @@ RSpec.describe StatusLengthValidator do
   private
 
   def starting_string
-    'a' * 476
+    # ==========================================
+    # EPSILON : EXTENDED POST LIMITS
+    'a' * 976
+    # ==========================================
   end
 
   def example_link

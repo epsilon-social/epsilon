@@ -45,7 +45,11 @@ class Status < ApplicationRecord
   include Status::Visibility
   include Status::InteractionPolicyConcern
 
-  MEDIA_ATTACHMENTS_LIMIT = 4
+  # ==========================================
+  # EPSILON : EXTENDED POST LIMITS
+  MEDIA_ATTACHMENTS_LIMIT = 10
+  # original: MEDIA_ATTACHMENTS_LIMIT = 4
+  # ==========================================
 
   rate_limit by: :account, family: :statuses
 

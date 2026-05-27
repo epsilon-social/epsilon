@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Api::V1::StatusesController < Api::BaseController
+  # ==========================================
+  # EPSILON : CLEAN EMPTY POLL WARNING
+  include Epsilon::StatusesControllerExtension
+  # ==========================================
   include Authorization
   include AsyncRefreshesConcern
   include Api::InteractionPoliciesConcern
