@@ -3,6 +3,12 @@
 class FanOutOnWriteService < BaseService
   include Redisable
 
+  # ==========================================
+  # EPSILON : TIMELINE DELAY INTERCEPTOR
+  prepend Epsilon::FanOutOnWriteServiceExtension
+
+  # ==========================================
+
   # Push a status into home and mentions feeds
   # @param [Status] status
   # @param [Hash] options

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_22_121618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.index ["account_id", "uri"], name: "index_account_aliases_on_account_id_and_uri", unique: true
+  end
+
+  create_table "account_category_overrides", primary_key: "account_id", force: :cascade do |t|
+    t.bigint "category_master_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_master_id"], name: "index_account_category_overrides_on_category_master_id"
   end
 
   create_table "account_conversations", force: :cascade do |t|
@@ -351,6 +358,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.index ["reference_account_id"], name: "index_canonical_email_blocks_on_reference_account_id"
   end
 
+  create_table "category_masters", force: :cascade do |t|
+    t.string "slug", limit: 50, null: false
+    t.string "name", limit: 100, null: false
+    t.boolean "is_active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "category_subscriptions_count", default: 0, null: false
+    t.index ["slug"], name: "index_category_masters_on_slug", unique: true
+  end
+
+  create_table "category_subscriptions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "category_master_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "category_master_id"], name: "idx_unique_category_subscriptions", unique: true
+    t.index ["category_master_id"], name: "index_category_subscriptions_on_category_master_id"
+  end
+
+  create_table "category_votes", force: :cascade do |t|
+    t.bigint "status_id", null: false
+    t.bigint "account_id", null: false
+    t.bigint "category_master_id"
+    t.integer "vote_points", default: 10
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_master_id"], name: "index_category_votes_on_category_master_id"
+    t.index ["status_id", "account_id", "category_master_id"], name: "idx_unique_category_votes", unique: true
+  end
+
   create_table "conversation_mutes", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.bigint "account_id", null: false
@@ -448,6 +485,69 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.bigint "parent_id"
     t.boolean "allow_with_approval", default: false, null: false
     t.index ["domain"], name: "index_email_domain_blocks_on_domain", unique: true
+  end
+
+  create_table "epsilon_ai_metadata", force: :cascade do |t|
+    t.bigint "status_id", null: false
+    t.jsonb "categories_raw", default: {}, null: false
+    t.jsonb "mistral_payload", default: {}, null: false
+    t.float "violence_score", default: 0.0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status_id"], name: "index_epsilon_ai_metadata_on_status_id", unique: true
+  end
+
+  create_table "epsilon_ai_moderation_settings", force: :cascade do |t|
+    t.boolean "use_native_moderation", default: false, null: false
+    t.text "custom_prompt", default: "You are the content analysis radar for the Epsilon social network.\nYour only role is to analyze the provided text (regardless of its language) and return strict severity scores in JSON format. You do not make banning decisions; you solely measure and classify.", null: false
+    t.decimal "ban_violence", precision: 3, scale: 2, default: "0.8", null: false
+    t.decimal "ban_vulgarity", precision: 3, scale: 2, default: "0.8", null: false
+    t.decimal "ban_sexual", precision: 3, scale: 2, default: "0.8", null: false
+    t.decimal "sensitive_violence", precision: 3, scale: 2, default: "0.25", null: false
+    t.decimal "sensitive_vulgarity", precision: 3, scale: 2, default: "0.25", null: false
+    t.decimal "sensitive_sexual", precision: 3, scale: 2, default: "0.25", null: false
+    t.decimal "review_threshold", precision: 3, scale: 2, default: "0.5", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "epsilon_ai_status_moderations", force: :cascade do |t|
+    t.bigint "status_id", null: false
+    t.integer "state", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status_id"], name: "index_epsilon_ai_status_moderations_on_status_id", unique: true
+  end
+
+  create_table "epsilon_live_invitations", force: :cascade do |t|
+    t.string "token", null: false
+    t.bigint "host_account_id", null: false
+    t.bigint "guest_account_id", null: false
+    t.bigint "live_session_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "role", default: "guest", null: false
+    t.index ["guest_account_id", "live_session_id"], name: "index_live_invitations_on_guest_and_session_unique", unique: true, where: "(status = ANY (ARRAY[0, 1]))"
+    t.index ["guest_account_id", "status"], name: "index_epsilon_live_invitations_on_guest_account_id_and_status"
+    t.index ["guest_account_id"], name: "index_epsilon_live_invitations_on_guest_account_id"
+    t.index ["host_account_id"], name: "index_epsilon_live_invitations_on_host_account_id"
+    t.index ["live_session_id"], name: "index_epsilon_live_invitations_on_live_session_id"
+    t.index ["token"], name: "index_epsilon_live_invitations_on_token", unique: true
+  end
+
+  create_table "epsilon_live_questions", force: :cascade do |t|
+    t.bigint "live_session_id", null: false
+    t.bigint "account_id", null: false
+    t.text "content", null: false
+    t.integer "status", default: 0, null: false
+    t.integer "upvotes_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_epsilon_live_questions_on_account_id"
+    t.index ["live_session_id", "created_at"], name: "index_epsilon_live_questions_on_live_session_id_and_created_at"
+    t.index ["live_session_id"], name: "index_epsilon_live_questions_on_live_session_id"
+    t.index ["status"], name: "index_epsilon_live_questions_on_status"
   end
 
   create_table "fasp_backfill_requests", force: :cascade do |t|
@@ -585,6 +685,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.index ["account_id", "year"], name: "index_generated_annual_reports_on_account_id_and_year", unique: true
   end
 
+  create_table "hashtag_mappings", primary_key: "hashtag", id: { type: :string, limit: 50 }, force: :cascade do |t|
+    t.bigint "category_master_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_master_id"], name: "index_hashtag_mappings_on_category_master_id"
+  end
+
   create_table "identities", force: :cascade do |t|
     t.string "provider", default: "", null: false
     t.string "uid", default: "", null: false
@@ -647,6 +754,52 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.integer "replies_policy", default: 0, null: false
     t.boolean "exclusive", default: false, null: false
     t.index ["account_id"], name: "index_lists_on_account_id"
+  end
+
+  create_table "live_participants", force: :cascade do |t|
+    t.bigint "live_session_id", null: false
+    t.bigint "account_id", null: false
+    t.integer "role", default: 0, null: false
+    t.string "participant_identity"
+    t.datetime "joined_at"
+    t.datetime "left_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_live_participants_on_account_id"
+    t.index ["live_session_id", "account_id"], name: "index_live_participants_on_session_and_account", unique: true
+    t.index ["live_session_id"], name: "index_live_participants_on_live_session_id"
+  end
+
+  create_table "live_sessions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "status_id"
+    t.string "room_name", null: false
+    t.integer "state", default: 0, null: false
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.integer "max_participants", default: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "debate_format", default: "freestyle", null: false
+    t.string "host_role", default: "moderator", null: false
+    t.string "title"
+    t.datetime "scheduled_for"
+    t.index ["account_id"], name: "index_live_sessions_on_account_id"
+    t.index ["room_name"], name: "index_live_sessions_on_room_name", unique: true
+    t.index ["status_id"], name: "index_live_sessions_on_status_id"
+  end
+
+  create_table "local_post_categorizations", force: :cascade do |t|
+    t.bigint "status_id", null: false
+    t.bigint "category_master_id"
+    t.string "source", limit: 20, null: false
+    t.integer "confidence_score", default: 100
+    t.boolean "is_validated", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_master_id"], name: "index_local_post_categorizations_on_category_master_id"
+    t.index ["status_id", "category_master_id"], name: "idx_unique_post_categories", unique: true
+    t.index ["status_id"], name: "index_local_post_categorizations_on_status_id"
   end
 
   create_table "login_activities", force: :cascade do |t|
@@ -827,6 +980,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.bigint "size"
     t.datetime "captured_at", precision: nil
     t.index ["database", "captured_at"], name: "index_pghero_space_stats_on_database_and_captured_at"
+  end
+
+  create_table "phone_verifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "phone_number", null: false
+    t.string "verification_id", null: false
+    t.boolean "is_verified", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "unconfirmed_phone_number"
+    t.index ["user_id"], name: "index_phone_verifications_on_user_id", unique: true
   end
 
   create_table "poll_votes", force: :cascade do |t|
@@ -1293,6 +1457,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
     t.string "otp_secret"
     t.datetime "age_verified_at"
     t.boolean "require_tos_interstitial", default: false, null: false
+    t.string "phone_number"
+    t.string "vonage_request_id"
+    t.datetime "phone_verified_at"
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["created_by_application_id"], name: "index_users_on_created_by_application_id", where: "(created_by_application_id IS NOT NULL)"
@@ -1348,6 +1515,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   end
 
   add_foreign_key "account_aliases", "accounts", on_delete: :cascade
+  add_foreign_key "account_category_overrides", "category_masters"
   add_foreign_key "account_conversations", "accounts", on_delete: :cascade
   add_foreign_key "account_conversations", "conversations", on_delete: :cascade
   add_foreign_key "account_deletion_requests", "accounts", on_delete: :cascade
@@ -1386,6 +1554,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "bulk_import_rows", "bulk_imports", on_delete: :cascade
   add_foreign_key "bulk_imports", "accounts", on_delete: :cascade
   add_foreign_key "canonical_email_blocks", "accounts", column: "reference_account_id", on_delete: :cascade
+  add_foreign_key "category_subscriptions", "category_masters"
+  add_foreign_key "category_votes", "category_masters"
   add_foreign_key "conversation_mutes", "accounts", name: "fk_225b4212bb", on_delete: :cascade
   add_foreign_key "conversation_mutes", "conversations", on_delete: :cascade
   add_foreign_key "custom_filter_keywords", "custom_filters", on_delete: :cascade
@@ -1393,6 +1563,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "custom_filter_statuses", "statuses", on_delete: :cascade
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade
   add_foreign_key "email_domain_blocks", "email_domain_blocks", column: "parent_id", on_delete: :cascade
+  add_foreign_key "epsilon_ai_metadata", "statuses", on_delete: :cascade
+  add_foreign_key "epsilon_ai_status_moderations", "statuses", on_delete: :cascade
+  add_foreign_key "epsilon_live_questions", "accounts"
+  add_foreign_key "epsilon_live_questions", "live_sessions"
   add_foreign_key "fasp_backfill_requests", "fasp_providers"
   add_foreign_key "fasp_debug_callbacks", "fasp_providers"
   add_foreign_key "fasp_follow_recommendations", "accounts", column: "recommended_account_id"
@@ -1410,6 +1584,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "follows", "accounts", column: "target_account_id", name: "fk_745ca29eac", on_delete: :cascade
   add_foreign_key "follows", "accounts", name: "fk_32ed1b5560", on_delete: :cascade
   add_foreign_key "generated_annual_reports", "accounts"
+  add_foreign_key "hashtag_mappings", "category_masters"
   add_foreign_key "identities", "users", name: "fk_bea040f377", on_delete: :cascade
   add_foreign_key "instance_moderation_notes", "accounts", on_delete: :cascade
   add_foreign_key "invites", "users", on_delete: :cascade
@@ -1418,6 +1593,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "list_accounts", "follows", on_delete: :cascade
   add_foreign_key "list_accounts", "lists", on_delete: :cascade
   add_foreign_key "lists", "accounts", on_delete: :cascade
+  add_foreign_key "live_participants", "accounts", on_delete: :cascade
+  add_foreign_key "live_participants", "live_sessions", on_delete: :cascade
+  add_foreign_key "live_sessions", "accounts", on_delete: :cascade
+  add_foreign_key "live_sessions", "statuses", on_delete: :nullify
+  add_foreign_key "local_post_categorizations", "category_masters"
   add_foreign_key "login_activities", "users", on_delete: :cascade
   add_foreign_key "markers", "users", on_delete: :cascade
   add_foreign_key "media_attachments", "accounts", name: "fk_96dd81e81b", on_delete: :nullify
@@ -1440,6 +1620,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_23_210145) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id", name: "fk_f5fc4c1ee3", on_delete: :cascade
   add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id", name: "fk_e84df68546", on_delete: :cascade
   add_foreign_key "oauth_applications", "users", column: "owner_id", name: "fk_b0988c7c0a", on_delete: :cascade
+  add_foreign_key "phone_verifications", "users"
   add_foreign_key "poll_votes", "accounts", on_delete: :cascade
   add_foreign_key "poll_votes", "polls", on_delete: :cascade
   add_foreign_key "polls", "accounts", on_delete: :cascade

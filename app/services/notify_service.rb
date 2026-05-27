@@ -3,6 +3,12 @@
 class NotifyService < BaseService
   include Redisable
 
+  # ==========================================
+  # EPSILON : TIMELINE DELAY INTERCEPTOR
+  prepend Epsilon::NotifyServiceExtension
+
+  # ==========================================
+
   # TODO: the severed_relationships and annual_report types probably warrants email notifications
   NON_EMAIL_TYPES = %i(
     admin.report

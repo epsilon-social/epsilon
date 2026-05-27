@@ -23,6 +23,10 @@ fr:
     posts_tab_heading: Messages
     self_follow_error: Suivre votre propre compte n'est pas autorisé
   admin:
+    epsilon:
+      ai_moderation:
+        title: Paramètres de Modération IA
+        updated: Paramètres de modération IA mis à jour avec succès
     account_actions:
       action: Effectuer l'action
       already_silenced: Ce compte est déjà limité.
@@ -2182,3 +2186,40 @@ fr:
     not_supported: Ce navigateur ne prend pas en charge les clés de sécurité
     otp_required: Pour utiliser les clés de sécurité, veuillez d'abord activer l'authentification à deux facteurs.
     registered_on: Inscrit le %{date}
+  epsilon:
+      moderation:
+        system:
+          report: |
+            [MODÉRATION IA COMPLÈTE]
+            Alerte principale : %{reason} (Score: %{score})
+
+            Détail des risques :
+            %{details}
+        message:
+          deleted:
+            reason: "Votre message a été supprimé par notre système automatisé (Motif : %{reason}, Score : %{score}).\n\nContenu original bloqué : \"%{content}\""
+            dm: "@%{username} Désolé, votre message a été bloqué par notre système de sécurité automatique. Motif détecté : %{reason}. Nous veillons à garder cet espace sûr pour tous."
+          review: "@%{username} Bonjour, votre post est en attente de validation manuelle par nos modérateurs car notre IA a détecté un risque potentiel (%{reason}). Il sera publié dès qu'un humain aura validé."
+  simple_form:
+    labels:
+      epsilon_ai_moderation_setting:
+        use_native_moderation: Utiliser l'API de Modération Native
+        custom_prompt: Prompt IA Personnalisé
+        ban_violence: Seuil de Bannissement - Violence
+        ban_vulgarity: Seuil de Bannissement - Vulgarité
+        ban_sexual: Seuil de Bannissement - Contenu Sexuel
+        sensitive_violence: Seuil Sensible - Violence
+        sensitive_vulgarity: Seuil Sensible - Vulgarité
+        sensitive_sexual: Seuil Sensible - Contenu Sexuel
+        review_threshold: Seuil de Révision Manuelle
+    hints:
+      epsilon_ai_moderation_setting:
+        use_native_moderation: Utiliser l'API de modération native de Mistral au lieu de la complétion de chat LLM
+        custom_prompt: "Instructions personnalisées pour le modérateur IA. L'échelle de notation, la liste des catégories et les exigences de format JSON sont automatiquement ajoutées et ne doivent pas être incluses ici."
+        ban_violence: Score au-dessus duquel le contenu est automatiquement rejeté pour violence (0.0 à 1.0)
+        ban_vulgarity: Score au-dessus duquel le contenu est automatiquement rejeté pour vulgarité (0.0 à 1.0)
+        ban_sexual: Score au-dessus duquel le contenu est automatiquement rejeté pour contenu sexuel (0.0 à 1.0)
+        sensitive_violence: Score au-dessus duquel le contenu est marqué comme sensible pour violence (0.0 à 1.0)
+        sensitive_vulgarity: Score au-dessus duquel le contenu est marqué comme sensible pour vulgarité (0.0 à 1.0)
+        sensitive_sexual: Score au-dessus duquel le contenu est marqué comme sensible pour contenu sexuel (0.0 à 1.0)
+        review_threshold: Score au-dessus duquel le contenu est envoyé pour révision manuelle (0.0 à 1.0)

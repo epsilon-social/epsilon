@@ -1,0 +1,78 @@
+- content_for :page_title do
+  = t('admin.epsilon.ai_moderation.title')
+
+= simple_form_for @setting, url: admin_epsilon_ai_moderation_setting_path, method: :put do |f|
+  .fields-group
+    = f.input :use_native_moderation,
+              as: :boolean,
+              wrapper: :with_label,
+              label: t('simple_form.labels.epsilon_ai_moderation_setting.use_native_moderation'),
+              hint: t('simple_form.hints.epsilon_ai_moderation_setting.use_native_moderation')
+
+  .fields-group
+    = f.input :custom_prompt,
+              as: :text,
+              wrapper: :with_block_label,
+              input_html: { rows: 8, disabled: @setting.use_native_moderation? },
+              label: t('simple_form.labels.epsilon_ai_moderation_setting.custom_prompt'),
+              hint: t('simple_form.hints.epsilon_ai_moderation_setting.custom_prompt')
+
+  %hr.spacer/
+
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :ban_violence,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.ban_violence'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.ban_violence'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :ban_vulgarity,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.ban_vulgarity'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.ban_vulgarity'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :ban_sexual,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.ban_sexual'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.ban_sexual'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :review_threshold,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.review_threshold'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.review_threshold'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+  %hr.spacer/
+
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :sensitive_violence,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.sensitive_violence'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.sensitive_violence'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :sensitive_vulgarity,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.sensitive_vulgarity'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.sensitive_vulgarity'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = f.input :sensitive_sexual,
+                wrapper: :with_label,
+                label: t('simple_form.labels.epsilon_ai_moderation_setting.sensitive_sexual'),
+                hint: t('simple_form.hints.epsilon_ai_moderation_setting.sensitive_sexual'),
+                input_html: { step: 0.01, min: 0.0, max: 1.0 }
+
+  .actions
+    = f.button :button, t('generic.save_changes'), type: :submit

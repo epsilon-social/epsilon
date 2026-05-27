@@ -23,6 +23,10 @@ en:
     posts_tab_heading: Posts
     self_follow_error: Following your own account is not allowed
   admin:
+    epsilon:
+      ai_moderation:
+        title: AI Moderation Settings
+        updated: AI moderation settings successfully updated
     account_actions:
       action: Perform action
       already_silenced: This account has already been limited.
@@ -2180,3 +2184,41 @@ en:
     not_supported: This browser doesn't support security keys
     otp_required: To use security keys please enable two-factor authentication first.
     registered_on: Registered on %{date}
+  epsilon:
+    moderation:
+      system:
+        report: |
+          [FULL AI MODERATION]
+          Main alert: %{reason} (Score: %{score})
+
+          Risk details:
+          %{details}
+      message:
+        deleted:
+          reason: "Your post has been removed by our automated system (Reason: %{reason}, Score: %{score}).\n\nBlocked original content: \"%{content}\""
+          dm: "@%{username} Sorry, your post has been blocked by our automated security system. Detected reason: %{reason}. We strive to keep this space safe for everyone."
+        review: "@%{username} Hello, your post is pending manual validation by our moderators as our AI detected a potential risk (%{reason}). It will be published once a human has validated it."
+  simple_form:
+      labels:
+        epsilon_ai_moderation_setting:
+          use_native_moderation: Use Native Moderation API
+          custom_prompt: Custom AI Prompt
+          ban_violence: Ban Threshold - Violence
+          ban_vulgarity: Ban Threshold - Vulgarity
+          ban_sexual: Ban Threshold - Sexual Content
+          sensitive_violence: Sensitive Threshold - Violence
+          sensitive_vulgarity: Sensitive Threshold - Vulgarity
+          sensitive_sexual: Sensitive Threshold - Sexual Content
+          review_threshold: Manual Review Threshold
+
+      hints:
+        epsilon_ai_moderation_setting:
+          use_native_moderation: Use Mistral's native moderation API instead of LLM chat completion
+          custom_prompt: "Custom instructions for the AI moderator. The scoring scale, category list, and JSON format requirements are automatically appended and should not be included here."
+          ban_violence: Score above which content is automatically rejected for violence (0.0 to 1.0)
+          ban_vulgarity: Score above which content is automatically rejected for vulgarity (0.0 to 1.0)
+          ban_sexual: Score above which content is automatically rejected for sexual content (0.0 to 1.0)
+          sensitive_violence: Score above which content is marked as sensitive for violence (0.0 to 1.0)
+          sensitive_vulgarity: Score above which content is marked as sensitive for vulgarity (0.0 to 1.0)
+          sensitive_sexual: Score above which content is marked as sensitive for sexual content (0.0 to 1.0)
+          review_threshold: Score above which content is sent for manual review (0.0 to 1.0)

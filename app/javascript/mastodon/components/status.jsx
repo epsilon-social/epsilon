@@ -36,6 +36,7 @@ import StatusContent from './status_content';
 import { StatusThreadLabel } from './status_thread_label';
 import { VisibilityIcon } from './visibility_icon';
 import { IconButton } from './icon_button';
+import ShieldIcon from '@/material-icons/400-24px/shield.svg?react';
 
 const domParser = new DOMParser();
 
@@ -390,6 +391,13 @@ class Status extends ImmutablePureComponent {
       return null;
     }
 
+    // ==========================================
+    // EPSILON : AI MODERATION
+    // ==========================================
+    const moderationState = status.get('moderation_state');
+    const isPendingAi = moderationState === 'pending_ai';
+    // ==========================================
+
     const handlers = this.props.muted ? {} : {
       reply: this.handleHotkeyReply,
       favourite: this.handleHotkeyFavourite,
@@ -573,11 +581,53 @@ class Status extends ImmutablePureComponent {
               })
             }
             data-id={status.get('id')}
+            /* ========================================== */
+            /* EPSILON : AI MODERATION                    */
+            /* ========================================== */
+            style={isPendingAi ? { opacity: 0.6, filter: 'grayscale(50%)', pointerEvents: 'none' } : {}}
           >
             {(connectReply || connectUp || connectToRoot) && <div className={classNames('status__line', { 'status__line--full': connectReply, 'status__line--first': !status.get('in_reply_to_id') && !connectToRoot })} />}
 
+            {/* ========================================== */}
+            {/* EPSILON : AI MODERATION                   */}
+            {/* ========================================== */}
+            {isPendingAi && (
+              <div style={{
+                backgroundColor: '#37474f',
+                color: '#ffffff',
+                padding: '8px',
+                textAlign: 'center',
+                borderRadius: '4px',
+                marginBottom: '10px',
+                fontSize: '13px'
+              }}>
+              <strong><FormattedMessage id='epsilon.moderation.pending.banner.title' defaultMessage='Pending verification' /></strong><br/>
+                <FormattedMessage id='epsilon.moderation.pending.banner.message' defaultMessage='This post is grayed out and hidden from other users until our system validates it.' />
+              </div>
+            )}
+            {/* ========================================== */}
+
             <div onClick={this.handleHeaderClick} onAuxClick={this.handleHeaderClick} className='status__info'>
               <Link to={`/@${status.getIn(['account', 'acct'])}/${status.get('id')}`} className='status__relative-time'>
+
+              {/* ========================================== */}
+              {/* EPSILON : AI MODERATION                    */}
+              {/* ========================================== */}
+                {status.get('ai_moderated') && (
+                <span
+                  className='status__visibility-icon'
+                  title={intl.formatMessage({ id: 'epsilon.moderation.icon.title' })}
+                  style={{ cursor: 'help' }}
+                >
+                  <Icon
+                    id="Shield-icon"
+                    icon={ShieldIcon}
+                  />
+                </span>
+              )}
+              {/* ========================================== */}
+
+
                 <span className='status__visibility-icon'><VisibilityIcon visibility={status.get('visibility')} /></span>
                 <RelativeTimestamp timestamp={status.get('created_at')} />{status.get('edited_at') && <abbr title={intl.formatMessage(messages.edited, { date: intl.formatDate(status.get('edited_at'), { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) })}> *</abbr>}
               </Link>

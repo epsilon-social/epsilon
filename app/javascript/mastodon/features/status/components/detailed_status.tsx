@@ -6,12 +6,13 @@
 import type { CSSProperties } from 'react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import AlternateEmailIcon from '@/material-icons/400-24px/alternate_email.svg?react';
+import ShieldIcon from '@/material-icons/400-24px/shield.svg?react';
 import { AnimatedNumber } from 'mastodon/components/animated_number';
 import { Avatar } from 'mastodon/components/avatar';
 import { ContentWarning } from 'mastodon/components/content_warning';
@@ -78,6 +79,7 @@ export const DetailedStatus: React.FC<{
   const [height, setHeight] = useState(0);
   const [showDespiteFilter, setShowDespiteFilter] = useState(false);
   const nodeRef = useRef<HTMLDivElement>();
+  const intl = useIntl();
 
   const { signedIn } = useIdentity();
 
@@ -471,6 +473,37 @@ export const DetailedStatus: React.FC<{
 
             {visibilityLink}
             {applicationLink}
+            {/* ========================================== */}
+            {/* EPSILON : AI MODERATION                    */}
+            {/* ========================================== */}
+            {status.get('ai_moderated') && (
+              <>
+                {' · '}
+                <span
+                  title={intl.formatMessage({
+                    id: 'epsilon.moderation.icon.title',
+                    defaultMessage:
+                      'Verified and secured by our AI moderation system',
+                  })}
+                  style={{
+                    cursor: 'help',
+                    display: 'inline-flex',
+                    verticalAlign: 'middle',
+                  }}
+                >
+                  <Icon
+                    id='shield-icon'
+                    icon={ShieldIcon}
+                    aria-label={intl.formatMessage({
+                      id: 'epsilon.moderation.icon.title',
+                      defaultMessage:
+                        'Verified and secured by our AI moderation system',
+                    })}
+                  />
+                </span>
+              </>
+            )}
+            {/* ========================================== */}
           </div>
 
           {status.get('edited_at') && (

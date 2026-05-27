@@ -215,6 +215,15 @@ Rails.application.routes.draw do
 
   draw(:admin)
 
+  # ==========================================
+  # EPSILON : AI MODERATION SETTINGS
+  namespace :admin do
+    namespace :epsilon do
+      resource :ai_moderation_setting, only: [:show, :update]
+    end
+  end
+  # ==========================================
+
   get '/admin', to: redirect('/admin/dashboard', status: 302)
 
   draw(:api)
