@@ -34,9 +34,8 @@ module Epsilon
         if must_be_sensitive
           status.sensitive = true
           status.spoiler_text = "Contenu sensible : #{trigger_reason.capitalize}" if status.spoiler_text.blank?
+          status.save! if status.changed?
         end
-
-        status.save! if status.changed?
 
         Epsilon::AiMetadata.find_or_create_by!(status: status) do |metadata|
           metadata.violence_score  = violence_score
@@ -58,7 +57,7 @@ module Epsilon
 
         ::FanOutOnWriteService.new.call(status)
 
-        ::UpdateStatusService.new.call(status, status.account.id, sensitive: status.sensitive) if must_be_sensitive
+        ::UpdateStatusService.new.call(status, status.account.id, sensitive: true) if must_be_sensitive
         trigger_system_report!(status, trigger_reason, highest_score, reasoning) if status.manual_review?
 
       when :rejected

@@ -10,12 +10,6 @@ module Epsilon::AiModerationPostStatusExtension
     end
   end
 
-  def postprocess_status!
-    return if @status.pending_ai?
-
-    super
-  end
-
   private
 
   def requires_ai_moderation?
@@ -33,5 +27,3 @@ module Epsilon::AiModerationPostStatusExtension
     !user.try(:trusted_debater?)
   end
 end
-
-PostStatusService.prepend(Epsilon::AiModerationPostStatusExtension)
