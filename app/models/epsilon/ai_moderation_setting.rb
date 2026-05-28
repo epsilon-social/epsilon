@@ -5,6 +5,7 @@
 # Table name: epsilon_ai_moderation_settings
 #
 #  id                    :bigint(8)        not null, primary key
+#  ai_enabled            :boolean          default(TRUE), not null
 #  ban_sexual            :decimal(3, 2)    default(0.8), not null
 #  ban_violence          :decimal(3, 2)    default(0.8), not null
 #  ban_vulgarity         :decimal(3, 2)    default(0.8), not null
@@ -30,6 +31,7 @@ module Epsilon
               numericality: { greater_than_or_equal_to: 0.0, less_than_or_equal_to: 1.0 }
 
     validates :custom_prompt, presence: true
+    validates :ai_enabled, inclusion: { in: [true, false] }
 
     def self.current
       first_or_create!

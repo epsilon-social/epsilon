@@ -3,6 +3,15 @@
 
 = simple_form_for @setting, url: admin_epsilon_ai_moderation_setting_path, method: :put do |f|
   .fields-group
+    = f.input :ai_enabled,
+              as: :boolean,
+              wrapper: :with_label,
+              label: t('simple_form.labels.epsilon_ai_moderation_setting.ai_enabled'),
+              hint: t('simple_form.hints.epsilon_ai_moderation_setting.ai_enabled')
+
+  %hr.spacer/
+
+  .fields-group
     = f.input :use_native_moderation,
               as: :boolean,
               wrapper: :with_label,

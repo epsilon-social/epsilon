@@ -30,8 +30,8 @@ module Epsilon::StatusExtension
   private
 
   def epsilon_requires_moderation?
-    return false if ENV.fetch('EPSILON_AI_MODERATION_ENABLED', 'true') == 'false'
     return false if Rails.env.test? && ENV.fetch('TEST_EPSILON_AI', 'false') != 'true'
+    return false unless ::Epsilon::AiModerationSetting.current.ai_enabled?
     return false if epsilon_bypass_ai
     return false if local? && account&.user&.role&.can?(:manage_reports)
 

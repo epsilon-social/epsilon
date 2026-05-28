@@ -6,6 +6,31 @@ module Epsilon
 
     sidekiq_options queue: 'epsilon_ai_moderation', retry: 3
 
+    sidekiq_retries_exhausted do |msg, exception|
+      status_id = msg['args'][0]
+      status = Status.find_by(id: status_id)
+
+      next if status.nil?
+
+      ApplicationRecord.transaction do
+        moderation = status.epsilon_ai_status_moderation_or_default
+
+        if moderation.pending_ai?
+          moderation.state = :unmoderated
+          moderation.save!
+
+          status.updated_at = Time.current
+          status.save! if status.changed?
+        end
+      end
+
+      status.reload
+
+      ::FanOutOnWriteService.new.call(status)
+
+      Rails.logger.error("[EPSILON AI CRITICAL] Échec définitif de la modération du statut #{status_id}. Erreur : #{exception.message}")
+    end
+
     def perform(status_id)
       status = Status.find_by(id: status_id)
       return if status.nil? || !status.pending_ai?
@@ -105,10 +130,6 @@ module Epsilon
         'category' => 'Modération Native',
         'reasoning' => 'Analyse via l\'API de modération standard',
       }
-    rescue JSON::ParserError
-      default_error_response('json_parse_error')
-    rescue
-      default_error_response('api_error')
     end
     # ==========================================
 
@@ -148,10 +169,6 @@ module Epsilon
 
       raw_json = response.parse.dig('choices', 0, 'message', 'content')
       JSON.parse(raw_json)
-    rescue JSON::ParserError
-      default_error_response('json_parse_error')
-    rescue
-      default_error_response('api_error')
     end
     # ==========================================
 
@@ -229,19 +246,6 @@ module Epsilon
         text: final_text,
         visibility: :direct
       )
-    end
-
-    # ==========================================
-    # HELPERS
-    # ==========================================
-    def default_error_response(reasoning)
-      {
-        'violence_score' => 0.0,
-        'vulgarity_score' => 0.0,
-        'sexual_score' => 0.0,
-        'category' => 'Autre',
-        'reasoning' => reasoning,
-      }
     end
   end
 end

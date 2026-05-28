@@ -285,31 +285,6 @@ RSpec.describe Epsilon::MistralModerationWorker do
       end
     end
 
-    context 'when Mistral API fails' do
-      let(:http_mock) { instance_double(HTTP::Client) }
-
-      before do
-        allow(HTTP).to receive(:timeout).with(5).and_return(http_mock)
-        allow(http_mock).to receive(:auth).with('Bearer test_api_key').and_return(http_mock)
-        allow(http_mock).to receive(:post).and_raise(StandardError.new('API Error'))
-      end
-
-      it 'handles the error gracefully and approves the status' do
-        worker.perform(status.id)
-
-        expect(status.reload.moderation_state).to eq('approved')
-      end
-
-      it 'creates AI metadata with api_error category' do
-        worker.perform(status.id)
-
-        metadata = status.reload.epsilon_ai_metadata
-        expect(metadata).to be_present
-        expect(metadata.mistral_payload['trigger']).to eq('violence')
-        expect(metadata.categories_raw['reasoning']).to eq('api_error')
-      end
-    end
-
     context 'when use_native_moderation setting is true' do
       let(:http_mock) { instance_double(HTTP::Client) }
       let(:response_mock) { instance_double(HTTP::Response, status: instance_double(HTTP::Response::Status, success?: true), parse: mistral_native_response) }
@@ -336,6 +311,40 @@ RSpec.describe Epsilon::MistralModerationWorker do
         expect(metadata.mistral_payload['category']).to eq('Modération Native')
         expect(metadata.mistral_payload['trigger']).to eq('violence')
       end
+    end
+  end
+
+  describe 'Fail-Safe behavior on exhausted retries' do
+    let(:exception) { StandardError.new('Mistral API Error: 401') }
+    let(:msg) { { 'args' => [status.id] } }
+    let(:fan_out_service) { instance_double(FanOutOnWriteService, call: true) }
+
+    before do
+      allow(FanOutOnWriteService).to receive(:new).and_return(fan_out_service)
+      allow(Rails.logger).to receive(:error)
+    end
+
+    it 'reverts to unmoderated, updates timestamp, federates the post and logs an error' do
+      exhausted_block = described_class.sidekiq_retries_exhausted_block
+
+      expect do
+        exhausted_block.call(msg, exception)
+      end.to change { status.epsilon_ai_status_moderation_or_default.reload.state }.from('pending_ai').to('unmoderated')
+                                                                                   .and(change { status.reload.updated_at })
+
+      expect(fan_out_service).to have_received(:call).with(status)
+
+      expect(Rails.logger).to have_received(:error).with(
+        "[EPSILON AI CRITICAL] Échec définitif de la modération du statut #{status.id}. Erreur : Mistral API Error: 401"
+      )
+    end
+
+    it 'does nothing if the status has been deleted in the meantime' do
+      exhausted_block = described_class.sidekiq_retries_exhausted_block
+      deleted_msg = { 'args' => [999_999_999] }
+
+      expect { exhausted_block.call(deleted_msg, exception) }.to_not raise_error
+      expect(fan_out_service).to_not have_received(:call)
     end
   end
 end

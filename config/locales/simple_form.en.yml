@@ -76,6 +76,17 @@ en:
       email_domain_block:
         domain: This can be the domain name that shows up in the e-mail address or the MX record it uses. They will be checked upon sign-up.
         with_dns_records: An attempt to resolve the given domain's DNS records will be made and the results will also be blocked
+      epsilon_ai_moderation_setting:
+        ai_enabled: Master switch to enable or disable all AI moderation. When disabled, no content will be sent to AI for moderation.
+        ban_sexual: Threshold above which content will be automatically rejected for sexual content
+        ban_violence: Threshold above which content will be automatically rejected for violence
+        ban_vulgarity: Threshold above which content will be automatically rejected for vulgarity
+        custom_prompt: Custom prompt to send to the AI moderation service. Only used when native moderation is disabled.
+        review_threshold: Threshold above which content will be flagged for manual review
+        sensitive_sexual: Threshold above which content will be marked as sensitive for sexual content
+        sensitive_violence: Threshold above which content will be marked as sensitive for violence
+        sensitive_vulgarity: Threshold above which content will be marked as sensitive for vulgarity
+        use_native_moderation: Use the AI service's built-in moderation instead of a custom prompt
       featured_tag:
         name: 'Here are some of the hashtags you used the most recently:'
       filters:
@@ -271,6 +282,17 @@ en:
         whole_word: Whole word
       email_domain_block:
         with_dns_records: Include MX records and IPs of the domain
+      epsilon_ai_moderation_setting:
+        ai_enabled: Enable AI Moderation (Kill Switch)
+        ban_sexual: Ban threshold - Sexual
+        ban_violence: Ban threshold - Violence
+        ban_vulgarity: Ban threshold - Vulgarity
+        custom_prompt: Custom AI prompt
+        review_threshold: Manual review threshold
+        sensitive_sexual: Sensitive threshold - Sexual
+        sensitive_violence: Sensitive threshold - Violence
+        sensitive_vulgarity: Sensitive threshold - Vulgarity
+        use_native_moderation: Use native moderation
       featured_tag:
         name: Hashtag
       filters:

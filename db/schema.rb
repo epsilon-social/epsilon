@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_05_22_121618) do
+ActiveRecord::Schema[8.0].define(version: 2026_05_28_122605) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -509,6 +509,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_05_22_121618) do
     t.decimal "review_threshold", precision: 3, scale: 2, default: "0.5", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "ai_enabled", default: true, null: false
   end
 
   create_table "epsilon_ai_status_moderations", force: :cascade do |t|
