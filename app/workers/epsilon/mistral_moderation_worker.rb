@@ -119,7 +119,10 @@ module Epsilon
       }
 
       response = HTTP.timeout(5).auth("Bearer #{api_key}").post(url, json: payload)
-      raise StandardError, "Mistral API Error: #{response.code}" unless response.status.success?
+      unless response.status.success?
+        error_details = response.body.to_s.truncate(200)
+        raise StandardError, "Mistral API Error: #{response.code} - #{error_details}"
+      end
 
       native_scores = response.parse.dig('results', 0, 'category_scores') || {}
 

@@ -34,6 +34,10 @@ module Epsilon::StatusExtension
     return false unless ::Epsilon::AiModerationSetting.current.ai_enabled?
     return false if epsilon_bypass_ai
     return false if local? && account&.user&.role&.can?(:manage_reports)
+    return false if reblog?
+
+    full_text = [text, spoiler_text].join(' ').strip
+    return false if full_text.blank?
 
     return true if local?
 
