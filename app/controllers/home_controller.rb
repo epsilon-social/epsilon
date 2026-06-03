@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class HomeController < ApplicationController
+  # ==========================================
+  # EPSILON : UNAUTHENTICATED HOME REDIRECT
+  include Epsilon::Redirect::HomeExtension
+  # ==========================================
+
   include WebAppControllerConcern
 
   def index
