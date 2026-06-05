@@ -43,7 +43,7 @@ const mapStateToProps = state => ({
   lang: state.getIn(['compose', 'language']),
   // ==========================================
   // EPSILON : EXTENDED POST LIMITS
-  maxChars: state.getIn(['server', 'server', 'configuration', 'statuses', 'max_characters'], 1000),
+  maxChars: state.getIn(['server', 'server', 'configuration', 'statuses', 'max_characters'], 9000),
   // ==========================================
 
 });

@@ -6,7 +6,7 @@ RSpec.describe StatusLengthValidator do
   describe '#validate' do
     # ==========================================
     # EPSILON : EXTENDED POST LIMITS
-    before { stub_const("#{described_class}::MAX_CHARS", 1000) } # Example values below are relative to this baseline
+    before { stub_const("#{described_class}::MAX_CHARS", 9000) } # Example values below are relative to this baseline
     # ==========================================
 
     it 'does not add errors onto remote statuses' do
@@ -30,7 +30,7 @@ RSpec.describe StatusLengthValidator do
     it 'adds an error when content warning is over character limit' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      status = status_double(spoiler_text: 'a' * 1020)
+      status = status_double(spoiler_text: 'a' * 9020)
       # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
@@ -39,7 +39,7 @@ RSpec.describe StatusLengthValidator do
     it 'adds an error when text is over character limit' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      status = status_double(text: 'a' * 1020)
+      status = status_double(text: 'a' * 9020)
       # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
@@ -48,7 +48,7 @@ RSpec.describe StatusLengthValidator do
     it 'adds an error when text and content warning are over character limit total' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      status = status_double(spoiler_text: 'a' * 1000, text: 'b' * 1001)
+      status = status_double(spoiler_text: 'a' * 9000, text: 'b' * 9001)
       # ==========================================
       subject.validate(status)
       expect(status.errors).to have_received(:add)
@@ -73,7 +73,7 @@ RSpec.describe StatusLengthValidator do
     it 'does not reduce calculated length of count overly long URLs' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      text = "http://example.com/valid?#{'#foo?' * 1000}"
+      text = "http://example.com/valid?#{'#foo?' * 9000}"
       # ==========================================
       status = status_double(text: text)
       subject.validate(status)
@@ -83,7 +83,7 @@ RSpec.describe StatusLengthValidator do
     it 'counts only the front part of remote usernames' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      text   = ('a' * 975) + " @alice@#{'b' * 30}.com"
+      text   = ('a' * 8975) + " @alice@#{'b' * 30}.com"
       # ==========================================
       status = status_double(text: text)
 
@@ -94,7 +94,7 @@ RSpec.describe StatusLengthValidator do
     it 'does count both parts of remote usernames for overly long domains' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      text   = "@alice@#{'b' * 1000}.com"
+      text   = "@alice@#{'b' * 9000}.com"
       # ==========================================
       status = status_double(text: text)
 
@@ -105,7 +105,7 @@ RSpec.describe StatusLengthValidator do
     it 'counts multi byte emoji as single character' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      text = '✨' * 1000
+      text = '✨' * 9000
       # ==========================================
       status = status_double(text: text)
 
@@ -116,7 +116,7 @@ RSpec.describe StatusLengthValidator do
     it 'counts ZWJ sequence emoji as single character' do
       # ==========================================
       # EPSILON : EXTENDED POST LIMITS
-      text = '🏳️‍⚧️' * 1000
+      text = '🏳️‍⚧️' * 9000
       # ==========================================
       status = status_double(text: text)
 
@@ -130,7 +130,7 @@ RSpec.describe StatusLengthValidator do
   def starting_string
     # ==========================================
     # EPSILON : EXTENDED POST LIMITS
-    'a' * 976
+    'a' * 8976
     # ==========================================
   end
 

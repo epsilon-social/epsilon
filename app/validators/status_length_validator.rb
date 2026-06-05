@@ -3,7 +3,7 @@
 class StatusLengthValidator < ActiveModel::Validator
   # ==========================================
   # EPSILON : EXTENDED POST LIMITS
-  MAX_CHARS = 1000
+  MAX_CHARS = 9000
   # Original : MAX_CHARS = 500
   # ==========================================
   URL_PLACEHOLDER_CHARS = 23
