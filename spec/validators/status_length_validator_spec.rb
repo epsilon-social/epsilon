@@ -3,129 +3,96 @@
 require 'rails_helper'
 
 RSpec.describe StatusLengthValidator do
-  describe '#validate' do
+  subject { Fabricate.build :status }
+
+  # ==========================================
+  # EPSILON : EXTENDED POST LIMITS
+  before { stub_const("#{described_class}::MAX_CHARS", 9000) } # Example values below are relative to this baseline
+  # ==========================================
+
+  let(:over_limit_text) { 'a' * described_class::MAX_CHARS * 2 }
+
+  context 'when status is remote' do
+    before { subject.update! account: Fabricate(:account, domain: 'host.example') }
+
+    it { is_expected.to allow_value(over_limit_text).for(:text) }
+    it { is_expected.to allow_value(over_limit_text).for(:spoiler_text).against(:text) }
+  end
+
+  context 'when status is a local reblog' do
+    before { subject.update! reblog: Fabricate(:status) }
+
+    it { is_expected.to allow_value(over_limit_text).for(:text) }
+    it { is_expected.to allow_value(over_limit_text).for(:spoiler_text).against(:text) }
+  end
+
+  context 'when text is over character limit' do
+    it { is_expected.to_not allow_value(over_limit_text).for(:text).with_message(too_long_message) }
+  end
+
+  context 'when content warning text is over character limit' do
+    it { is_expected.to_not allow_value(over_limit_text).for(:spoiler_text).against(:text).with_message(too_long_message) }
+  end
+
+  context 'when text and content warning combine to exceed limit' do
     # ==========================================
     # EPSILON : EXTENDED POST LIMITS
-    before { stub_const("#{described_class}::MAX_CHARS", 9000) } # Example values below are relative to this baseline
+    before { subject.text = 'a' * 4500 }
+
+    it { is_expected.to_not allow_value('a' * 4505).for(:spoiler_text).against(:text).with_message(too_long_message) }
+  end
+
+  context 'when text has space separated linkable URLs' do
+    let(:text) { [starting_string, example_link].join(' ') }
+
+    it { is_expected.to allow_value(text).for(:text) }
+  end
+
+  context 'when text has non-separated URLs' do
+    let(:text) { [starting_string, example_link].join }
+
+    it { is_expected.to_not allow_value(text).for(:text).with_message(too_long_message) }
+  end
+
+  context 'with excessively long URLs' do
+    # ==========================================
+    # EPSILON : EXTENDED POST LIMITS
+    let(:text) { "http://example.com/valid?#{'#foo?' * 2000}" }
     # ==========================================
 
-    it 'does not add errors onto remote statuses' do
-      status = instance_double(Status, local?: false)
-      allow(status).to receive(:errors)
+    it { is_expected.to_not allow_value(text).for(:text).with_message(too_long_message) }
+  end
 
-      subject.validate(status)
+  context 'when remote account usernames cause limit excess' do
+    # ==========================================
+    # EPSILON : EXTENDED POST LIMITS
+    let(:text) { ('a' * 8975) + " @alice@#{'b' * 30}.com" }
+    # ==========================================
 
-      expect(status).to_not have_received(:errors)
-    end
+    it { is_expected.to allow_value(text).for(:text) }
+  end
 
-    it 'does not add errors onto local reblogs' do
-      status = instance_double(Status, local?: false, reblog?: true)
-      allow(status).to receive(:errors)
+  context 'when remote usernames are attached to long domains' do
+    # ==========================================
+    # EPSILON : EXTENDED POST LIMITS
+    let(:text) { "@alice@#{'b' * 9000}.com" }
+    # ==========================================
 
-      subject.validate(status)
+    it { is_expected.to_not allow_value(text).for(:text).with_message(too_long_message) }
+  end
 
-      expect(status).to_not have_received(:errors)
-    end
+  context 'with special character strings' do
+    let(:multibyte_emoji) { '✨' * described_class::MAX_CHARS }
+    let(:zwj_sequence) { '🏳️‍⚧️' * described_class::MAX_CHARS }
 
-    it 'adds an error when content warning is over character limit' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      status = status_double(spoiler_text: 'a' * 9020)
-      # ==========================================
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'adds an error when text is over character limit' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      status = status_double(text: 'a' * 9020)
-      # ==========================================
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'adds an error when text and content warning are over character limit total' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      status = status_double(spoiler_text: 'a' * 9000, text: 'b' * 9001)
-      # ==========================================
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'reduces calculated length of auto-linkable space-separated URLs' do
-      text = [starting_string, example_link].join(' ')
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to_not have_received(:add)
-    end
-
-    it 'does not reduce calculated length of non-autolinkable URLs' do
-      text = [starting_string, example_link].join
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'does not reduce calculated length of count overly long URLs' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      text = "http://example.com/valid?#{'#foo?' * 9000}"
-      # ==========================================
-      status = status_double(text: text)
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'counts only the front part of remote usernames' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      text   = ('a' * 8975) + " @alice@#{'b' * 30}.com"
-      # ==========================================
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to_not have_received(:add)
-    end
-
-    it 'does count both parts of remote usernames for overly long domains' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      text   = "@alice@#{'b' * 9000}.com"
-      # ==========================================
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to have_received(:add)
-    end
-
-    it 'counts multi byte emoji as single character' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      text = '✨' * 9000
-      # ==========================================
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to_not have_received(:add)
-    end
-
-    it 'counts ZWJ sequence emoji as single character' do
-      # ==========================================
-      # EPSILON : EXTENDED POST LIMITS
-      text = '🏳️‍⚧️' * 9000
-      # ==========================================
-      status = status_double(text: text)
-
-      subject.validate(status)
-      expect(status.errors).to_not have_received(:add)
-    end
+    it { is_expected.to allow_values(multibyte_emoji, zwj_sequence).for(:text) }
   end
 
   private
+
+  def too_long_message
+    I18n.t('statuses.over_character_limit', max: described_class::MAX_CHARS)
+  end
 
   def starting_string
     # ==========================================
@@ -136,20 +103,5 @@ RSpec.describe StatusLengthValidator do
 
   def example_link
     "http://#{'b' * 30}.com/example"
-  end
-
-  def status_double(spoiler_text: '', text: '')
-    instance_double(
-      Status,
-      spoiler_text: spoiler_text,
-      text: text,
-      errors: activemodel_errors,
-      local?: true,
-      reblog?: false
-    )
-  end
-
-  def activemodel_errors
-    instance_double(ActiveModel::Errors, add: nil)
   end
 end

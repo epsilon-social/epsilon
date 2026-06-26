@@ -330,7 +330,7 @@ RSpec.describe Epsilon::MistralModerationWorker do
       expect do
         exhausted_block.call(msg, exception)
       end.to change { status.epsilon_ai_status_moderation_or_default.reload.state }.from('pending_ai').to('unmoderated')
-                                                                                   .and(change { status.reload.updated_at })
+        .and(change { status.reload.updated_at })
 
       expect(fan_out_service).to have_received(:call).with(status)
 

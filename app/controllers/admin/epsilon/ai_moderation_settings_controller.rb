@@ -26,7 +26,6 @@ module Admin
       end
 
       def resource_params
-        # rubocop:disable Rails/StrongParametersExpect
         params.require(:epsilon_ai_moderation_setting).permit(
           :ai_enabled,
           :use_native_moderation,
