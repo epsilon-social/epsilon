@@ -36,10 +36,14 @@
                    name: :reject,
                    type: :submit
 
+      -# EPSILON : CATEGORIZATION SYSTEM
+      %span.epsilon-hashtag-categories__column-header= t('admin.epsilon.categorization.column_title')
+      -# ==========================================
+
     .batch-table__body
       - if @tags.empty?
         = nothing_here 'nothing-here--under-tabs'
       - else
-        = render partial: 'tag', collection: @tags, locals: { f: f }
+        = render partial: 'tag', collection: @tags, locals: { f: f, epsilon_categories: @epsilon_categories, epsilon_category_ids_by_hashtag: @epsilon_category_ids_by_hashtag }
 
 = paginate @tags

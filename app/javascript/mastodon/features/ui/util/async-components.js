@@ -270,3 +270,17 @@ export function ListEdit () {
 export function ListMembers () {
   return import('../../lists/members');
 }
+
+
+export function EpsilonCategorySettings () {
+  return import('../../epsilon/category_settings');
+}
+// ==========================================
+
+// ==========================================
+// EPSILON : ONBOARDING CATEGORY SELECTION
+// ==========================================
+export function EpsilonOnboardingCategories () {
+  return import('../../epsilon/onboarding_categories');
+}
+// ==========================================

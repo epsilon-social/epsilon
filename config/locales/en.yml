@@ -32,6 +32,55 @@ en:
       ai_moderation:
         title: AI Moderation Settings
         updated: AI moderation settings successfully updated
+      categorization:
+        add_category: Add a category
+        add_hashtags_button: Add hashtags
+        add_hashtags_hint: One or more hashtags, separated by spaces, commas or new lines. Unknown hashtags are fine — they get linked automatically once a post uses them.
+        add_hashtags_placeholder: cats, dogs, wildlife
+        add_hashtags_title: Add hashtags
+        add_to_category: Add to a category
+        all_categories: All Epsilon categories
+        categories: Categories
+        category_created: Category %{name} added.
+        category_deleted: Category %{name} deleted.
+        category_name: Category name
+        category_updated: Category updated.
+        column_title: Categories
+        copy_button: Copy
+        create_button: Add
+        dashboard_title: Epsilon Categories
+        delete_button: Delete
+        delete_confirm: 'Delete %{name}? Its hashtag mappings and user subscriptions will be removed.'
+        hashtags_added:
+          one: '%{count} hashtag added.'
+          other: '%{count} hashtags added.'
+        hashtags_copied:
+          one: '%{count} hashtag copied to %{category}.'
+          other: '%{count} hashtags copied to %{category}.'
+        hashtags_migrated:
+          one: '%{count} hashtag moved to %{category}.'
+          other: '%{count} hashtags moved to %{category}.'
+        hashtags_removed:
+          one: '%{count} hashtag removed.'
+          other: '%{count} hashtags removed.'
+        migrate_button: Migrate
+        migrate_confirm: Move the selected hashtags to the chosen category?
+        migrate_target_missing: Target category not found.
+        migrate_target_prompt: Move to a category…
+        no_categories: This tag is not linked to any Epsilon category.
+        no_hashtags: No hashtags mapped to this category yet.
+        no_results: No category is mapped to this hashtag.
+        rename_button: Rename
+        remove_button: Remove
+        remove_confirm: Remove the selected hashtags from this category?
+        search_button: Search
+        search_hashtag: Hashtag
+        search_placeholder: e.g. ruby
+        search_results: Search results
+        tag_categories: Epsilon categories
+        view_all_hashtags:
+          one: See the only hashtag
+          other: See all %{count} hashtags
     account_actions:
       action: Perform action
       already_silenced: This account has already been limited.
@@ -1561,6 +1610,43 @@ en:
     auto: Auto
     native: Native
     twemoji: Twemoji
+  epsilon_cat:
+    category_saved: "Subscriptions updated!"
+    save: "Save my choice"
+    vote:
+      has_voted: "has already voted for this category on this post"
+  epsilon:
+    categories:
+      news: "News"
+      politics: "Politics"
+      economy: "Economy"
+      technology: "Technology"
+      science: "Science"
+      health: "Health"
+      education: "Education"
+      history: "History"
+      philosophy: "Philosophy"
+      religion: "Religion & Spirituality"
+      environment: "Environment"
+      space: "Space & Astronomy"
+      sports: "Sports"
+      gaming: "Gaming"
+      entertainment: "Entertainment"
+      movies_tv: "Movies & TV"
+      music: "Music"
+      literature: "Books & Literature"
+      art_design: "Art & Design"
+      photography_video: "Photography & Video"
+      fashion_beauty: "Fashion & Beauty"
+      food_gastronomy: "Food & Gastronomy"
+      travel: "Travel"
+      automotive: "Automotive & Mobility"
+      home_garden: "Home & Garden"
+      animals: "Animals"
+      family_lifestyle: "Family & Lifestyle"
+      humor_memes: "Humor & Memes"
+      business_career: "Business & Career"
+      hobbies: "Hobbies & Passions"
   errors:
     '400': The request you submitted was invalid or malformed.
     '403': You don't have permission to view this page.

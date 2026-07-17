@@ -88,7 +88,10 @@ class Auth::ConfirmationsController < Devise::ConfirmationsController
     if user.created_by_application && redirect_to_app?
       user.created_by_application.confirmation_redirect_uri
     elsif user_signed_in?
-      web_url('start')
+      # ==========================================
+      # EPSILON : ONBOARDING STARTS WITH CATEGORIES
+      web_url('start/categories')
+      # ==========================================
     else
       new_user_session_path
     end

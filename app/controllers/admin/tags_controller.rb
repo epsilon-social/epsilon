@@ -11,6 +11,16 @@ module Admin
       authorize :tag, :index?
 
       @tags = filtered_tags.page(params[:page]).per(PER_PAGE)
+
+      # ==========================================
+      # EPSILON : CATEGORIZATION SYSTEM
+      @epsilon_categories = ::Epsilon::Categorization::CategoryMaster.active.order(:name).to_a
+      @epsilon_category_ids_by_hashtag = ::Epsilon::Categorization::HashtagMapping
+        .where(hashtag: @tags.map(&:name))
+        .pluck(:hashtag, :category_master_id)
+        .group_by(&:first)
+        .transform_values { |pairs| pairs.map(&:last) }
+      # ==========================================
     end
 
     def show

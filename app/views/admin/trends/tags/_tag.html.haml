@@ -21,3 +21,16 @@
       - elsif tag.requires_review?
         ·
         = t('admin.trends.pending_review')
+
+  -# EPSILON : CATEGORIZATION SYSTEM
+  - assigned_ids = epsilon_category_ids_by_hashtag.fetch(tag.name, [])
+  %details.epsilon-hashtag-categories{ data: { epsilon_hashtag: tag.name, epsilon_toggle_url: admin_epsilon_hashtags_categorization_toggle_path } }
+    %summary.epsilon-hashtag-categories__summary
+      = t('admin.epsilon.categorization.categories')
+      %span.epsilon-hashtag-categories__count{ data: { epsilon_category_count: '' } }= assigned_ids.size
+    .epsilon-hashtag-categories__menu
+      - epsilon_categories.each do |category|
+        %label.epsilon-hashtag-categories__option
+          = check_box_tag "epsilon_category_#{tag.id}_#{category.id}", category.id, assigned_ids.include?(category.id), data: { epsilon_category_toggle: '' }
+          %span= category.name
+  -# ==========================================

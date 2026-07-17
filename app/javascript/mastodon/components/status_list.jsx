@@ -7,13 +7,19 @@ import { debounce } from 'lodash';
 
 import { TIMELINE_GAP, TIMELINE_PINNED_VIEW_ALL, TIMELINE_SUGGESTIONS } from 'mastodon/actions/timelines';
 import { RegenerationIndicator } from 'mastodon/components/regeneration_indicator';
-import { InlineFollowSuggestions } from 'mastodon/features/home_timeline/components/inline_follow_suggestions';
 import { PinnedShowAllButton } from '@/mastodon/features/account_timeline/components/pinned_statuses';
 
 import { StatusQuoteManager } from '../components/status_quoted';
 
 import { LoadGap } from './load_gap';
 import ScrollableList from './scrollable_list';
+
+/* ========================================== */
+/* EPSILON : CATEGORY SUGGESTIONS             */
+/* ========================================== */
+import EpsilonCategorySuggestions from '../features/epsilon/category_suggestions';
+import { AlternatingSuggestions } from '../features/epsilon/categorization/components/alternating_suggestions';
+/* ========================================== */
 
 
 export default class StatusList extends ImmutablePureComponent {
@@ -65,7 +71,12 @@ export default class StatusList extends ImmutablePureComponent {
         switch(statusId) {
         case TIMELINE_SUGGESTIONS:
           return (
-            <InlineFollowSuggestions key={TIMELINE_SUGGESTIONS} />
+            /* ========================================== */
+            /* EPSILON : CATEGORIZATION SYSTEM            */
+            /* Alterne carrousel de comptes / de catégories */
+            /* ========================================== */
+            <AlternatingSuggestions key={TIMELINE_SUGGESTIONS} />
+            /* ========================================== */
           );
         case TIMELINE_GAP:
           return (
@@ -76,6 +87,16 @@ export default class StatusList extends ImmutablePureComponent {
               onClick={onLoadMore}
             />
           );
+        /* ========================================== */
+        /* EPSILON : CATEGORY SUGGESTIONS             */
+        /* ========================================== */
+        case 'epsilon_category_suggestions':
+          return (
+            <EpsilonCategorySuggestions
+              key={statusId}
+            />
+          );
+        /* ========================================== */
         default:
           return (
             <StatusQuoteManager

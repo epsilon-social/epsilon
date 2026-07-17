@@ -7,6 +7,16 @@ class Admin::Trends::TagsController < Admin::BaseController
     @pending_tags_count = pending_tags.async_count
     @tags = filtered_tags.page(params[:page])
     @form = Trends::TagBatch.new
+
+    # ==========================================
+    # EPSILON : CATEGORIZATION SYSTEM
+    @epsilon_categories = ::Epsilon::Categorization::CategoryMaster.active.order(:name).to_a
+    @epsilon_category_ids_by_hashtag = ::Epsilon::Categorization::HashtagMapping
+      .where(hashtag: @tags.map(&:name))
+      .pluck(:hashtag, :category_master_id)
+      .group_by(&:first)
+      .transform_values { |pairs| pairs.map(&:last) }
+    # ==========================================
   end
 
   def batch

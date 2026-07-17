@@ -32,6 +32,55 @@ fr:
       ai_moderation:
         title: Paramètres de Modération IA
         updated: Paramètres de modération IA mis à jour avec succès
+      categorization:
+        add_category: Ajouter une catégorie
+        add_hashtags_button: Ajouter les hashtags
+        add_hashtags_hint: Un ou plusieurs hashtags, séparés par des espaces, virgules ou retours à la ligne. Les hashtags inconnus sont acceptés — le lien se fait automatiquement dès qu'un post les utilise.
+        add_hashtags_placeholder: chats, chiens, faune
+        add_hashtags_title: Ajouter des hashtags
+        add_to_category: Ajouter à une catégorie
+        all_categories: Toutes les catégories Epsilon
+        categories: Catégories
+        category_created: Catégorie %{name} ajoutée.
+        category_deleted: Catégorie %{name} supprimée.
+        category_name: Nom de la catégorie
+        category_updated: Catégorie mise à jour.
+        column_title: Catégories
+        copy_button: Copier
+        create_button: Ajouter
+        dashboard_title: Catégories Epsilon
+        delete_button: Supprimer
+        delete_confirm: 'Supprimer %{name} ? Ses associations de hashtags et les abonnements des utilisateurs seront supprimés.'
+        hashtags_added:
+          one: '%{count} hashtag ajouté.'
+          other: '%{count} hashtags ajoutés.'
+        hashtags_copied:
+          one: '%{count} hashtag copié vers %{category}.'
+          other: '%{count} hashtags copiés vers %{category}.'
+        hashtags_migrated:
+          one: '%{count} hashtag déplacé vers %{category}.'
+          other: '%{count} hashtags déplacés vers %{category}.'
+        hashtags_removed:
+          one: '%{count} hashtag retiré.'
+          other: '%{count} hashtags retirés.'
+        migrate_button: Migrer
+        migrate_confirm: Déplacer les hashtags sélectionnés vers la catégorie choisie ?
+        migrate_target_missing: Catégorie cible introuvable.
+        migrate_target_prompt: Déplacer vers une catégorie…
+        no_categories: Ce tag n’est lié à aucune catégorie Epsilon.
+        no_hashtags: Aucun hashtag associé à cette catégorie pour le moment.
+        no_results: Aucune catégorie n’est associée à ce hashtag.
+        rename_button: Renommer
+        remove_button: Retirer
+        remove_confirm: Retirer les hashtags sélectionnés de cette catégorie ?
+        search_button: Rechercher
+        search_hashtag: Hashtag
+        search_placeholder: ex. ruby
+        search_results: Résultats de la recherche
+        tag_categories: Catégories Epsilon
+        view_all_hashtags:
+          one: Voir le seul hashtag
+          other: Voir les %{count} hashtags
     account_actions:
       action: Effectuer l'action
       already_silenced: Ce compte est déjà limité.
@@ -1561,6 +1610,43 @@ fr:
     auto: Auto
     native: Natif
     twemoji: Twemoji
+  epsilon_cat:
+    category_saved: "Abonnements mis à jour !"
+    save: "Sauvegarder mes choix"
+    vote:
+      has_voted: "a déjà voté pour cette catégorie sur ce post"
+  epsilon:
+    categories:
+      news: "Actualités"
+      politics: "Politique"
+      economy: "Économie"
+      technology: "Technologie"
+      science: "Sciences"
+      health: "Santé"
+      education: "Éducation"
+      history: "Histoire"
+      philosophy: "Philosophie"
+      religion: "Religion & Spiritualité"
+      environment: "Environnement"
+      space: "Espace & Astronomie"
+      sports: "Sport"
+      gaming: "Jeux vidéo"
+      entertainment: "Divertissement"
+      movies_tv: "Cinéma & TV"
+      music: "Musique"
+      literature: "Livres & Littérature"
+      art_design: "Art & Design"
+      photography_video: "Photographie & Vidéo"
+      fashion_beauty: "Mode & Beauté"
+      food_gastronomy: "Cuisine & Gastronomie"
+      travel: "Voyage"
+      automotive: "Automobile & Mobilité"
+      home_garden: "Maison & Jardin"
+      animals: "Animaux"
+      family_lifestyle: "Famille & Lifestyle"
+      humor_memes: "Humour & Mèmes"
+      business_career: "Business & Carrière"
+      hobbies: "Loisirs & Passions"
   errors:
     '400': La demande que vous avez soumise est invalide ou mal formée.
     '403': Vous n’avez pas accès à cette page.

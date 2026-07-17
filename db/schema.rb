@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_17_103734) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -371,6 +371,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
     t.datetime "created_at", null: false
     t.boolean "is_active", default: true, null: false
     t.string "name", limit: 100, null: false
+    t.jsonb "name_translations", default: {}, null: false
     t.string "slug", limit: 50, null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_category_masters_on_slug", unique: true
@@ -757,11 +758,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_11_150940) do
     t.index ["account_id", "year"], name: "index_generated_annual_reports_on_account_id_and_year", unique: true
   end
 
-  create_table "hashtag_mappings", primary_key: "hashtag", id: { type: :string, limit: 50 }, force: :cascade do |t|
-    t.bigint "category_master_id"
+  create_table "hashtag_mappings", force: :cascade do |t|
+    t.bigint "category_master_id", null: false
     t.datetime "created_at", null: false
+    t.string "hashtag", limit: 50, null: false
     t.datetime "updated_at", null: false
     t.index ["category_master_id"], name: "index_hashtag_mappings_on_category_master_id"
+    t.index ["hashtag", "category_master_id"], name: "idx_unique_epsilon_hashtag_mapping", unique: true
   end
 
   create_table "identities", force: :cascade do |t|

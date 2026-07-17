@@ -74,6 +74,7 @@ docker-compose.override.yml
 
 # Ignore dotenv .local files
 .env*.local
+.env.development
 
 # Ignore local-only rspec configuration
 .rspec-local

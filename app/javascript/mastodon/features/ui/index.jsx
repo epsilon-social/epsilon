@@ -84,6 +84,11 @@ import {
   AccountEdit,
   AccountEditFeaturedTags,
   Quotes,
+  // ==========================================
+  // EPSILON : CATEGORY
+  EpsilonCategorySettings,
+  EpsilonOnboardingCategories
+  // ==========================================
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
 import { focusColumn, getFocusedItemIndex, focusItemSibling, focusFirstItem, getFocusedColumnIndex } from './util/focusUtils';
@@ -165,7 +170,7 @@ class SwitchingColumnsArea extends PureComponent {
     let rootRedirect;
     if (signedIn) {
       if (forceOnboarding) {
-        rootRedirect = '/start';
+        rootRedirect = '/start/categories';
       } else if (singleColumn) {
         rootRedirect = '/home';
       } else {
@@ -201,6 +206,10 @@ class SwitchingColumnsArea extends PureComponent {
             <WrappedRoute path='/privacy-policy' component={PrivacyPolicy} content={children} />
             <WrappedRoute path='/terms-of-service/:date?' component={TermsOfService} content={children} />
 
+            {/* ========================================== */}
+            {/* EPSILON : CATEGORIZATION SYSTEM            */}
+            <WrappedRoute path='/categories' component={EpsilonCategorySettings} content={children} />
+            {/* ========================================== */}
             <WrappedRoute path={['/home', '/timelines/home']} component={HomeTimeline} content={children} />
             <Redirect from='/timelines/public' to='/public' exact />
             <Redirect from='/timelines/public/local' to='/public/local' exact />
@@ -224,6 +233,11 @@ class SwitchingColumnsArea extends PureComponent {
 
             <WrappedRoute path='/start/profile' exact component={OnboardingProfile} content={children} />
             <WrappedRoute path={['/start', '/start/follows']} exact component={OnboardingFollows} content={children} />
+            {/* ========================================== */}
+            {/* EPSILON : ONBOARDING CATEGORY SELECTION    */}
+            {/* ========================================== */}
+            <WrappedRoute path='/start/categories' component={EpsilonOnboardingCategories} content={children} />
+            {/* ========================================== */}
             <WrappedRoute path='/directory' component={Directory} content={children} />
             <WrappedRoute path='/explore' component={Explore} content={children} />
             <WrappedRoute path='/search' component={Search} content={children} />

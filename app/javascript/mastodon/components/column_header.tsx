@@ -38,18 +38,30 @@ export const messages = defineMessages({
 
 const BackButton: React.FC<{
   hasTitle: boolean;
-}> = ({ hasTitle }) => {
+  /* ========================================== */
+  /* EPSILON : CATEGORIZATION SYSTEM            */
+  onClickBack?: () => void;
+  /* ========================================== */
+}> = ({ hasTitle, onClickBack }) => {
   const history = useAppHistory();
   const intl = useIntl();
   const columnIndex = useColumnIndexContext();
 
   const handleBackClick = useCallback(() => {
+    /* ========================================== */
+    /* EPSILON : CATEGORIZATION SYSTEM            */
+    if (onClickBack) {
+      onClickBack();
+      return;
+    }
+    /* ========================================== */
+
     if (history.location.state?.fromMastodon) {
       history.goBack();
     } else {
       history.push('/');
     }
-  }, [history]);
+  }, [history, onClickBack]);
 
   return (
     <button
@@ -84,6 +96,10 @@ export interface Props {
   multiColumn?: boolean;
   extraButton?: React.ReactNode;
   showBackButton?: boolean;
+  // ==========================================
+  // EPSILON : CATEGORIZATION SYSTEM
+  onClickBack?: () => void;
+  // ==========================================
   placeholder?: boolean;
   appendContent?: React.ReactNode;
   collapseIssues?: boolean;
@@ -103,6 +119,10 @@ export const ColumnHeader: React.FC<Props> = ({
   multiColumn,
   extraButton,
   showBackButton,
+  // ==========================================
+  // EPSILON : CATEGORIZATION SYSTEM
+  onClickBack,
+  // ==========================================
   placeholder,
   appendContent,
   collapseIssues,
@@ -227,7 +247,11 @@ export const ColumnHeader: React.FC<Props> = ({
     !pinned &&
     ((multiColumn && history.location.state?.fromMastodon) || showBackButton)
   ) {
-    backButton = <BackButton hasTitle={!!title} />;
+    // ==========================================
+    // EPSILON : CATEGORIZATION SYSTEM
+    // On passe la prop onClickBack au composant enfant
+    backButton = <BackButton hasTitle={!!title} onClickBack={onClickBack} />;
+    // ==========================================
   }
 
   const collapsedContent = [extraContent];

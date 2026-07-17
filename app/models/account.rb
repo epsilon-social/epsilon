@@ -63,7 +63,21 @@
 #
 
 class Account < ApplicationRecord
-  self.ignored_columns += %w(devices_url)
+  # ==========================================
+  # EPSILON : CATEGORIZATION SYSTEM
+  include Epsilon::Categorization::AccountExtension
+
+  # ==========================================
+
+  self.ignored_columns += %w(
+    devices_url
+    hub_url
+    remote_url
+    salmon_url
+    secret
+    subscription_expires_at
+    trust_level
+  )
 
   BACKGROUND_REFRESH_INTERVAL = 1.week.freeze
   REFRESH_DEADLINE = 6.hours

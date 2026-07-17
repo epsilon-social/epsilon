@@ -77,6 +77,23 @@
 
   %hr.spacer/
 
+-#
+  ==========================================
+  EPSILON : CATEGORIZATION SYSTEM
+  ==========================================
+- epsilon_categories = Epsilon::Categorization::CategoryMaster.where(id: Epsilon::Categorization::HashtagMapping.where(hashtag: @tag.name.downcase).select(:category_master_id)).order(:name)
+.fields-group
+  %h4= t('admin.epsilon.categorization.tag_categories')
+  - if epsilon_categories.any?
+    %ul.epsilon-categories
+      - epsilon_categories.each do |category|
+        %li= link_to category.name, admin_epsilon_category_path(category)
+  - else
+    %p.muted-hint= t('admin.epsilon.categorization.no_categories')
+
+%hr.spacer/
+-# ========================================== EPSILON END
+
 = simple_form_for @tag, url: admin_tag_path(@tag.id) do |f|
   = render 'shared/error_messages', object: @tag
 

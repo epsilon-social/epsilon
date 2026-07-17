@@ -35,6 +35,8 @@
     - if @tags.empty?
       = nothing_here 'nothing-here--under-tabs nothing-here--no-toolbar'
     - else
-      = render partial: 'tag', collection: @tags
+      -# EPSILON : pass categorization locals to the tag partial
+      = render partial: 'tag', collection: @tags, locals: { epsilon_categories: @epsilon_categories, epsilon_category_ids_by_hashtag: @epsilon_category_ids_by_hashtag }
+      -# ==========================================
 
 = paginate @tags

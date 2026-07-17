@@ -5,6 +5,11 @@ import { on } from 'delegated-events';
 
 import ready from '../mastodon/ready';
 
+// ==========================================
+// EPSILON : CATEGORIZATION SYSTEM
+import './epsilon/admin_hashtag_categories';
+// ==========================================
+
 const setAnnouncementEndsAttributes = (target: HTMLInputElement) => {
   const valid = target.value && target.validity.valid;
   const element = document.querySelector<HTMLInputElement>(

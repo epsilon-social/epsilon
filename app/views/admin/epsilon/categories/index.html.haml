@@ -1,0 +1,88 @@
+- content_for :page_title do
+  = t('admin.epsilon.categorization.dashboard_title')
+
+= form_with url: admin_epsilon_categories_path, method: :get, local: true, class: 'simple_form' do |f|
+  .fields-group
+    = f.label :search_hashtag, t('admin.epsilon.categorization.search_hashtag')
+    = f.search_field :search_hashtag, value: @search_hashtag, placeholder: t('admin.epsilon.categorization.search_placeholder')
+
+  .actions
+    = f.submit t('admin.epsilon.categorization.search_button'), class: 'button'
+
+- if @search_hashtag.present?
+  %hr.spacer/
+
+  %h4= t('admin.epsilon.categorization.search_results')
+
+  - if @search_tags.present?
+    .table-wrapper
+      %table.table
+        %thead
+          %tr
+            %th= t('admin.epsilon.categorization.search_hashtag')
+            %th= t('admin.epsilon.categorization.categories')
+            %th
+        %tbody
+          - @search_tags.each do |tag|
+            - assigned_ids = @category_ids_by_hashtag.fetch(tag.name, [])
+            - assigned_names = @all_categories.select { |c| assigned_ids.include?(c.id) }.map(&:display_name)
+            %tr
+              %td= link_to "##{tag.name}", admin_tag_path(tag.id)
+              %td.epsilon-search-results__categories{ data: { epsilon_category_names: '' } }= assigned_names.any? ? assigned_names.join(', ') : '—'
+              %td.epsilon-search-results__actions
+                %details.epsilon-hashtag-categories{ data: { epsilon_hashtag: tag.name, epsilon_toggle_url: admin_epsilon_hashtags_categorization_toggle_path } }
+                  %summary.epsilon-hashtag-categories__summary
+                    = t('admin.epsilon.categorization.add_to_category')
+                    %span.epsilon-hashtag-categories__count{ data: { epsilon_category_count: '' } }= assigned_ids.size
+                  .epsilon-hashtag-categories__menu
+                    - @all_categories.each do |category|
+                      %label.epsilon-hashtag-categories__option
+                        = check_box_tag "epsilon_cat_#{tag.id}_#{category.id}", category.id, assigned_ids.include?(category.id), data: { epsilon_category_toggle: '', epsilon_category_name: category.display_name }
+                        %span= category.display_name
+    = paginate @search_tags
+  - else
+    %p.muted-hint= t('admin.epsilon.categorization.no_results')
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.categorization.add_category')
+
+= form_with url: admin_epsilon_categories_path, method: :post, scope: :category, local: true, class: 'simple_form' do |f|
+  - Epsilon::Categorization::CategoryMaster::TRANSLATED_LOCALES.each do |locale|
+    .fields-group
+      = label_tag "category_name_translations_#{locale}", "#{t('admin.epsilon.categorization.category_name')} (#{locale.upcase})"
+      = text_field_tag "category[name_translations][#{locale}]", nil, id: "category_name_translations_#{locale}", placeholder: t('admin.epsilon.categorization.category_name'), required: locale == 'en'
+
+  .actions
+    = f.submit t('admin.epsilon.categorization.create_button'), class: 'button'
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.categorization.all_categories')
+
+- if @categories.any?
+  %ul.epsilon-categories
+    - @categories.each do |category|
+      - count = @hashtag_counts[category.id].to_i
+      - preview = @preview_mappings[category.id] || []
+      %li
+        %details.epsilon-category
+          %summary
+            = link_to category.display_name, admin_epsilon_category_path(category), class: 'epsilon-category__link'
+            %span.epsilon-category__count= count
+          - if preview.any?
+            %ul.epsilon-category__hashtags
+              - preview.each do |mapping|
+                %li
+                  - tag = @preview_tags[mapping.hashtag]
+                  - if tag.present?
+                    = link_to "##{mapping.hashtag}", admin_tag_path(tag.id)
+                  - else
+                    \##{mapping.hashtag}
+            - if count > preview.size
+              = link_to t('admin.epsilon.categorization.view_all_hashtags', count: count), admin_epsilon_category_path(category), class: 'epsilon-category__more'
+          - else
+            %p.muted-hint= t('admin.epsilon.categorization.no_hashtags')
+  = paginate @categories
+- else
+  %p.muted-hint= t('admin.epsilon.categorization.no_categories')

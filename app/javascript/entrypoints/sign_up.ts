@@ -9,7 +9,10 @@ async function checkConfirmation() {
   });
 
   if (response.status === 200 && response.data === true) {
-    window.location.href = '/start';
+    // ==========================================
+    // EPSILON : ONBOARDING STARTS WITH CATEGORIES
+    window.location.href = '/start/categories';
+    // ==========================================
   }
 }
 

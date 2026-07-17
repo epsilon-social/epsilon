@@ -9,9 +9,11 @@
 #  ban_sexual            :decimal(3, 2)    default(0.8), not null
 #  ban_violence          :decimal(3, 2)    default(0.8), not null
 #  ban_vulgarity         :decimal(3, 2)    default(0.8), not null
-# rubocop:disable Layout/LineLength
-#  custom_prompt         :text             default("You are the content analysis radar for the Epsilon social network.\nYour only role is to analyze the provided text (regardless of its language) and return strict severity scores in JSON format. You do not make banning decisions; you solely measure and classify."), not null
-# rubocop:enable Layout/LineLength
+#  custom_prompt         :text             default("You are the content analysis radar for t
+#                                                   he Epsilon social network.\nYour only role is to
+#                                                   analyze the provided text (regardless of its language) and return strict
+#                                                   severity scores in JSON format. You do not make banning decisions;
+#                                                   you solely measure and classify."), not null
 #  review_threshold      :decimal(3, 2)    default(0.5), not null
 #  sensitive_sexual      :decimal(3, 2)    default(0.25), not null
 #  sensitive_violence    :decimal(3, 2)    default(0.25), not null

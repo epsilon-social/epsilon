@@ -29,6 +29,8 @@ import SettingsIcon from '@/material-icons/400-24px/settings.svg?react';
 import StarActiveIcon from '@/material-icons/400-24px/star-fill.svg?react';
 import StarIcon from '@/material-icons/400-24px/star.svg?react';
 import TrendingUpIcon from '@/material-icons/400-24px/trending_up.svg?react';
+import TuneActiveIcon from '@/material-icons/400-24px/tune-fill.svg?react';
+import TuneIcon from '@/material-icons/400-24px/tune.svg?react';
 import { fetchFollowRequests } from 'mastodon/actions/accounts';
 import { openNavigation, closeNavigation } from 'mastodon/actions/navigation';
 import { Account } from 'mastodon/components/account';
@@ -113,6 +115,10 @@ const messages = defineMessages({
   },
   logout: { id: 'navigation_bar.logout', defaultMessage: 'Logout' },
   compose: { id: 'tabs_bar.publish', defaultMessage: 'New Post' },
+  categories: {
+    id: 'epsilon_cat.column_settings.categories',
+    defaultMessage: 'Categories',
+  },
 });
 
 const NotificationsLink = () => {
@@ -339,6 +345,21 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             </li>
 
             <li role='separator' />
+
+            {/* ========================================== */}
+            {/* EPSILON : CATEGORIES SETTINGS LINK         */}
+            {/* ========================================== */}
+            <li>
+              <ColumnLink
+                transparent
+                to='/categories'
+                icon='tune'
+                iconComponent={TuneIcon}
+                activeIconComponent={TuneActiveIcon}
+                text={intl.formatMessage(messages.categories)}
+              />
+            </li>
+            {/* ========================================== */}
 
             <ListPanel />
 

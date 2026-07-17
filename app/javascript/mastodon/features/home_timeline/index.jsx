@@ -162,11 +162,11 @@ class HomeTimeline extends PureComponent {
 
     let emptyMessage = <FormattedMessage id='empty_column.home' defaultMessage='Your home timeline is empty! Follow more people to fill it up.' />;
 
-    {/* ========================================== */}
-    {/* EPSILON : HOME SUGGESTIONS FOR EMPTY FEED  */}
-    {/* ========================================== */}
+    /* ========================================== */
+    /* EPSILON : HOME SUGGESTIONS FOR EMPTY FEED  */
+    /* ========================================== */
     emptyMessage = <EpsilonHomeEmptyState />;
-    {/* ========================================== */}
+    /* ========================================== */
 
     return (
       <Column bindToDocument={!multiColumn} ref={this.setRef} label={intl.formatMessage(messages.title)}>

@@ -1,0 +1,61 @@
+- content_for :page_title do
+  = @category.display_name
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.categorization.all_categories'), admin_epsilon_categories_path, class: 'button button-tertiary'
+  - delete_confirm = t('admin.epsilon.categorization.delete_confirm', name: @category.display_name)
+  = link_to t('admin.epsilon.categorization.delete_button'), admin_epsilon_category_path(@category), data: { method: :delete, confirm: delete_confirm }, class: 'button button--dangerous'
+
+= form_with url: admin_epsilon_category_path(@category), method: :patch, scope: :category, local: true, class: 'simple_form' do |f|
+  - Epsilon::Categorization::CategoryMaster::TRANSLATED_LOCALES.each do |locale|
+    .fields-group
+      = label_tag "category_name_translations_#{locale}", "#{t('admin.epsilon.categorization.category_name')} (#{locale.upcase})"
+      = text_field_tag "category[name_translations][#{locale}]", @category.name_translations[locale], id: "category_name_translations_#{locale}", required: locale == 'en'
+
+  .actions
+    = f.submit t('admin.epsilon.categorization.rename_button'), class: 'button'
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.categorization.add_hashtags_title')
+
+%p.muted-hint= t('admin.epsilon.categorization.add_hashtags_hint')
+
+= form_with url: add_hashtags_admin_epsilon_category_path(@category), method: :post, local: true, class: 'simple_form' do
+  .fields-group
+    = text_area_tag :new_hashtags, nil, rows: 3, placeholder: t('admin.epsilon.categorization.add_hashtags_placeholder')
+
+  .actions
+    = button_tag t('admin.epsilon.categorization.add_hashtags_button'), type: :submit, class: 'button'
+
+%hr.spacer/
+
+- if @hashtags.any?
+  = form_with url: reassign_hashtags_admin_epsilon_category_path(@category), method: :post, local: true do
+    - remove_confirm = t('admin.epsilon.categorization.remove_confirm')
+    .batch-table
+      .batch-table__toolbar
+        %label.batch-table__toolbar__select.batch-checkbox-all
+          = check_box_tag :batch_checkbox_all, nil, false
+        .batch-table__toolbar__actions
+          = select_tag :target_category_id, options_from_collection_for_select(@other_categories, :id, :display_name), prompt: t('admin.epsilon.categorization.migrate_target_prompt'), required: true
+          = button_tag t('admin.epsilon.categorization.copy_button'), type: :submit, name: 'mode', value: 'copy', class: 'button'
+          = button_tag t('admin.epsilon.categorization.migrate_button'), type: :submit, name: 'mode', value: 'migrate', class: 'button', data: { confirm: t('admin.epsilon.categorization.migrate_confirm') }
+          = button_tag t('admin.epsilon.categorization.remove_button'), type: :submit, name: 'mode', value: 'remove', formnovalidate: true, class: 'button button--dangerous', data: { confirm: remove_confirm }
+      .batch-table__body
+        .table-wrapper
+          %table.table
+            %tbody
+              - @hashtags.each do |mapping|
+                %tr
+                  %td.batch-checkbox
+                    = check_box_tag 'hashtags[]', mapping.hashtag, false, id: "hashtag_#{mapping.id}"
+                  %td
+                    - tag = @tags[mapping.hashtag]
+                    - if tag.present?
+                      = link_to "##{mapping.hashtag}", admin_tag_path(tag.id)
+                    - else
+                      \##{mapping.hashtag}
+  = paginate @hashtags
+- else
+  %p.muted-hint= t('admin.epsilon.categorization.no_hashtags')

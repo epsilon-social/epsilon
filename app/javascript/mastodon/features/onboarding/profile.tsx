@@ -3,7 +3,6 @@ import { useState, useMemo, useCallback, createRef } from 'react';
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
-import { useHistory } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
@@ -70,7 +69,6 @@ export const Profile: React.FC<{
   const headerFileRef = createRef<HTMLInputElement>();
   const dispatch = useAppDispatch();
   const intl = useIntl();
-  const history = useHistory();
 
   const handleDisplayNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +134,10 @@ export const Profile: React.FC<{
       }),
     )
       .then(() => {
-        history.push('/home');
+        /* ========================================== */
+        /* EPSILON : CATEGORIZATION SYSTEM            */
+        window.location.href = '/home';
+        /* ========================================== */
         dispatch(closeOnboarding());
         return '';
       })
@@ -151,7 +152,7 @@ export const Profile: React.FC<{
 
         setIsSaving(false);
       });
-  }, [dispatch, displayName, note, avatar, header, discoverable, history]);
+  }, [dispatch, displayName, note, avatar, header, discoverable]);
 
   return (
     <Column

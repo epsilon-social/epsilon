@@ -7,6 +7,11 @@ module.exports = {
     'public/assets/**/*',
     'public/packs*/**/*',
     'vendor/**/*',
+    // ==========================================
+    // EPSILON : Ignore build dev files scss
+    // ==========================================
+    'public/packs-dev/**/*'
+    // ==========================================
   ],
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,

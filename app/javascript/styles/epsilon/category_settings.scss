@@ -1,0 +1,133 @@
+@use '../mastodon/variables' as *;
+
+.epsilon-category-settings {
+  &__intro {
+    padding: 15px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-top: none;
+    z-index: 2;
+  }
+
+  &__hint {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  &__search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__search {
+    position: relative;
+    flex: 1 1 auto;
+
+    .search__input {
+      width: 100%;
+      padding-right: 36px;
+    }
+  }
+
+  &__search-clear {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: color 0.2s;
+
+    &:hover,
+    &:focus {
+      color: var(--color-text-primary);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__scrollable {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 15px;
+  }
+
+  &__list {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 8px;
+  }
+
+  &__item {
+    display: inline-flex;
+    flex: 0 0 auto;
+    max-width: 100%;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 15px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--color-text-primary);
+    font-weight: 400;
+
+    &:hover {
+      border-color: var(--color-bg-brand-base);
+    }
+
+    &--active {
+      background: var(--color-bg-brand-base);
+      border-color: var(--color-bg-brand-base);
+      color: var(--color-text-on-brand-base);
+
+      &:hover {
+        background: var(--color-bg-brand-base-hover);
+        border-color: var(--color-bg-brand-base-hover);
+      }
+    }
+
+    &--pending {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+  }
+
+  &__item-check {
+    font-size: 14px;
+    color: var(--color-text-on-brand-base);
+  }
+
+  &__loading,
+  &__empty {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-top: 20px;
+  }
+}
+
+.epsilon-collection-button {
+  padding: 0 12px !important;
+  height: 28px !important;
+  line-height: 26px !important;
+  font-size: 13px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  margin-left: 8px !important;
+  align-self: center !important;
+}

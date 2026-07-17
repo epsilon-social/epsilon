@@ -62,6 +62,41 @@ namespace :api, format: false do
       end
     end
 
+    namespace :epsilon do
+      # ==========================================
+      # EPSILON : CATEGORIZATION SYSTEM
+      # ==========================================
+      #
+      namespace :categorization do
+        get 'categories/suggested', to: 'categories#suggested'
+        get 'categories/:id', to: 'categories#show'
+        get 'categories/:id/exclude', to: 'categories#exclude'
+        resources :category_vote, only: [] do
+          member do
+            post 'statuses/:id/vote', to: 'category_votes#create'
+          end
+        end
+
+        resources :categories, only: [:index, :show] do
+          member do
+            get :exclude
+          end
+        end
+
+        # ==========================================
+        # EPSILON : ONBOARDING CATEGORY SELECTION
+        # ==========================================
+        resource :subscriptions, only: [:show, :update]
+
+        # EPSILON : one-click per-category subscribe / unsubscribe
+        post 'subscriptions/:category_id', to: 'subscriptions#create', as: :subscription
+        delete 'subscriptions/:category_id', to: 'subscriptions#destroy'
+        # ==========================================
+      end
+
+      # ==========================================
+    end
+
     namespace :timelines do
       resource :home, only: :show, controller: :home
       resource :public, only: :show, controller: :public

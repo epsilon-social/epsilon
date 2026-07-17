@@ -1,0 +1,119 @@
+@use '../mastodon/variables' as *;
+
+.epsilon-onboarding-categories {
+  padding: 15px;
+  max-width: 960px;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 auto;
+
+  &__description {
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--color-text-secondary);
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-break: strict;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &__error {
+    background: var(--color-bg-error-softest);
+    border: 1px solid var(--color-border-error-soft); // Correction syntaxe border
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: var(--color-text-error);
+    text-align: center;
+  }
+
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  &__expand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+}
+
+.epsilon-category-tile {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  max-width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  text-align: start;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-bg-brand-base);
+  }
+
+  &--selected {
+    background: var(--color-bg-brand-base);
+    border-color: var(--color-bg-brand-base);
+    color: var(--color-text-on-brand-base);
+
+    .epsilon-category-tile__name {
+      color: var(--color-text-on-brand-base);
+    }
+  }
+
+  &__content {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 400;
+    color: var(--color-text-primary);
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-break: strict;
+  }
+
+  &__stats {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  &__check {
+    width: 24px;
+    height: 24px;
+    background: var(--color-text-secondary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      color: var(--color-bg-primary);
+    }
+  }
+}

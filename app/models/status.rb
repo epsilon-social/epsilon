@@ -32,6 +32,11 @@
 #
 
 class Status < ApplicationRecord
+  # ==========================================
+  # EPSILON : CATEGORIZATION SYSTEM
+  include Epsilon::Categorization::StatusExtension
+  # ==========================================
+
   include Cacheable
   include Discard::Model
   include Paginable
