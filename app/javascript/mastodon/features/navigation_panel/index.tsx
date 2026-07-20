@@ -361,9 +361,14 @@ export const NavigationPanel: React.FC<{ multiColumn?: boolean }> = ({
             </li>
             {/* ========================================== */}
 
-            <ListPanel />
+            {/* ========================================== */}
+            {/* EPSILON : REORDER NAVIGATION LINK          */}
+            {/* ========================================== */}
 
             <FollowedTagsPanel />
+
+            <ListPanel />
+            {/* ========================================== */}
 
             <li>
               <ColumnLink

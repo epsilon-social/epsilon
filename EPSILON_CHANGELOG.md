@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-07-20
+
+### Changed
+
+- **Navigation** : Interversion des onglets Hashtags et Listes dans le panneau de navigation (ordre : Catégories, Hashtags, Listes).
+
 ## [0.2.1] - 2026-07-20
 
 ### Maintenance
