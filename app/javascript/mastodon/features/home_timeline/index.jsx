@@ -11,12 +11,10 @@ import { connect } from 'react-redux';
 import CampaignIcon from '@/material-icons/400-24px/campaign.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import { injectIntl } from '@/mastodon/components/intl';
-import { SymbolLogo } from 'mastodon/components/logo';
 import { fetchAnnouncements, toggleShowAnnouncements } from 'mastodon/actions/announcements';
 import { IconWithBadge } from 'mastodon/components/icon_with_badge';
 import { NotSignedInIndicator } from 'mastodon/components/not_signed_in_indicator';
 import { identityContextPropShape, withIdentity } from 'mastodon/identity_context';
-import { withBreakpoint } from 'mastodon/features/ui/hooks/useBreakpoint';
 
 import { addColumn, removeColumn, moveColumn } from '../../actions/columns';
 import { expandHomeTimeline } from '../../actions/timelines';
@@ -61,8 +59,6 @@ class HomeTimeline extends PureComponent {
     hasAnnouncements: PropTypes.bool,
     unreadAnnouncements: PropTypes.number,
     showAnnouncements: PropTypes.bool,
-    matchesBreakpoint: PropTypes.bool,
-
   };
 
   handlePin = () => {
@@ -132,7 +128,7 @@ class HomeTimeline extends PureComponent {
   };
 
   render () {
-    const { intl, hasUnread, columnId, multiColumn, hasAnnouncements, unreadAnnouncements, showAnnouncements, matchesBreakpoint, criticalUpdatesPending } = this.props;
+    const { intl, hasUnread, columnId, multiColumn, hasAnnouncements, unreadAnnouncements, showAnnouncements, criticalUpdatesPending } = this.props;
     const pinned = !!columnId;
     const { signedIn } = this.props.identity;
     const banners = [
@@ -170,11 +166,11 @@ class HomeTimeline extends PureComponent {
 
     return (
       <Column bindToDocument={!multiColumn} ref={this.setRef} label={intl.formatMessage(messages.title)}>
+        {/* EPSILON: always use the page icon, never swap to the site logo at wide breakpoints */}
         <ColumnHeader
           icon='home'
-          iconComponent={matchesBreakpoint ? SymbolLogo : HomeIcon}
+          iconComponent={HomeIcon}
           active={hasUnread}
-          title={intl.formatMessage(messages.title)}
           onPin={this.handlePin}
           onMove={this.handleMove}
           onClick={this.handleHeaderClick}
@@ -213,4 +209,4 @@ class HomeTimeline extends PureComponent {
 
 }
 
-export default connect(mapStateToProps)(withBreakpoint(withIdentity(injectIntl(HomeTimeline))));
+export default connect(mapStateToProps)(withIdentity(injectIntl(HomeTimeline)));

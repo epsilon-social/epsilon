@@ -1,0 +1,445 @@
+/* ========================================== */
+
+/* EPSILON : AUTH PAGES (login / signup / …)  */
+
+/* ========================================== */
+
+.epsilon-auth {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 880px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: grid;
+  grid-template-columns: 264px minmax(0, 480px);
+  justify-content: center;
+  align-content: center;
+  align-items: stretch;
+  gap: 20px;
+
+  /* ---- brand card (left) ---- */
+  &__brand {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    padding: 30px 28px;
+    border-radius: var(--eps-radius);
+    background: var(--eps-brand-primary);
+    color: var(--eps-text-white);
+  }
+
+  &__brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  &__brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 16%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  &__brand-name {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  &__brand-title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--eps-text-white);
+  }
+
+  &__brand-copy {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 82%);
+  }
+
+  &__benefits {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__benefit {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  &__benefit-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 14%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+  }
+
+  &__benefit-body {
+    display: grid;
+    gap: 2px;
+  }
+
+  &__benefit-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--eps-text-white);
+  }
+
+  &__benefit-copy {
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 75%);
+  }
+
+  /* ---- form card (right) ---- */
+  .form-container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 32px 34px !important;
+    border: 1px solid var(--eps-border);
+    border-radius: var(--eps-radius);
+    background: var(--eps-surface);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  /* ---- headings ---- */
+  h1.title,
+  .title {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--eps-text-primary);
+  }
+
+  .lead {
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--eps-text-secondary);
+  }
+
+  /* ---- fields ---- */
+  .fields-group {
+    margin-bottom: 16px;
+  }
+
+  .input {
+    margin-bottom: 14px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--eps-text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='tel'],
+  input[type='number'],
+  select,
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--eps-border) !important;
+    border-radius: 14px !important;
+    background: var(--eps-nav-hover) !important;
+    color: var(--eps-text-primary) !important;
+    font-size: 14px;
+
+    &:focus {
+      border-color: var(--eps-brand-primary) !important;
+      background: var(--eps-surface-hover) !important;
+      outline: none;
+    }
+  }
+
+  .hint {
+    color: var(--eps-text-secondary);
+    font-size: 12.5px;
+  }
+
+  .input-with-append .append,
+  .label_input__append {
+    color: var(--eps-text-secondary);
+  }
+
+  .input.boolean {
+    label {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--eps-text-secondary);
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  }
+
+  input[type='checkbox'] {
+    appearance: none;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: 18px !important;
+    height: 18px !important;
+    min-height: 0 !important;
+    margin: 1px 0 0 !important;
+    padding: 0;
+    border: 1px solid var(--eps-border) !important;
+    border-radius: 5px !important;
+    background: var(--eps-nav-hover) !important;
+    accent-color: auto;
+    cursor: pointer;
+    position: relative;
+
+    &:checked {
+      border-color: var(--eps-brand-primary) !important;
+      background: var(--eps-brand-primary) !important;
+
+      // white tick
+      &::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        inset-inline-start: 6px;
+        width: 4px;
+        height: 8px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  /* ---- buttons ---- */
+  .actions {
+    margin-top: 22px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .button,
+  button.button,
+  .actions button {
+    min-height: 48px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 14px;
+    background: var(--eps-brand-primary);
+    color: var(--eps-text-white);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover {
+      background: var(--eps-brand-primary) !important;
+      filter: brightness(1.05);
+    }
+
+    &:disabled,
+    &.disabled {
+      background: var(--eps-nav-hover) !important;
+      color: var(--eps-text-secondary) !important;
+      cursor: not-allowed;
+      filter: none !important;
+    }
+  }
+
+  .button.button-secondary,
+  .button-tertiary {
+    background: transparent;
+    border: 1px solid var(--eps-border);
+    color: var(--eps-text-primary);
+  }
+
+  &__ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: 1px solid var(--eps-brand-primary) !important;
+    color: var(--eps-brand-primary) !important;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--eps-brand-primary) !important;
+      border-color: var(--eps-brand-primary) !important;
+      color: var(--eps-text-white) !important;
+      filter: none !important;
+    }
+  }
+
+  .progress-tracker {
+    --circle-size: 28px;
+
+    margin-bottom: 24px !important;
+    padding-bottom: 26px !important;
+
+    .circle {
+      border-width: 1px !important;
+    }
+
+    .label {
+      font-size: 12px;
+    }
+  }
+
+  /* ---- alternative (social) login ---- */
+  .alternative-login {
+    margin-top: 24px;
+
+    h1,
+    h2,
+    h4 {
+      margin-bottom: 12px;
+      color: var(--eps-text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+
+    .button {
+      background: var(--eps-surface);
+      border: 1px solid var(--eps-border);
+      color: var(--eps-text-primary);
+    }
+  }
+
+  /* ---- footer links ---- */
+  .form-footer {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--eps-border);
+
+    .no-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      a {
+        color: var(--eps-brand-primary);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  /* ---- rules list (accept rules step) ---- */
+  .rules-list {
+    margin-bottom: 24px;
+    font-size: 15px;
+    line-height: 1.5;
+
+    li {
+      border-color: var(--eps-border) !important;
+
+      &::before {
+        background: var(--eps-brand-primary) !important;
+        color: var(--eps-text-white) !important;
+      }
+    }
+
+    &__text {
+      color: var(--eps-text-primary);
+    }
+
+    &__hint {
+      color: var(--eps-text-secondary) !important;
+    }
+  }
+
+  .stacked-actions {
+    margin-top: 24px;
+
+    .button {
+      width: 100%;
+    }
+  }
+
+  /* ---- responsive: stack ---- */
+  @media (width <= 800px) {
+    grid-template-columns: minmax(0, 480px);
+    max-width: 480px;
+
+    &__brand {
+      gap: 14px;
+      padding: 24px;
+    }
+
+    &__benefits {
+      display: none;
+    }
+
+    &__brand-title {
+      font-size: 24px;
+    }
+
+    .form-container {
+      padding: 26px 22px !important;
+    }
+
+    .progress-tracker {
+      padding-bottom: 0 !important;
+
+      .label {
+        display: none !important;
+      }
+    }
+  }
+}

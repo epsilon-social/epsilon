@@ -22,4 +22,5 @@
   .stacked-actions
     = form.hidden_field :invite_code, value: @invite_code if @invite_code.present?
     = form.button t('auth.rules.accept'), name: :accept, type: :submit, class: :button, value: @accept_token
-    = link_to t('auth.rules.back'), root_path, class: 'button button-secondary'
+    -# EPSILON: brand-outline style (like the login/signup ghost buttons)
+    = link_to t('auth.rules.back'), root_path, class: 'button epsilon-auth__ghost'

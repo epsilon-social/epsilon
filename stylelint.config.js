@@ -10,7 +10,7 @@ module.exports = {
     // ==========================================
     // EPSILON : Ignore build dev files scss
     // ==========================================
-    'public/packs-dev/**/*'
+    'public/packs-dev/**/*',
     // ==========================================
   ],
   reportDescriptionlessDisables: true,

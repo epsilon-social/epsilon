@@ -19,6 +19,7 @@ export const ColumnLink: React.FC<{
   transparent?: boolean;
   className?: string;
   id?: string;
+  activeClassName?: string;
 }> = ({
   icon,
   activeIcon,

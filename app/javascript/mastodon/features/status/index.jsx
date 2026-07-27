@@ -68,6 +68,8 @@ import { getAncestorsIds, getDescendantsIds } from 'mastodon/selectors/contexts'
 import Column from '../ui/components/column';
 import { attachFullscreenListener, detachFullscreenListener, isFullscreen } from '../ui/util/fullscreen';
 
+import { EpsilonInlineReply } from 'mastodon/features/epsilon/inline_reply';
+
 import ActionBar from './components/action_bar';
 import { DetailedStatus } from './components/detailed_status';
 import { RefreshController } from './components/refresh_controller';
@@ -635,6 +637,9 @@ class Status extends ImmutablePureComponent {
                 />
               </NavigationFocusTarget>
             </Hotkeys>
+
+            {/* EPSILON: inline reply — a live compose pre-set as a reply to this post */}
+            <EpsilonInlineReply statusId={status.get('id')} />
 
             {descendants}
 

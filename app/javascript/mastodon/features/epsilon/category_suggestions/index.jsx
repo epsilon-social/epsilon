@@ -4,48 +4,60 @@ import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 
-import { Link } from 'react-router-dom';
-
 import { useDispatch } from 'react-redux';
+
+import { useIdentity } from 'mastodon/identity_context';
 
 import { showAlertForError } from '../../../actions/alerts';
 import api from '../../../api';
 import { categoryDisplayName } from '../category_names';
 
-const MAX_VISIBLE = 15;
+const MAX_VISIBLE = 10;
 
 const messages = defineMessages({
-  title: { id: 'epsilon.category_suggestions.title', defaultMessage: 'What to follow' },
+  title: { id: 'epsilon.category_suggestions.title', defaultMessage: 'Improve your feed relevance' },
+  description: { id: 'epsilon.category_suggestions.description', defaultMessage: 'Choose the topics to prioritize in your feed.' },
+  descriptionNote: { id: 'epsilon.category_suggestions.description_note', defaultMessage: 'You can change these settings at any time.' },
+  confirm: { id: 'epsilon.category_suggestions.confirm', defaultMessage: 'Confirm' },
 });
 
-const STORAGE_KEY = 'epsilon_category_suggestions_dismissed';
+const STORAGE_KEY = 'epsilon_category_suggestions_snoozed_until';
+const DAY_MS = 24 * 60 * 60 * 1000;
+const SNOOZE_AFTER_CONFIRM = 7 * DAY_MS;
+const SNOOZE_AFTER_DISMISS = 30 * DAY_MS;
 
 const EpsilonCategorySuggestions = () => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { signedIn } = useIdentity();
   const [suggestions, setSuggestions] = useState([]);
-  const [subscribedIds, setSubscribedIds] = useState([]);
-  const [pendingIds, setPendingIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDismissed, setIsDismissed] = useState(() => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [isHidden, setIsHidden] = useState(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) === 'true';
+      const until = parseInt(localStorage.getItem(STORAGE_KEY) ?? '0', 10);
+      return Date.now() < until;
     } catch {
       return false;
     }
   });
 
-  const handleDismiss = useCallback(() => {
-    setIsDismissed(true);
+  const snooze = useCallback((durationMs) => {
+    setIsHidden(true);
     try {
-      localStorage.setItem(STORAGE_KEY, 'true');
+      localStorage.setItem(STORAGE_KEY, String(Date.now() + durationMs));
     } catch (error) {
-      console.error('Failed to save dismiss state:', error);
+      console.error('Failed to save snooze state:', error);
     }
   }, []);
 
+  const handleDismiss = useCallback(() => {
+    snooze(SNOOZE_AFTER_DISMISS);
+  }, [snooze]);
+
   useEffect(() => {
-    if (isDismissed) {
+    if (isHidden || !signedIn) {
       return;
     }
     const fetchSuggestions = async () => {
@@ -63,35 +75,30 @@ const EpsilonCategorySuggestions = () => {
     };
 
     fetchSuggestions();
-  }, [isDismissed]);
+  }, [isHidden, signedIn]);
 
-  const handleToggle = useCallback(async (categoryId) => {
-    if (pendingIds.includes(categoryId)) return;
-
-    const wasSubscribed = subscribedIds.includes(categoryId);
-
-    setSubscribedIds(prev => (
-      wasSubscribed ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
+  const handleToggleSelect = useCallback((categoryId) => {
+    setSelectedIds(prev => (
+      prev.includes(categoryId) ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
     ));
-    setPendingIds(prev => [...prev, categoryId]);
+  }, []);
 
+  const handleConfirm = useCallback(async () => {
+    setIsSaving(true);
     try {
-      if (wasSubscribed) {
-        await api().delete(`/api/v1/epsilon/categorization/subscriptions/${categoryId}`);
-      } else {
-        await api().post(`/api/v1/epsilon/categorization/subscriptions/${categoryId}`);
-      }
+      await Promise.all(
+        selectedIds.map(id => api().post(`/api/v1/epsilon/categorization/subscriptions/${id}`))
+      );
+      snooze(SNOOZE_AFTER_CONFIRM);
+      window.location.href = '/home';
     } catch (error) {
-      setSubscribedIds(prev => (
-        wasSubscribed ? [...prev, categoryId] : prev.filter(id => id !== categoryId)
-      ));
       dispatch(showAlertForError(error));
     } finally {
-      setPendingIds(prev => prev.filter(id => id !== categoryId));
+      setIsSaving(false);
     }
-  }, [dispatch, pendingIds, subscribedIds]);
+  }, [selectedIds, snooze, dispatch]);
 
-  if (isDismissed || isLoading || suggestions.length === 0) {
+  if (isHidden || isLoading || suggestions.length === 0) {
     return null;
   }
 
@@ -99,46 +106,46 @@ const EpsilonCategorySuggestions = () => {
 
   return (
     <div className='epsilon-category-suggestions'>
-      <div className='epsilon-category-suggestions__header'>
-        <h3 className='epsilon-category-suggestions__title'>
-          {intl.formatMessage(messages.title)}
-        </h3>
+      <h3 className='epsilon-category-suggestions__title'>
+        {intl.formatMessage(messages.title)}
+      </h3>
 
-        <div className='epsilon-category-suggestions__header__actions'>
-          <button className='link-button' onClick={handleDismiss} type='button'>
-            <FormattedMessage
-              id='follow_suggestions.dismiss'
-              defaultMessage="Don't show again"
-            />
+      <p className='epsilon-category-suggestions__description'>
+        {intl.formatMessage(messages.description)}{' '}
+        <em>{intl.formatMessage(messages.descriptionNote)}</em>
+      </p>
+
+      <div className='epsilon-category-suggestions__list'>
+        {visibleSuggestions.map(category => (
+          <button
+            key={category.id}
+            type='button'
+            onClick={() => handleToggleSelect(category.id)}
+            className={classNames('epsilon-category-suggestions__pill', {
+              'epsilon-category-suggestions__pill--active': selectedIds.includes(category.id),
+            })}
+          >
+            {categoryDisplayName(intl, category)}
           </button>
-          <Link to='/categories' className='link-button'>
-            <FormattedMessage
-              id='follow_suggestions.view_all'
-              defaultMessage='View all'
-            />
-          </Link>
-        </div>
+        ))}
       </div>
 
-      <div className='epsilon-category-settings__list'>
-        {visibleSuggestions.map(category => {
-          const isSubscribed = subscribedIds.includes(category.id);
-
-          return (
-            <div
-              key={category.id}
-              role='button'
-              tabIndex={0}
-              onClick={() => handleToggle(category.id)}
-              className={classNames('epsilon-category-settings__item', {
-                'epsilon-category-settings__item--active': isSubscribed,
-                'epsilon-category-settings__item--pending': pendingIds.includes(category.id),
-              })}
-            >
-              <span>{categoryDisplayName(intl, category)}</span>
-            </div>
-          );
-        })}
+      <div className='epsilon-category-suggestions__footer'>
+        <button
+          className='epsilon-category-suggestions__dismiss'
+          onClick={handleDismiss}
+          type='button'
+        >
+          <FormattedMessage id='follow_suggestions.dismiss' defaultMessage="Don't show again" />
+        </button>
+        <button
+          className='epsilon-category-suggestions__confirm'
+          onClick={handleConfirm}
+          type='button'
+          disabled={isSaving}
+        >
+          {intl.formatMessage(messages.confirm)}
+        </button>
       </div>
     </div>
   );

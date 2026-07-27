@@ -1,17 +1,23 @@
-@use '../mastodon/variables' as *;
+$eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
 
 .epsilon-onboarding-categories {
-  padding: 15px;
-  max-width: 960px;
   box-sizing: border-box;
   width: 100%;
-  margin: 0 auto;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 28px;
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius);
+  background: var(--eps-surface);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
 
   &__description {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+    color: var(--eps-text-secondary);
+    font-size: 15px;
+    line-height: 1.5;
     text-align: center;
-    font-size: 16px;
-    color: var(--color-text-secondary);
     overflow-wrap: anywhere;
     word-break: normal;
     line-break: strict;
@@ -22,12 +28,11 @@
   }
 
   &__error {
-    background: var(--color-bg-error-softest);
-    border: 1px solid var(--color-border-error-soft); // Correction syntaxe border
-    border-radius: 4px;
-    padding: 15px;
     margin-bottom: 20px;
-    color: var(--color-text-error);
+    padding: 12px 15px;
+    border-radius: 12px;
+    background: rgb(255 93 93 / 12%);
+    color: #d63b3b;
     text-align: center;
   }
 
@@ -35,22 +40,44 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
-    justify-content: space-around;
-    gap: 8px;
-    margin-bottom: 20px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   &__expand {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+
+    .button {
+      border-radius: 999px !important;
+      background: transparent !important;
+      color: var(--eps-text-primary) !important;
+      border: 1px solid var(--eps-border) !important;
+      font-weight: 600 !important;
+    }
   }
 
   &__actions {
     display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+
+    .button {
+      width: 100%;
+      justify-content: center;
+      border-radius: 999px !important;
+      padding: 12px 22px !important;
+      font-weight: 600 !important;
+    }
+
+    .button.button-secondary {
+      background: transparent !important;
+      color: var(--eps-text-primary) !important;
+      border: 1px solid var(--eps-border) !important;
+    }
   }
 }
 
@@ -61,25 +88,35 @@
   max-width: 100%;
   align-items: center;
   justify-content: space-between;
+  padding: 9px 18px;
+  border: 2px solid var(--eps-brand-primary);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--eps-text-primary);
   text-align: start;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: 8px;
-  padding: 12px 15px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    border-color: var(--color-bg-brand-base);
+    background: var(--eps-nav-hover);
   }
 
   &--selected {
-    background: var(--color-bg-brand-base);
-    border-color: var(--color-bg-brand-base);
-    color: var(--color-text-on-brand-base);
+    background: var(--eps-brand-primary);
+    color: var(--eps-text-white);
 
     .epsilon-category-tile__name {
-      color: var(--color-text-on-brand-base);
+      color: var(--eps-text-white);
+    }
+
+    &:hover {
+      color: var(--eps-text-primary);
+
+      .epsilon-category-tile__name {
+        color: var(--eps-text-primary);
+      }
     }
   }
 
@@ -89,31 +126,16 @@
   }
 
   &__name {
-    font-weight: 400;
-    color: var(--color-text-primary);
+    color: var(--eps-text-primary);
+    font-size: 14px;
+    font-weight: 500;
     overflow-wrap: anywhere;
     word-break: normal;
     line-break: strict;
   }
 
   &__stats {
+    color: var(--eps-text-secondary);
     font-size: 13px;
-    color: var(--color-text-secondary);
-  }
-
-  &__check {
-    width: 24px;
-    height: 24px;
-    background: var(--color-text-secondary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .icon {
-      width: 16px;
-      height: 16px;
-      color: var(--color-bg-primary);
-    }
   }
 }

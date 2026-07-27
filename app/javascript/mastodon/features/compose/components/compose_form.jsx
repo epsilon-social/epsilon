@@ -32,8 +32,22 @@ import { UploadForm } from './upload_form';
 import { Warning } from './warning';
 import { ComposeQuotedStatus } from './quoted_post';
 import { VisibilityButton } from './visibility_button';
+import { useAppSelector } from 'mastodon/store';
+import { Avatar } from 'mastodon/components/avatar';
+import { Skeleton } from 'mastodon/components/skeleton';
+import { me } from 'mastodon/initial_state';
+
 
 const allowedAroundShortCode = '><\u0085\u0020\u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000\u2028\u2029\u0009\u000a\u000b\u000c\u000d';
+
+const CurrentUserAvatar = () => {
+  const account = useAppSelector((state) => state.accounts.get(me));
+
+  if (account) {
+    return <Avatar account={account} size={44} />;
+  }
+  return <Skeleton width={44} height={44} />;
+};
 
 const messages = defineMessages({
   placeholder: { id: 'compose_form.placeholder', defaultMessage: 'What is on your mind?' },
@@ -215,17 +229,20 @@ class ComposeForm extends ImmutablePureComponent {
       // described in https://github.com/WICG/inert#performance-and-gotchas
       Promise.resolve().then(() => {
         this.textareaRef.current.setSelectionRange(selectionStart, selectionEnd);
-        this.textareaRef.current.focus();
+        // EPSILON: preventScroll on every focus below — our compose is a fixed
+        // overlay / sits atop the home timeline, so a native focus scroll jumps
+        // the document body to the top. See also autosuggest_textarea.jsx.
+        this.textareaRef.current.focus({ preventScroll: true });
       }).catch(console.error);
     } else if(prevProps.isSubmitting && !this.props.isSubmitting) {
-      this.textareaRef.current.focus();
+      this.textareaRef.current.focus({ preventScroll: true });
     } else if (this.props.spoiler !== prevProps.spoiler) {
       const mediaJustAdded = this.props.anyMedia && !prevProps.anyMedia;
 
       if (this.props.spoiler && !mediaJustAdded) {
-        this.spoilerText.input.focus();
+        this.spoilerText.input.focus({ preventScroll: true });
       } else if (prevProps.spoiler) {
-        this.textareaRef.current.focus();
+        this.textareaRef.current.focus({ preventScroll: true });
       }
     }
   };
@@ -246,12 +263,16 @@ class ComposeForm extends ImmutablePureComponent {
     this.props.onPickEmoji(position, data, needsSpace);
   };
 
+
+  /* ========================================== */
+  /* EPSILON : COMPOSE FORM UI OVERRIDE         */
+  /* ========================================== */
   render () {
     const { intl, onPaste, onDrop, autoFocus, withoutNavigation, maxChars, isSubmitting } = this.props;
 
     return (
       <form
-        className='compose-form'
+        className='compose-form epsilon-compose'
         role='region'
         aria-label={intl.formatMessage({
           id: 'tabs_bar.publish',
@@ -260,89 +281,98 @@ class ComposeForm extends ImmutablePureComponent {
         onSubmit={this.handleSubmit}
       >
         <ReplyIndicator />
-        {!withoutNavigation && <NavigationBar />}
+        {/* {!withoutNavigation && <NavigationBar />}*/}
         <Warning />
 
         <div className='compose-form__highlightable' ref={this.setRef}>
           <EditIndicator />
 
-          <div className='compose-form__dropdowns'>
-            <VisibilityButton disabled={this.props.isEditing} />
-            <LanguageDropdown />
-          </div>
+          {/* ZONE HAUTE : Avatar et Champ de texte */}
+          <div className='epsilon-compose__top'>
+            <div className='epsilon-compose__avatar'>
+              <CurrentUserAvatar />
+            </div>
 
-          {this.props.spoiler && (
-            <div className='spoiler-input'>
-              <div className='spoiler-input__border' />
+            <div className='epsilon-compose__input-wrapper'>
+              {this.props.spoiler && (
+                <div className='spoiler-input'>
+                  <div className='spoiler-input__border' />
+                  <AutosuggestInput
+                    placeholder={intl.formatMessage(messages.spoiler_placeholder)}
+                    value={this.props.spoilerText}
+                    disabled={isSubmitting}
+                    onChange={this.handleChangeSpoilerText}
+                    onKeyDown={this.handleKeyDownSpoiler}
+                    ref={this.setSpoilerText}
+                    suggestions={this.props.suggestions}
+                    onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                    onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                    onSuggestionSelected={this.onSpoilerSuggestionSelected}
+                    searchTokens={[':']}
+                    id='cw-spoiler-input'
+                    className='spoiler-input__input'
+                    lang={this.props.lang}
+                    spellCheck
+                  />
+                  <div className='spoiler-input__border' />
+                </div>
+              )}
 
-              <AutosuggestInput
-                placeholder={intl.formatMessage(messages.spoiler_placeholder)}
-                value={this.props.spoilerText}
+              <AutosuggestTextarea
+                ref={this.textareaRef}
+                placeholder={intl.formatMessage(messages.placeholder)}
                 disabled={isSubmitting}
-                onChange={this.handleChangeSpoilerText}
-                onKeyDown={this.handleKeyDownSpoiler}
-                ref={this.setSpoilerText}
+                value={this.props.text}
+                onChange={this.handleChange}
                 suggestions={this.props.suggestions}
+                onFocus={this.handleFocus}
+                onKeyDown={this.handleKeyDownPost}
                 onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
                 onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                onSuggestionSelected={this.onSpoilerSuggestionSelected}
-                searchTokens={[':']}
-                id='cw-spoiler-input'
-                className='spoiler-input__input'
+                onSuggestionSelected={this.onSuggestionSelected}
+                onDrop={onDrop}
+                onPaste={onPaste}
+                autoFocus={autoFocus}
                 lang={this.props.lang}
-                spellCheck
+                className='compose-form__input'
               />
-
-              <div className='spoiler-input__border' />
             </div>
-          )}
-
-          <AutosuggestTextarea
-            ref={this.textareaRef}
-            placeholder={intl.formatMessage(messages.placeholder)}
-            disabled={isSubmitting}
-            value={this.props.text}
-            onChange={this.handleChange}
-            suggestions={this.props.suggestions}
-            onFocus={this.handleFocus}
-            onKeyDown={this.handleKeyDownPost}
-            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-            onSuggestionSelected={this.onSuggestionSelected}
-            onPaste={onPaste}
-            onDrop={onDrop}
-            autoFocus={autoFocus}
-            lang={this.props.lang}
-            className='compose-form__input'
-          />
+          </div>
 
           <PollForm />
           <UploadForm />
           <ComposeQuotedStatus />
 
-          <div className='compose-form__footer'>
-            <div className='compose-form__actions'>
-              <div className='compose-form__buttons'>
+          <div className='compose-form__footer epsilon-compose__bottom'>
+            <div className='compose-form__actions epsilon-compose__actions-wrapper'>
+
+              <div className='compose-form__buttons epsilon-compose__tools'>
                 <UploadButtonContainer />
                 <PollButtonContainer />
                 <SpoilerButtonContainer />
                 <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} />
-                <CharacterCounter max={maxChars} text={this.getFulltextForCharacterCounting()} />
               </div>
 
-              <div className='compose-form__submit'>
-                <Button
-                  type='submit'
-                  compact
-                  disabled={!this.canSubmit()}
-                  loading={isSubmitting}
-                >
-                  {intl.formatMessage(
-                    this.props.isEditing ?
-                      messages.saveChanges :
-                      (this.props.isInReply ? messages.reply : messages.publish)
-                  )}
-                </Button>
+              <div className='epsilon-compose__actions'>
+                <VisibilityButton disabled={this.props.isEditing} />
+                <LanguageDropdown />
+                <CharacterCounter max={maxChars} text={this.getFulltextForCharacterCounting()} />
+
+                <div className='compose-form__submit'>
+                  <Button
+                    type='submit'
+                    compact
+                    disabled={!this.canSubmit()}
+                    loading={isSubmitting}
+                    className='epsilon-compose__submit'
+                  >
+                    {intl.formatMessage(
+                      this.props.isEditing ?
+                        messages.saveChanges :
+                        (this.props.isInReply ? messages.reply : messages.publish)
+                    )}
+                    </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -350,6 +380,105 @@ class ComposeForm extends ImmutablePureComponent {
       </form>
     );
   }
+
+  /* ========================================== */
+
+  // render () {
+  //   const { intl, onPaste, autoFocus, withoutNavigation, maxChars, isSubmitting } = this.props;
+  //   const { highlighted } = this.state;
+
+  //   return (
+  //     <form className='compose-form' onSubmit={this.handleSubmit}>
+  //       <ReplyIndicator />
+  //       {!withoutNavigation && <NavigationBar />}
+  //       <Warning />
+
+  //       <div className={classNames('compose-form__highlightable', { active: highlighted })} ref={this.setRef}>
+  //         <EditIndicator />
+
+  //         <div className='compose-form__dropdowns'>
+  //           <VisibilityButton disabled={this.props.isEditing} />
+  //           <LanguageDropdown />
+  //         </div>
+
+  //         {this.props.spoiler && (
+  //           <div className='spoiler-input'>
+  //             <div className='spoiler-input__border' />
+
+  //             <AutosuggestInput
+  //               placeholder={intl.formatMessage(messages.spoiler_placeholder)}
+  //               value={this.props.spoilerText}
+  //               disabled={isSubmitting}
+  //               onChange={this.handleChangeSpoilerText}
+  //               onKeyDown={this.handleKeyDownSpoiler}
+  //               ref={this.setSpoilerText}
+  //               suggestions={this.props.suggestions}
+  //               onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+  //               onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+  //               onSuggestionSelected={this.onSpoilerSuggestionSelected}
+  //               searchTokens={[':']}
+  //               id='cw-spoiler-input'
+  //               className='spoiler-input__input'
+  //               lang={this.props.lang}
+  //               spellCheck
+  //             />
+
+  //             <div className='spoiler-input__border' />
+  //           </div>
+  //         )}
+
+  //         <AutosuggestTextarea
+  //           ref={this.textareaRef}
+  //           placeholder={intl.formatMessage(messages.placeholder)}
+  //           disabled={isSubmitting}
+  //           value={this.props.text}
+  //           onChange={this.handleChange}
+  //           suggestions={this.props.suggestions}
+  //           onFocus={this.handleFocus}
+  //           onKeyDown={this.handleKeyDownPost}
+  //           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+  //           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+  //           onSuggestionSelected={this.onSuggestionSelected}
+  //           onPaste={onPaste}
+  //           autoFocus={autoFocus}
+  //           lang={this.props.lang}
+  //           className='compose-form__input'
+  //         />
+
+  //         <UploadForm />
+  //         <PollForm />
+  //         <ComposeQuotedStatus />
+
+  //         <div className='compose-form__footer'>
+  //           <div className='compose-form__actions'>
+  //             <div className='compose-form__buttons'>
+  //               <UploadButtonContainer />
+  //               <PollButtonContainer />
+  //               <SpoilerButtonContainer />
+  //               <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} />
+  //               <CharacterCounter max={maxChars} text={this.getFulltextForCharacterCounting()} />
+  //             </div>
+
+  //             <div className='compose-form__submit'>
+  //               <Button
+  //                 type='submit'
+  //                 compact
+  //                 disabled={!this.canSubmit()}
+  //                 loading={isSubmitting}
+  //               >
+  //                 {intl.formatMessage(
+  //                   this.props.isEditing ?
+  //                     messages.saveChanges :
+  //                     (this.props.isInReply ? messages.reply : messages.publish)
+  //                 )}
+  //               </Button>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </form>
+  //   );
+  // }
 
 }
 

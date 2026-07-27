@@ -1,54 +1,82 @@
-@use '../mastodon/variables' as *;
+$eps-card-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
+$eps-card-text: rgb(255 255 255 / 92%);
+$eps-card-text-muted: rgb(255 255 255 / 60%);
+$eps-card-border: rgb(255 255 255 / 12%);
+$eps-card-border-focus: rgb(255 255 255 / 25%);
+$eps-card-hover-overlay: rgb(255 255 255 / 6%);
+$eps-card-input-bg: rgb(255 255 255 / 5%);
 
 .epsilon-category-settings {
-  &__intro {
-    padding: 15px;
-    background: var(--color-bg-primary);
-    border: 1px solid var(--color-border-primary);
-    border-top: none;
-    z-index: 2;
+  padding: 20px;
+
+  &__card {
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 28px;
+    background: var(--eps-card-bg);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+
+  &__title {
+    margin: 0 0 8px;
+    color: $eps-card-text;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
   }
 
   &__hint {
-    color: var(--color-text-secondary);
+    margin: 0 0 22px;
+    color: $eps-card-text-muted;
     font-size: 14px;
-    margin-bottom: 15px;
-  }
-
-  &__search-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    line-height: 1.5;
   }
 
   &__search {
     position: relative;
-    flex: 1 1 auto;
+    margin-bottom: 24px;
+  }
 
-    .search__input {
-      width: 100%;
-      padding-right: 36px;
+  &__search-input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 42px 12px 18px;
+    border: 1px solid $eps-card-border;
+    border-radius: 999px;
+    background: $eps-card-input-bg;
+    color: $eps-card-text;
+    font-size: 15px;
+    line-height: 1.2;
+
+    &::placeholder {
+      color: $eps-card-text-muted;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $eps-card-border-focus;
     }
   }
 
   &__search-clear {
     position: absolute;
     top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
+    right: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    background: transparent;
     border: none;
+    background: transparent;
+    color: $eps-card-text-muted;
     cursor: pointer;
-    color: var(--color-text-secondary);
-    transition: color 0.2s;
+    transform: translateY(-50%);
+    transition: color 0.15s ease;
 
     &:hover,
     &:focus {
-      color: var(--color-text-primary);
+      color: $eps-card-text;
     }
 
     .icon {
@@ -57,49 +85,42 @@
     }
   }
 
-  &__scrollable {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 15px;
-  }
-
   &__list {
     display: flex;
-    width: 100%;
     flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: space-around;
-    gap: 8px;
+    gap: 10px;
   }
 
   &__item {
     display: inline-flex;
-    flex: 0 0 auto;
-    max-width: 100%;
     align-items: center;
-    gap: 8px;
-    padding: 12px 15px;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-primary);
-    border-radius: 8px;
+    padding: 9px 18px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background:
+      linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+      $eps-card-gradient border-box;
+    color: $eps-card-text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
     cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--color-text-primary);
-    font-weight: 400;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
 
     &:hover {
-      border-color: var(--color-bg-brand-base);
+      background:
+        linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
+          padding-box,
+        linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+        $eps-card-gradient border-box;
     }
 
     &--active {
-      background: var(--color-bg-brand-base);
-      border-color: var(--color-bg-brand-base);
-      color: var(--color-text-on-brand-base);
-
-      &:hover {
-        background: var(--color-bg-brand-base-hover);
-        border-color: var(--color-bg-brand-base-hover);
-      }
+      background: $eps-card-gradient border-box;
+      color: #16171a;
+      font-weight: 600;
     }
 
     &--pending {
@@ -108,26 +129,10 @@
     }
   }
 
-  &__item-check {
-    font-size: 14px;
-    color: var(--color-text-on-brand-base);
-  }
-
   &__loading,
   &__empty {
+    margin-top: 24px;
+    color: $eps-card-text-muted;
     text-align: center;
-    color: var(--color-text-secondary);
-    margin-top: 20px;
   }
-}
-
-.epsilon-collection-button {
-  padding: 0 12px !important;
-  height: 28px !important;
-  line-height: 26px !important;
-  font-size: 13px !important;
-  border-radius: 6px !important;
-  font-weight: 500 !important;
-  margin-left: 8px !important;
-  align-self: center !important;
 }

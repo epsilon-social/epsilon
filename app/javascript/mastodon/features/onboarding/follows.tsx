@@ -113,65 +113,78 @@ export const Follows: React.FC<{
 
   return (
     <Column
+      className='epsilon-onboarding-column'
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.title)}
     >
       <ColumnHeader
+        className='epsilon-onboarding-header'
         title={intl.formatMessage(messages.title)}
         icon='person'
         iconComponent={PersonIcon}
         multiColumn={multiColumn}
       />
 
-      <ColumnSearchHeader
-        placeholder={intl.formatMessage(messages.search)}
-        onBack={handleDismissSearchClick}
-        onActivate={handleSearchClick}
-        active={mode === 'add'}
-        onSubmit={handleSearch}
-      />
+      {/* EPSILON: onboarding new UI — surface card wrapper (title = native ColumnHeader above) */}
+      <div className='epsilon-onboarding'>
+        <div className='epsilon-onboarding__card'>
+          <ColumnSearchHeader
+            placeholder={intl.formatMessage(messages.search)}
+            onBack={handleDismissSearchClick}
+            onActivate={handleSearchClick}
+            active={mode === 'add'}
+            onSubmit={handleSearch}
+          />
 
-      <ScrollableList
-        scrollKey='follow_recommendations'
-        trackScroll={!multiColumn}
-        bindToDocument={!multiColumn}
-        showLoading={
-          (isLoading || isLoadingSearch) && displayedAccountIds.length === 0
-        }
-        hasMore={false}
-        isLoading={isLoading || isLoadingSearch}
-        footer={
-          <>
-            {displayedAccountIds.length > 0 && <div className='spacer' />}
+          <ScrollableList
+            scrollKey='follow_recommendations'
+            trackScroll={!multiColumn}
+            bindToDocument={!multiColumn}
+            showLoading={
+              (isLoading || isLoadingSearch) && displayedAccountIds.length === 0
+            }
+            hasMore={false}
+            isLoading={isLoading || isLoadingSearch}
+            footer={
+              <>
+                {displayedAccountIds.length > 0 && <div className='spacer' />}
 
-            <div className='column-footer'>
-              <Link className='button button--block' to='/start/profile'>
+                <div className='column-footer'>
+                  <Link className='button button--block' to='/start/profile'>
+                    <FormattedMessage
+                      id='onboarding.follows.next'
+                      defaultMessage='Next: Setup your profile'
+                    />
+                  </Link>
+                </div>
+              </>
+            }
+            emptyMessage={
+              mode === 'remove' ? (
                 <FormattedMessage
-                  id='onboarding.follows.next'
-                  defaultMessage='Next: Setup your profile'
+                  id='onboarding.follows.empty'
+                  defaultMessage='Unfortunately, no results can be shown right now. You can try using search or browsing the explore page to find people to follow, or try again later.'
                 />
-              </Link>
-            </div>
-          </>
-        }
-        emptyMessage={
-          mode === 'remove' ? (
-            <FormattedMessage
-              id='onboarding.follows.empty'
-              defaultMessage='Unfortunately, no results can be shown right now. You can try using search or browsing the explore page to find people to follow, or try again later.'
-            />
-          ) : (
-            <FormattedMessage
-              id='lists.no_results_found'
-              defaultMessage='No results found.'
-            />
-          )
-        }
-      >
-        {displayedAccountIds.map((accountId) => (
-          <Account id={accountId} key={accountId} withBio withMenu={false} />
-        ))}
-      </ScrollableList>
+              ) : (
+                <FormattedMessage
+                  id='lists.no_results_found'
+                  defaultMessage='No results found.'
+                />
+              )
+            }
+          >
+            {displayedAccountIds.map((accountId) => (
+              <Account
+                id={accountId}
+                key={accountId}
+                withBio
+                withMenu={false}
+              />
+            ))}
+          </ScrollableList>
+        </div>
+      </div>
+      {/* /EPSILON */}
 
       <Helmet>
         <title>{intl.formatMessage(messages.title)}</title>

@@ -84,3 +84,6 @@ storybook-static
 
 .aider*
 instructions.txt
+
+# never commit DB dumps
+*.dump

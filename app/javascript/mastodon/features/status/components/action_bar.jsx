@@ -11,8 +11,10 @@ import BookmarkBorderIcon from '@/material-icons/400-24px/bookmark.svg?react';
 import MoreHorizIcon from '@/material-icons/400-24px/more_horiz.svg?react';
 import ReplyIcon from '@/material-icons/400-24px/reply.svg?react';
 import ReplyAllIcon from '@/material-icons/400-24px/reply_all.svg?react';
-import StarIcon from '@/material-icons/400-24px/star-fill.svg?react';
-import StarBorderIcon from '@/material-icons/400-24px/star.svg?react';
+// EPSILON: favourite star icon → heart (+ broken heart on hover)
+import StarIcon from '@/material-icons/400-24px/heart-fill.svg?react';
+import StarBorderIcon from '@/material-icons/400-24px/heart.svg?react';
+import HeartBrokenIcon from '@/material-icons/400-24px/heart_broken-fill.svg?react';
 import { injectIntl } from '@/mastodon/components/intl';
 import { identityContextPropShape, withIdentity } from 'mastodon/identity_context';
 import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
@@ -107,6 +109,19 @@ class ActionBar extends PureComponent {
   handleFavouriteClick = () => {
     this.props.onFavourite(this.props.status);
   };
+
+  // ==========================================
+  // EPSILON : favourite hover → broken heart
+  state = { favHover: false };
+
+  handleFavMouseEnter = () => {
+    this.setState({ favHover: true });
+  };
+
+  handleFavMouseLeave = () => {
+    this.setState({ favHover: false });
+  };
+  // ==========================================
 
   handleBookmarkClick = (e) => {
     this.props.onBookmark(this.props.status, e);
@@ -332,7 +347,7 @@ class ActionBar extends PureComponent {
         <div className='detailed-status__button'>
           <BoostButton status={status} />
         </div>
-        <div className='detailed-status__button'><IconButton className='star-icon' animate active={status.get('favourited')} title={favouriteTitle} icon='star' iconComponent={status.get('favourited') ? StarIcon : StarBorderIcon} onClick={this.handleFavouriteClick} /></div>
+        <div className='detailed-status__button'><IconButton className='star-icon' animate active={status.get('favourited')} title={favouriteTitle} icon='star' iconComponent={status.get('favourited') ? (this.state.favHover ? HeartBrokenIcon : StarIcon) : StarBorderIcon} onClick={this.handleFavouriteClick} onMouseEnter={this.handleFavMouseEnter} onMouseLeave={this.handleFavMouseLeave} /></div>
         <div className='detailed-status__button'><IconButton className='bookmark-icon' disabled={!signedIn} active={status.get('bookmarked')} title={bookmarkTitle} icon='bookmark' iconComponent={status.get('bookmarked') ? BookmarkIcon : BookmarkBorderIcon} onClick={this.handleBookmarkClick} /></div>
 
         <div className='detailed-status__action-bar-dropdown'>

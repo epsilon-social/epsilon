@@ -18,6 +18,7 @@ import {
   COMPOSE_CHANGE,
   COMPOSE_REPLY,
   COMPOSE_REPLY_CANCEL,
+  EPSILON_COMPOSE_SET_INLINE_REPLY,
   COMPOSE_DIRECT,
   COMPOSE_MENTION,
   COMPOSE_SUBMIT_REQUEST,
@@ -446,6 +447,34 @@ export const composeReducer = (state = initialState, action) => {
         if (map.get('media_attachments').size >= 1) {
           map.set('sensitive', true);
         }
+      } else {
+        map.set('spoiler', false);
+        map.set('spoiler_text', '');
+      }
+    });
+  // EPSILON: like COMPOSE_REPLY but intentionally omits focusDate/preselectDate
+  // so the inline reply box becomes a reply on mount without stealing focus.
+  case EPSILON_COMPOSE_SET_INLINE_REPLY:
+    return state.withMutations(map => {
+      map.set('id', null);
+      map.set('in_reply_to', action.status.get('id'));
+      map.set('text', statusToTextMentions(state, action.status));
+      map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
+      map.set('caretPosition', null);
+      map.set('idempotencyKey', uuid());
+      map.set('quoted_status_id', null);
+
+      map.update('media_attachments', list => list.filter(media => media.get('unattached')));
+
+      if (action.status.get('language') && !action.status.has('translation')) {
+        map.set('language', action.status.get('language'));
+      } else {
+        map.set('language', state.get('default_language'));
+      }
+
+      if (action.status.get('spoiler_text').length > 0) {
+        map.set('spoiler', true);
+        map.set('spoiler_text', action.status.get('spoiler_text'));
       } else {
         map.set('spoiler', false);
         map.set('spoiler_text', '');

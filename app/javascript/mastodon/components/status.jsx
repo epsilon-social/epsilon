@@ -604,21 +604,18 @@ class Status extends ImmutablePureComponent {
                 'status--is-quote': isQuotedPost,
                 'status--has-quote': !!status.get('quote'),
                 'status--highlighted-entry': this.props.shouldHighlightOnMount,
+                // EPSILON: AI moderation — grey out + disable a post pending verification
+                'status--ai-pending': status.get('moderation_state') === 'pending_ai',
               })
             }
             data-id={status.get('id')}
-            /* ========================================== */
-            /* EPSILON : AI MODERATION                    */
-            /* ========================================== */
-            style={status.get('ai_moderated_pending') ? { opacity: 0.6, filter: 'grayscale(50%)', pointerEvents: 'none' } : {}}
-            /* ========================================== */
           >
             {(connectReply || connectUp || connectToRoot) && <div className={classNames('status__line', { 'status__line--full': connectReply, 'status__line--first': !status.get('in_reply_to_id') && !connectToRoot })} />}
 
             {/* ========================================== */}
             {/* EPSILON : AI MODERATION                    */}
             {/* ========================================== */}
-            {status.get('ai_moderated_pending') && (
+            {status.get('moderation_state') === 'pending_ai' && (
               <div style={{
                 backgroundColor: '#37474f',
                 color: '#ffffff',

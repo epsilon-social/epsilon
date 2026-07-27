@@ -1,14 +1,31 @@
+-# EPSILON: redesigned auth shell (brand aside + form card) — styling in app/javascript/styles/epsilon/auth.scss
 - content_for :header_tags do
   = vite_typescript_tag 'public.tsx', crossorigin: 'anonymous'
 
 - content_for :content do
-  .container-alt
-    %header.logo-container
-      - if within_authorization_flow?
-        = logo_as_symbol(:wordmark)
-      - else
-        = link_to root_path do
-          = logo_as_symbol(:wordmark)
+  .container-alt.epsilon-auth
+    %aside.epsilon-auth__brand
+      = link_to root_path, class: 'epsilon-auth__brand-lockup' do
+        %span.epsilon-auth__brand-mark E
+        %span.epsilon-auth__brand-name Epsilon
+      %h1.epsilon-auth__brand-title= t('epsilon_auth.title')
+      %p.epsilon-auth__brand-copy= t('epsilon_auth.description')
+      %ul.epsilon-auth__benefits
+        %li.epsilon-auth__benefit
+          %span.epsilon-auth__benefit-icon= material_symbol('badge')
+          %span.epsilon-auth__benefit-body
+            %strong.epsilon-auth__benefit-title= t('epsilon_auth.benefit_profiles_title')
+            %span.epsilon-auth__benefit-copy= t('epsilon_auth.benefit_profiles_copy')
+        %li.epsilon-auth__benefit
+          %span.epsilon-auth__benefit-icon= material_symbol('shield')
+          %span.epsilon-auth__benefit-body
+            %strong.epsilon-auth__benefit-title= t('epsilon_auth.benefit_moderation_title')
+            %span.epsilon-auth__benefit-copy= t('epsilon_auth.benefit_moderation_copy')
+        %li.epsilon-auth__benefit
+          %span.epsilon-auth__benefit-icon= material_symbol('tune')
+          %span.epsilon-auth__benefit-body
+            %strong.epsilon-auth__benefit-title= t('epsilon_auth.benefit_feed_title')
+            %span.epsilon-auth__benefit-copy= t('epsilon_auth.benefit_feed_copy')
 
     %main.form-container
       = render 'flashes'

@@ -100,6 +100,12 @@ import { CustomHomepage } from 'mastodon/features/custom_homepage';
 import '../../components/status';
 import { getNavigationSkipLinkId, SkipLinks } from './components/skip_links';
 
+/* ========================================== */
+/* EPSILON : MAIN UI LAYOUT                   */
+/* ========================================== */
+import EpsilonLayout from '../../epsilon/components/epsilon_layout';
+/* ========================================== */
+
 const messages = defineMessages({
   beforeUnload: { id: 'ui.beforeunload', defaultMessage: 'Your draft will be lost if you leave Mastodon.' },
 });
@@ -189,6 +195,10 @@ class SwitchingColumnsArea extends PureComponent {
     }
 
     return (
+      /* ========================================== */
+      /* EPSILON : MAIN UI LAYOUT ENCAPSULATION     */
+      /* ========================================== */
+      <EpsilonLayout>
       <ColumnsContextProvider multiColumn={!singleColumn}>
         <ColumnsArea ref={this.setRef} singleColumn={singleColumn} domain={domain} minimalShell={!signedIn && landingPage === 'overview'}>
           <WrappedSwitch>
@@ -279,7 +289,9 @@ class SwitchingColumnsArea extends PureComponent {
             <Route component={BundleColumnError} />
           </WrappedSwitch>
         </ColumnsArea>
-      </ColumnsContextProvider>
+        </ColumnsContextProvider>
+      </EpsilonLayout>
+      /* ========================================== */
     );
   }
 

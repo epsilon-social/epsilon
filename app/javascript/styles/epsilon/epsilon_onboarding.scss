@@ -1,0 +1,32 @@
+.epsilon-onboarding {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+
+  &__card {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 20px;
+    border: 1px solid var(--eps-border);
+    border-radius: var(--eps-radius);
+    background: var(--eps-surface);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+
+    .scrollable {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      contain: none !important;
+      flex: 0 0 auto !important;
+    }
+
+    .column-footer {
+      padding: 16px 0 0;
+
+      .button {
+        border-radius: 999px !important;
+      }
+    }
+  }
+}

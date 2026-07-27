@@ -10,9 +10,7 @@ import TrendingUpIcon from '@/material-icons/400-24px/trending_up.svg?react';
 import { Column } from 'mastodon/components/column';
 import type { ColumnRef } from 'mastodon/components/column';
 import { ColumnHeader } from 'mastodon/components/column_header';
-import { SymbolLogo } from 'mastodon/components/logo';
 import { Search } from 'mastodon/features/compose/components/search';
-import { useBreakpoint } from 'mastodon/features/ui/hooks/useBreakpoint';
 import { useIdentity } from 'mastodon/identity_context';
 
 import Links from './links';
@@ -28,7 +26,6 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
   const { signedIn } = useIdentity();
   const intl = useIntl();
   const columnRef = useRef<ColumnRef>(null);
-  const logoRequired = useBreakpoint('full');
 
   const handleHeaderClick = useCallback(() => {
     columnRef.current?.scrollTop();
@@ -40,9 +37,10 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
       ref={columnRef}
       label={intl.formatMessage(messages.title)}
     >
+      {/* EPSILON: always use the page icon, never swap to the site logo at wide breakpoints */}
       <ColumnHeader
         icon={'explore'}
-        iconComponent={logoRequired ? SymbolLogo : TrendingUpIcon}
+        iconComponent={TrendingUpIcon}
         title={intl.formatMessage(messages.title)}
         onClick={handleHeaderClick}
         multiColumn={multiColumn}

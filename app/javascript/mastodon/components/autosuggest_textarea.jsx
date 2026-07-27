@@ -172,7 +172,10 @@ const AutosuggestTextarea = forwardRef(({
   useEffect(() => {
     if (lang && textareaRef.current && textareaRef.current === document.activeElement) {
       textareaRef.current.blur();
-      textareaRef.current.focus();
+      // EPSILON: preventScroll — this fires on compose mount and, without it,
+      // the native focus scroll yanks the document body to the top (our compose
+      // sits at the top of the home timeline / inside a fixed overlay).
+      textareaRef.current.focus({ preventScroll: true });
     }
   }, [lang]);
 

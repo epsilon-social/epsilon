@@ -34,6 +34,8 @@
                 wrapper: :with_label
 
     .actions
+      -# EPSILON: "sign up" outline button to the left of the submit
+      = link_to t('auth.register'), available_sign_up_url, class: 'button epsilon-auth__ghost'
       = f.button :button, t('auth.login'), type: :submit
 
 - if devise_mapping.omniauthable? && resource_class.omniauth_providers.any?

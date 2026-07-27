@@ -157,6 +157,16 @@ const Card: React.FC<{
           <Source id={sources[0]} />
         )}
       </div>
+      {/* ========================================== */}
+      {/* EPSILON : INLINE SUGGESTION BIO EXTENSION  */}
+      {/* ========================================== */}
+      {account?.get('note') && (
+        <div
+          className='epsilon-suggestion-bio'
+          dangerouslySetInnerHTML={{ __html: account.get('note') }}
+        />
+      )}
+      {/* ========================================== */}
 
       <FollowButton accountId={id} />
     </div>

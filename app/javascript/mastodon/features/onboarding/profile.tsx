@@ -156,10 +156,12 @@ export const Profile: React.FC<{
 
   return (
     <Column
+      className='epsilon-onboarding-column'
       bindToDocument={!multiColumn}
       label={intl.formatMessage(messages.title)}
     >
       <ColumnHeader
+        className='epsilon-onboarding-header'
         title={intl.formatMessage(messages.title)}
         icon='person'
         iconComponent={PersonIcon}
@@ -167,148 +169,154 @@ export const Profile: React.FC<{
         showBackButton
       />
 
-      <div className='scrollable scrollable--flex'>
-        <div className='simple_form app-form'>
-          <div className='onboarding__profile'>
-            <label
-              className={classNames('app-form__header-input', {
-                selected: !!headerPreview,
-                invalid: !!errors?.header,
-              })}
-              title={intl.formatMessage(messages.uploadHeader)}
-            >
-              <input
-                type='file'
-                hidden
-                ref={headerFileRef}
-                accept='image/*'
-                onChange={handleHeaderChange}
-              />
+      {/* EPSILON: onboarding new UI — surface card wrapper (title = native ColumnHeader above) */}
+      <div className='epsilon-onboarding'>
+        <div className='epsilon-onboarding__card'>
+          <div className='scrollable scrollable--flex'>
+            <div className='simple_form app-form'>
+              <div className='onboarding__profile'>
+                <label
+                  className={classNames('app-form__header-input', {
+                    selected: !!headerPreview,
+                    invalid: !!errors?.header,
+                  })}
+                  title={intl.formatMessage(messages.uploadHeader)}
+                >
+                  <input
+                    type='file'
+                    hidden
+                    ref={headerFileRef}
+                    accept='image/*'
+                    onChange={handleHeaderChange}
+                  />
 
-              {headerPreview && <img src={headerPreview} alt='' />}
+                  {headerPreview && <img src={headerPreview} alt='' />}
 
-              <Icon
-                id=''
-                icon={headerPreview ? EditIcon : AddPhotoAlternateIcon}
-              />
-            </label>
+                  <Icon
+                    id=''
+                    icon={headerPreview ? EditIcon : AddPhotoAlternateIcon}
+                  />
+                </label>
 
-            <label
-              className={classNames('app-form__avatar-input', {
-                selected: !!avatarPreview,
-                invalid: !!errors?.avatar,
-              })}
-              title={intl.formatMessage(messages.uploadAvatar)}
-            >
-              <input
-                type='file'
-                hidden
-                ref={avatarFileRef}
-                accept='image/*'
-                onChange={handleAvatarChange}
-              />
+                <label
+                  className={classNames('app-form__avatar-input', {
+                    selected: !!avatarPreview,
+                    invalid: !!errors?.avatar,
+                  })}
+                  title={intl.formatMessage(messages.uploadAvatar)}
+                >
+                  <input
+                    type='file'
+                    hidden
+                    ref={avatarFileRef}
+                    accept='image/*'
+                    onChange={handleAvatarChange}
+                  />
 
-              {avatarPreview && <img src={avatarPreview} alt='' />}
+                  {avatarPreview && <img src={avatarPreview} alt='' />}
 
-              <Icon
-                id=''
-                icon={avatarPreview ? EditIcon : AddPhotoAlternateIcon}
-              />
-            </label>
-          </div>
+                  <Icon
+                    id=''
+                    icon={avatarPreview ? EditIcon : AddPhotoAlternateIcon}
+                  />
+                </label>
+              </div>
 
-          <div className='fields-group'>
-            <TextInputField
-              maxLength={30}
-              label={
-                <FormattedMessage
-                  id='onboarding.profile.display_name'
-                  defaultMessage='Display name'
-                />
-              }
-              hint={
-                <FormattedMessage
-                  id='onboarding.profile.display_name_hint'
-                  defaultMessage='Your full name or your fun name…'
-                />
-              }
-              value={displayName}
-              onChange={handleDisplayNameChange}
-              status={errors?.display_name ? 'error' : undefined}
-              id='display_name'
-            />
-          </div>
-
-          <div className='fields-group'>
-            <TextAreaField
-              maxLength={500}
-              label={
-                <FormattedMessage
-                  id='onboarding.profile.note'
-                  defaultMessage='Bio'
-                />
-              }
-              hint={
-                <FormattedMessage
-                  id='onboarding.profile.note_hint'
-                  defaultMessage='You can @mention other people or #hashtags…'
-                />
-              }
-              value={note}
-              onChange={handleNoteChange}
-              status={errors?.note ? 'error' : undefined}
-              id='note'
-            />
-          </div>
-
-          <label className='app-form__toggle'>
-            <div className='app-form__toggle__label'>
-              <strong>
-                <FormattedMessage
-                  id='onboarding.profile.discoverable'
-                  defaultMessage='Make my profile discoverable'
-                />
-              </strong>{' '}
-              <span className='recommended'>
-                <FormattedMessage
-                  id='recommended'
-                  defaultMessage='Recommended'
-                />
-              </span>
-              <span className='hint'>
-                <FormattedMessage
-                  id='onboarding.profile.discoverable_hint'
-                  defaultMessage='When you opt in to discoverability on Mastodon, your posts may appear in search results and trending, and your profile may be suggested to people with similar interests to you.'
-                />
-              </span>
-            </div>
-
-            <div className='app-form__toggle__toggle'>
-              <div>
-                <Toggle
-                  checked={discoverable}
-                  onChange={handleDiscoverableChange}
+              <div className='fields-group'>
+                <TextInputField
+                  maxLength={30}
+                  label={
+                    <FormattedMessage
+                      id='onboarding.profile.display_name'
+                      defaultMessage='Display name'
+                    />
+                  }
+                  hint={
+                    <FormattedMessage
+                      id='onboarding.profile.display_name_hint'
+                      defaultMessage='Your full name or your fun name…'
+                    />
+                  }
+                  value={displayName}
+                  onChange={handleDisplayNameChange}
+                  status={errors?.display_name ? 'error' : undefined}
+                  id='display_name'
                 />
               </div>
+
+              <div className='fields-group'>
+                <TextAreaField
+                  maxLength={500}
+                  label={
+                    <FormattedMessage
+                      id='onboarding.profile.note'
+                      defaultMessage='Bio'
+                    />
+                  }
+                  hint={
+                    <FormattedMessage
+                      id='onboarding.profile.note_hint'
+                      defaultMessage='You can @mention other people or #hashtags…'
+                    />
+                  }
+                  value={note}
+                  onChange={handleNoteChange}
+                  status={errors?.note ? 'error' : undefined}
+                  id='note'
+                />
+              </div>
+
+              <label className='app-form__toggle'>
+                <div className='app-form__toggle__label'>
+                  <strong>
+                    <FormattedMessage
+                      id='onboarding.profile.discoverable'
+                      defaultMessage='Make my profile discoverable'
+                    />
+                  </strong>{' '}
+                  <span className='recommended'>
+                    <FormattedMessage
+                      id='recommended'
+                      defaultMessage='Recommended'
+                    />
+                  </span>
+                  <span className='hint'>
+                    <FormattedMessage
+                      id='onboarding.profile.discoverable_hint'
+                      defaultMessage='When you opt in to discoverability on Mastodon, your posts may appear in search results and trending, and your profile may be suggested to people with similar interests to you.'
+                    />
+                  </span>
+                </div>
+
+                <div className='app-form__toggle__toggle'>
+                  <div>
+                    <Toggle
+                      checked={discoverable}
+                      onChange={handleDiscoverableChange}
+                    />
+                  </div>
+                </div>
+              </label>
             </div>
-          </label>
-        </div>
 
-        <div className='spacer' />
+            <div className='spacer' />
 
-        <div className='column-footer'>
-          <Button block onClick={handleSubmit} disabled={isSaving}>
-            {isSaving ? (
-              <LoadingIndicator />
-            ) : (
-              <FormattedMessage
-                id='onboarding.profile.finish'
-                defaultMessage='Finish'
-              />
-            )}
-          </Button>
+            <div className='column-footer'>
+              <Button block onClick={handleSubmit} disabled={isSaving}>
+                {isSaving ? (
+                  <LoadingIndicator />
+                ) : (
+                  <FormattedMessage
+                    id='onboarding.profile.finish'
+                    defaultMessage='Finish'
+                  />
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+      {/* /EPSILON */}
 
       <Helmet>
         <title>{intl.formatMessage(messages.title)}</title>

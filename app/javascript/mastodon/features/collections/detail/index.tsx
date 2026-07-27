@@ -7,10 +7,11 @@ import { Link } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
+// EPSILON: favourite star icon → heart
+import StarIcon from '@/material-icons/400-24px/heart.svg?react';
 import HelpIcon from '@/material-icons/400-24px/help.svg?react';
 import ListAltIcon from '@/material-icons/400-24px/list_alt.svg?react';
 import ShareIcon from '@/material-icons/400-24px/share.svg?react';
-import StarIcon from '@/material-icons/400-24px/star.svg?react';
 import { openModal } from 'mastodon/actions/modal';
 import type {
   ApiCollectionJSON,

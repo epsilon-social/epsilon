@@ -7,11 +7,11 @@ import classNames from 'classnames';
 import { useHistory } from 'react-router-dom';
 
 import CancelIcon from '@/material-icons/400-24px/cancel-fill.svg?react';
-import HomeIcon from '@/material-icons/400-24px/home-fill.svg?react';
+import TileIcon from '@/material-icons/400-24px/tile.svg?react';
 
 import api from '../../../api';
 import Column from '../../../components/column';
-import ColumnHeader from '../../../components/column_header';
+import { ColumnHeader } from '../../../components/column_header';
 import { Icon } from '../../../components/icon';
 import { categoryDisplayName } from '../category_names';
 
@@ -32,9 +32,9 @@ const EpsilonCategorySettings = () => {
   const [categories, setCategories] = useState([]);
   const [subscribedIds, setSubscribedIds] = useState([]);
   const [pendingIds, setPendingIds] = useState([]);
-  const [hasChanged, setHasChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [hasChanged, setHasChanged] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,11 +67,11 @@ const EpsilonCategorySettings = () => {
 
     const wasSubscribed = subscribedIds.includes(categoryId);
 
+    setHasChanged(true);
     setSubscribedIds(prev => (
       wasSubscribed ? prev.filter(id => id !== categoryId) : [...prev, categoryId]
     ));
     setPendingIds(prev => [...prev, categoryId]);
-    setHasChanged(true);
 
     const request = wasSubscribed
       ? api().delete(`/api/v1/epsilon/categorization/subscriptions/${categoryId}`)
@@ -89,14 +89,6 @@ const EpsilonCategorySettings = () => {
     });
   }, [subscribedIds, pendingIds, intl]);
 
-  const handleSearchChange = useCallback((e) => {
-    setSearchQuery(e.target.value);
-  }, []);
-
-  const handleClearSearch = useCallback(() => {
-    setSearchQuery('');
-  }, []);
-
   const handleClickBack = useCallback(() => {
     if (hasChanged) {
       window.location.href = '/home';
@@ -104,6 +96,14 @@ const EpsilonCategorySettings = () => {
       history.goBack();
     }
   }, [hasChanged, history]);
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
+  }, []);
 
   const renderCategoryItem = (category, isSubscribed) => (
     <div
@@ -127,25 +127,26 @@ const EpsilonCategorySettings = () => {
   return (
     <Column>
       <ColumnHeader
-        icon='home'
-        iconComponent={HomeIcon}
+        icon='tile'
+        iconComponent={TileIcon}
         title={intl.formatMessage(messages.title)}
         showBackButton
         onClickBack={handleClickBack}
       />
 
-      <div className='epsilon-category-settings__intro'>
-        <p className='epsilon-category-settings__hint'>
-          {intl.formatMessage(messages.hint)}
-        </p>
-        <div className='epsilon-category-settings__search-row'>
+      <div className='scrollable epsilon-category-settings'>
+        <div className='epsilon-category-settings__card'>
+          <p className='epsilon-category-settings__hint'>
+            {intl.formatMessage(messages.hint)}
+          </p>
+
           <div className='epsilon-category-settings__search'>
             <input
               type='text'
               placeholder={intl.formatMessage(messages.searchPlaceholder)}
               value={searchQuery}
               onChange={handleSearchChange}
-              className='search__input'
+              className='epsilon-category-settings__search-input'
             />
             {searchQuery && (
               <button
@@ -159,25 +160,23 @@ const EpsilonCategorySettings = () => {
               </button>
             )}
           </div>
-        </div>
-      </div>
 
-      <div className='scrollable epsilon-category-settings__scrollable'>
-        {isLoading ? (
-          <div className='epsilon-category-settings__loading'>
-            {intl.formatMessage(messages.loading)}
-          </div>
-        ) : filteredCategories.length === 0 ? (
-          <div className='epsilon-category-settings__empty'>
-            {intl.formatMessage(messages.empty, { query: searchQuery })}
-          </div>
-        ) : (
-          <div className='epsilon-category-settings__list'>
-            {filteredCategories.map(category => (
-              renderCategoryItem(category, subscribedIds.includes(category.id))
-            ))}
-          </div>
-        )}
+          {isLoading ? (
+            <div className='epsilon-category-settings__loading'>
+              {intl.formatMessage(messages.loading)}
+            </div>
+          ) : filteredCategories.length === 0 ? (
+            <div className='epsilon-category-settings__empty'>
+              {intl.formatMessage(messages.empty, { query: searchQuery })}
+            </div>
+          ) : (
+            <div className='epsilon-category-settings__list'>
+              {filteredCategories.map(category => (
+                renderCategoryItem(category, subscribedIds.includes(category.id))
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Column>
   );

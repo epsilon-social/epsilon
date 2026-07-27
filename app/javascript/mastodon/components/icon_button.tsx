@@ -15,6 +15,9 @@ interface Props {
   iconComponent: IconProp;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onMouseDown?: React.MouseEventHandler<HTMLButtonElement>;
+  // EPSILON: hover passthrough (favourite → heart_broken on hover)
+  onMouseEnter?: React.MouseEventHandler<HTMLButtonElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
   active?: boolean;
   expanded?: boolean;
@@ -47,6 +50,8 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>(
       onClick,
       onKeyDown,
       onMouseDown,
+      onMouseEnter,
+      onMouseLeave,
       active = false,
       disabled = false,
       animate = false,
@@ -136,6 +141,8 @@ export const IconButton = forwardRef<HTMLButtonElement, Props>(
         className={classes}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         onKeyDown={handleKeyDown}
         style={buttonStyle}
         tabIndex={tabIndex}

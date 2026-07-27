@@ -17,6 +17,9 @@ import BookmarksActiveIcon from '@/material-icons/400-24px/bookmarks-fill.svg?re
 import BookmarksIcon from '@/material-icons/400-24px/bookmarks.svg?react';
 import CollectionsActiveIcon from '@/material-icons/400-24px/category-fill.svg?react';
 import CollectionsIcon from '@/material-icons/400-24px/category.svg?react';
+// EPSILON: favourite star icon → heart
+import StarActiveIcon from '@/material-icons/400-24px/heart-fill.svg?react';
+import StarIcon from '@/material-icons/400-24px/heart.svg?react';
 import HomeActiveIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home.svg?react';
 import InfoIcon from '@/material-icons/400-24px/info.svg?react';
@@ -26,8 +29,6 @@ import PersonAddActiveIcon from '@/material-icons/400-24px/person_add-fill.svg?r
 import PersonAddIcon from '@/material-icons/400-24px/person_add.svg?react';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
 import SettingsIcon from '@/material-icons/400-24px/settings.svg?react';
-import StarActiveIcon from '@/material-icons/400-24px/star-fill.svg?react';
-import StarIcon from '@/material-icons/400-24px/star.svg?react';
 import TrendingUpIcon from '@/material-icons/400-24px/trending_up.svg?react';
 import TuneActiveIcon from '@/material-icons/400-24px/tune-fill.svg?react';
 import TuneIcon from '@/material-icons/400-24px/tune.svg?react';

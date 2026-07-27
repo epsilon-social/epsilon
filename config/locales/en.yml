@@ -1610,6 +1610,15 @@ en:
     auto: Auto
     native: Native
     twemoji: Twemoji
+  epsilon_auth:
+    title: A healthier social space.
+    description: Better-identified profiles, AI-assisted moderation and a feed that stays relevant — without the usual noise.
+    benefit_profiles_title: Trusted profiles
+    benefit_profiles_copy: Better-identified accounts, fewer fake profiles.
+    benefit_moderation_title: AI moderation
+    benefit_moderation_copy: Content is verified before it is shown.
+    benefit_feed_title: Relevant feed
+    benefit_feed_copy: Choose your topics, keep control of your feed.
   epsilon_cat:
     category_saved: "Subscriptions updated!"
     save: "Save my choice"

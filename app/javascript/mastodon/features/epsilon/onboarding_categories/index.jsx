@@ -142,8 +142,8 @@ const EpsilonOnboardingCategories = () => {
 
   if (isLoading) {
     return (
-      <Column>
-        <ColumnHeader title={intl.formatMessage(messages.columnTitle)} />
+      <Column className='epsilon-onboarding-column'>
+        <ColumnHeader className='epsilon-onboarding-header' title={intl.formatMessage(messages.columnTitle)} />
         <LoadingIndicator />
       </Column>
     );
@@ -151,20 +151,23 @@ const EpsilonOnboardingCategories = () => {
 
   return (
     <Column
+       className='epsilon-onboarding-column'
        label={intl.formatMessage(messages.columnTitle)}
     >
       <ColumnHeader
+      className='epsilon-onboarding-header'
       icon='tile'
       iconComponent={TileIcon}
       title={intl.formatMessage(messages.columnTitle)} />
 
       <div className='scrollable'>
-        <div className='epsilon-onboarding-categories'>
+        <div className='epsilon-onboarding'>
           <Helmet>
             <title>{intl.formatMessage(messages.title)}</title>
             <meta name='robots' content='noindex' />
           </Helmet>
 
+          <div className='epsilon-onboarding-categories'>
           <div className='epsilon-onboarding-categories__description'>
             <p>{intl.formatMessage(messages.description)}</p>
           </div>
@@ -208,6 +211,7 @@ const EpsilonOnboardingCategories = () => {
               secondary
               disabled={isSaving}
             />
+          </div>
           </div>
         </div>
       </div>

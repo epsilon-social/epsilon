@@ -1,34 +1,120 @@
-@use '../mastodon/variables' as *;
+$eps-card-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
+$eps-card-text: rgb(255 255 255 / 92%);
+$eps-card-text-muted: rgb(255 255 255 / 60%);
+$eps-card-hover-overlay: rgb(255 255 255 / 6%);
 
 .epsilon-category-suggestions {
-  background: var(--color-bg-brand-softest);
-  border-bottom: 1px solid var(--color-border-primary);
-  padding: 16px;
+  border: 1px solid transparent;
+  border-radius: var(--eps-radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  background: var(--eps-card-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
 
-  &__header {
-    margin-bottom: 12px;
+  &__title {
+    margin: 0 0 6px;
+    color: $eps-card-text;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  &__description {
+    margin: 0 0 18px;
+    color: $eps-card-text-muted;
+    font-size: 13px;
+    line-height: 1.5;
+
+    em {
+      font-style: italic;
+      opacity: 0.85;
+    }
+  }
+
+  &__list {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  &__pill {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
+    padding: 7px 16px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background:
+      linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+      $eps-card-gradient border-box;
+    color: $eps-card-text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
 
-    &__actions {
-      display: flex;
-      align-items: center;
-      gap: 24px;
+    &:hover {
+      background:
+        linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
+          padding-box,
+        linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+        $eps-card-gradient border-box;
+    }
 
-      .link-button {
-        font-size: 13px;
-        font-weight: 500;
+    &--active {
+      background: $eps-card-gradient border-box;
+      color: #16171a;
+
+      &:hover {
+        color: $eps-card-text;
       }
     }
   }
 
-  &__title {
-    color: var(--color-text-primary);
-    font-size: 15px;
-    line-height: 22px;
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__dismiss {
+    padding: 0;
+    border: none;
+    background: none;
+    color: $eps-card-text-muted;
+    font-size: 13px;
     font-weight: 500;
-    margin: 0;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: $eps-card-text;
+    }
+  }
+
+  &__confirm {
+    padding: 8px 22px;
+    border: none;
+    border-radius: 999px;
+    background: #fff;
+    color: #16171a;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }

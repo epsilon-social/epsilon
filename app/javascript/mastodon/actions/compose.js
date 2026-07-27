@@ -26,6 +26,9 @@ export const COMPOSE_SUBMIT_SUCCESS  = 'COMPOSE_SUBMIT_SUCCESS';
 export const COMPOSE_SUBMIT_FAIL     = 'COMPOSE_SUBMIT_FAIL';
 export const COMPOSE_REPLY           = 'COMPOSE_REPLY';
 export const COMPOSE_REPLY_CANCEL    = 'COMPOSE_REPLY_CANCEL';
+// EPSILON: like COMPOSE_REPLY but without focusDate, for an inline reply box
+// that must be a reply the moment it mounts without stealing focus.
+export const EPSILON_COMPOSE_SET_INLINE_REPLY = 'EPSILON_COMPOSE_SET_INLINE_REPLY';
 export const COMPOSE_DIRECT          = 'COMPOSE_DIRECT';
 export const COMPOSE_MENTION         = 'COMPOSE_MENTION';
 export const COMPOSE_RESET           = 'COMPOSE_RESET';
@@ -133,6 +136,23 @@ export function replyComposeById(statusId) {
     if (status) {
       const account = state.accounts.get(status.get('account'));
       dispatch(replyCompose(status.set('account', account)));
+    }
+  };
+}
+
+// EPSILON: configure the compose as a reply to `statusId` WITHOUT focusing it
+// or opening the overlay — used by the inline reply box under a detailed status.
+export function epsilonSetInlineReply(statusId) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const status = state.statuses.get(statusId);
+
+    if (status) {
+      const account = state.accounts.get(status.get('account'));
+      dispatch({
+        type: EPSILON_COMPOSE_SET_INLINE_REPLY,
+        status: status.set('account', account),
+      });
     }
   };
 }
