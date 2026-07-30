@@ -98,6 +98,21 @@ export const EpsilonComposeProvider = ({ children }) => {
     }
   }, [inReplyTo, quotedStatusId, focusDate]);
 
+  // "Mention" / "Privately mention" set the composer text but don't change
+  // in_reply_to or quoted_status_id, so the effect above never fires for them.
+  // The compose actions broadcast this event; open the modal on demand.
+  useEffect(() => {
+    const handleOpenRequest = () => {
+      if (!inlineReplyActiveRef.current) {
+        setOpen(true);
+      }
+    };
+
+    window.addEventListener('epsilon:open-compose', handleOpenRequest);
+    return () =>
+      window.removeEventListener('epsilon:open-compose', handleOpenRequest);
+  }, []);
+
   const isSubmitting = useAppSelector((state) =>
     state.compose.get('is_submitting'),
   );

@@ -1,0 +1,60 @@
+// Explore pages (People / Hashtags / News / Posts): wrap the active list in a
+// single container "card", and render every item as its own inner card. Mirrors
+// the notifications treatment (.item-list:has(.notification-group)).
+// Pure-CSS scope, no change to the native explore view: .explore__search-header
+// is rendered ONLY in features/explore/index.tsx, and the Column renders its
+// children as siblings inside a single .column. So the header's following
+// sibling .scrollable is the active tab's list AND unique to the Explore column.
+// Spacing uses flex `gap` (not item margins) so top = between = sides = 12px
+// without relying on :first-child — items go through <article> wrappers where
+// :first-child is always true.
+
+.epsilon-layout {
+  .explore__search-header ~ .scrollable {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 300px;
+    margin-bottom: 16px;
+    padding: 12px !important;
+    border: 1px solid var(--eps-border) !important;
+    border-radius: 36px !important;
+    background: var(--eps-surface) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    .story,
+    .trends__item,
+    .explore-suggestions-card {
+      box-sizing: border-box;
+      margin: 0;
+      border: 1px solid var(--eps-border);
+      border-radius: 24px;
+      background: var(--eps-surface);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+
+      &:hover {
+        border-color: var(--eps-border-hover);
+        background: var(--eps-surface-hover);
+      }
+    }
+
+    .status {
+      margin: 0 !important;
+    }
+  }
+}

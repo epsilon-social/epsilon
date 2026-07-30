@@ -692,11 +692,14 @@ body.theme-system {
     .item-list:has(.notification-ungrouped),
     .item-list:has(.conversation) {
       box-sizing: border-box;
-      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px !important;
       margin-bottom: 16px;
-      border: 1px solid var(--eps-border);
-      border-radius: 36px;
-      background: var(--eps-surface);
+      border: 1px solid var(--eps-border) !important;
+      border-radius: 36px !important;
+      background: var(--eps-surface) !important;
       -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
     }
@@ -704,8 +707,7 @@ body.theme-system {
     .notification-group,
     .conversation {
       box-sizing: border-box;
-      margin-top: 16px !important;
-      margin-bottom: 0 !important;
+      margin: 0 !important;
       border: 1px solid var(--eps-border) !important;
       border-radius: 30px !important;
       background: var(--eps-surface) !important;
@@ -731,9 +733,22 @@ body.theme-system {
       }
     }
 
-    .notification-group:not(:has(.notification-group__main__status)),
-    .notification-ungrouped:not(:has(.notification-ungrouped__main__status)) {
-      padding: 18px 22px !important;
+    .notification-group,
+    .notification-ungrouped {
+      padding: 14px 12px !important;
+    }
+
+    .follow_requests-unlocked_explanation {
+      margin: 0 0 12px !important;
+      padding: 2px 22px !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      color: var(--eps-text-secondary) !important;
+
+      a {
+        color: var(--eps-brand-primary) !important;
+        font-weight: 600 !important;
+      }
     }
 
     .epsilon-top-logo {
@@ -986,7 +1001,7 @@ body.theme-system {
     }
 
     &--active {
-      --eps-text-primary:                           !important;
+      --eps-text-primary:                              !important;
 
       background: var(--eps-nav-active-bg) !important;
       position: relative;
@@ -2357,7 +2372,6 @@ body.theme-system {
 }
 
 .account__section-headline,
-.explore__links,
 .notification__filter-bar,
 .tabs-bar {
   display: flex !important;

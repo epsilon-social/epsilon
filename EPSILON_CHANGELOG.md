@@ -5,6 +5,19 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-30
+
+### Changed
+
+- **Pages Explorer / Tendances** : Publications, Comptes, Hashtags et Actualité présentés en cartes — une grande carte conteneur englobant une carte par élément, dans la continuité de la page Notifications.
+- **Densité des notifications** : Espacement unifié (haut = entre les éléments = côtés) sur les pages Notifications (Tout et Mentions) et les mentions privées ; réduction de l'imbrication « boîte dans une boîte » sur les mentions et réponses.
+- **Demandes de suivi** : Le bandeau d'explication des demandes de suivi est intégré à la carte des notifications (sans encadré ni fond dédié).
+
+### Fixed
+
+- **Modale de composition** : Les boutons « Mentionner @utilisateur » et « Mentionner en privé » du menu d'un statut ouvrent désormais la modale de composition (ils restaient sans effet auparavant).
+- **Bordure des cartes** : Affichage du contour de la grande carte sur les pages Notifications, aligné sur les pages Tendances.
+
 ## [0.3.0] - 2026-07-27
 
 ### Added

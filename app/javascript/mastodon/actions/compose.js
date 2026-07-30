@@ -96,6 +96,21 @@ export const ensureComposeIsVisible = (getState) => {
   }
 };
 
+// ==========================================
+// EPSILON : UI OPEN COMPOSE MODAL
+// The redesigned UI keeps the composer permanently mounted inside a modal, so
+// ensureComposeIsVisible() never navigates to /publish and actions like
+// "Mention" / "Privately mention" would set the text without ever showing the
+// composer. Broadcast an event the Epsilon compose modal listens for so it can
+// pop itself open. Covers every entry point (status dropdown, status page,
+// notifications, profile header) since they all funnel through these actions.
+export const notifyEpsilonComposeOpen = () => {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('epsilon:open-compose'));
+  }
+};
+// ==========================================
+
 export function setComposeToStatus(status, text, spoiler_text) {
   return (dispatch, getState) => {
     const maxOptions = getState().server.server.item?.configuration.polls.max_options;
@@ -187,6 +202,10 @@ export function mentionCompose(account) {
     });
 
     ensureComposeIsVisible(getState);
+    // ==========================================
+    // EPSILON : UI OPEN COMPOSE MODAL
+    notifyEpsilonComposeOpen();
+    // ==========================================
   };
 }
 
@@ -204,6 +223,10 @@ export function directCompose(account) {
     });
 
     ensureComposeIsVisible(getState);
+    // ==========================================
+    // EPSILON : UI OPEN COMPOSE MODAL
+    notifyEpsilonComposeOpen();
+    // ==========================================
   };
 }
 
