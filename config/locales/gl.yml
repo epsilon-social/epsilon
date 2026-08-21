@@ -1226,6 +1226,7 @@ gl:
           other: Utilizado por %{count} persoas na última semana
       title: Recomendacións e Suxestións
       trending: Popularidade
+    update_available: Actualización dispoñible
     username_blocks:
       add_new: Engadir nova
       block_registrations: Bloqueo dos rexistros
@@ -1884,7 +1885,7 @@ gl:
     mention:
       action: Responder
       body: "%{name} mencionoute en:"
-      subject: Foches mencionada por %{name}
+      subject: "%{name} mencionoute"
       title: Nova mención
     moderation_warning:
       subject: Recibiches unha advertencia da moderación

@@ -5,6 +5,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-08-21
+
+### Security
+
+- **Correctifs de sécurité hérités** (upstream Mastodon 4.6.1→4.6.6) : renforcement de la protection SSRF (contournement via adresses IPv6 mappées IPv4), correction d'une application incorrecte des permissions, et mise à jour de FFmpeg dans l'image conteneur (CVE-2026-8461, critique).
+
+### Maintenance
+
+- **Upstream Merge** : Mise à jour de la base de code de Mastodon `v4.6.0` vers `v4.6.6` (aucune migration de base de données).
+
 ## [0.3.1] - 2026-07-30
 
 ### Changed
