@@ -48,19 +48,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 900;
   }
 
   &__brand-name {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 800;
     letter-spacing: -0.01em;
   }
 
   &__brand-title {
     margin: 0;
-    font-size: 30px;
+    font-size: 1.875rem;
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -69,7 +69,7 @@
 
   &__brand-copy {
     margin: 0;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 82%);
   }
@@ -111,13 +111,13 @@
   }
 
   &__benefit-title {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 700;
     color: var(--eps-text-white);
   }
 
   &__benefit-copy {
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.5;
     color: rgba(255, 255, 255, 75%);
   }
@@ -140,7 +140,7 @@
   h1.title,
   .title {
     margin: 0 0 8px;
-    font-size: 30px;
+    font-size: 1.875rem;
     font-weight: 800;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -149,7 +149,7 @@
 
   .lead {
     margin: 0 0 20px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.6;
     color: var(--eps-text-secondary);
   }
@@ -167,7 +167,7 @@
     display: block;
     margin-bottom: 8px;
     color: var(--eps-text-secondary);
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
   }
 
@@ -186,7 +186,7 @@
     border-radius: 14px !important;
     background: var(--eps-nav-hover) !important;
     color: var(--eps-text-primary) !important;
-    font-size: 14px;
+    font-size: 0.875rem;
 
     &:focus {
       border-color: var(--eps-brand-primary) !important;
@@ -197,7 +197,46 @@
 
   .hint {
     color: var(--eps-text-secondary);
-    font-size: 12.5px;
+    font-size: 0.78125rem;
+  }
+
+  /* ---- error / invalid states ---- */
+  .input.field_with_errors {
+    input[type='text'],
+    input[type='email'],
+    input[type='password'],
+    input[type='tel'],
+    input[type='number'],
+    select,
+    textarea {
+      border-color: var(--color-border-error) !important;
+    }
+
+    label {
+      color: var(--color-text-error);
+    }
+  }
+
+  input:focus:user-invalid:not(:placeholder-shown),
+  input:required:user-invalid:not(:placeholder-shown),
+  textarea:required:user-invalid:not(:placeholder-shown) {
+    border-color: var(--color-border-error) !important;
+  }
+
+  .error {
+    display: block;
+    margin-top: 6px;
+    color: var(--color-text-error);
+    font-size: 0.78125rem;
+    font-weight: 600;
+  }
+
+  .flash-message {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
   }
 
   .input-with-append .append,
@@ -211,7 +250,7 @@
       gap: 10px;
       align-items: flex-start;
       color: var(--eps-text-secondary);
-      font-size: 13px;
+      font-size: 0.8125rem;
       font-weight: 400;
       line-height: 1.5;
     }
@@ -268,16 +307,23 @@
     border-radius: 14px;
     background: var(--eps-brand-primary);
     color: var(--eps-text-white);
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 700;
     cursor: pointer;
     transition:
       filter 0.2s ease,
       opacity 0.2s ease;
 
-    &:hover {
+    &:hover,
+    &:focus,
+    &:focus-visible {
       background: var(--eps-brand-primary) !important;
       filter: brightness(1.05);
+    }
+
+    &:active {
+      background: var(--eps-brand-primary) !important;
+      filter: brightness(0.95);
     }
 
     &:disabled,
@@ -324,7 +370,7 @@
     }
 
     .label {
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   }
 
@@ -337,7 +383,7 @@
     h4 {
       margin-bottom: 12px;
       color: var(--eps-text-secondary);
-      font-size: 13px;
+      font-size: 0.8125rem;
       font-weight: 600;
       text-align: center;
     }
@@ -369,7 +415,7 @@
 
       a {
         color: var(--eps-brand-primary);
-        font-size: 13px;
+        font-size: 0.8125rem;
         font-weight: 600;
         text-decoration: none;
 
@@ -383,7 +429,7 @@
   /* ---- rules list (accept rules step) ---- */
   .rules-list {
     margin-bottom: 24px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.5;
 
     li {
@@ -427,7 +473,7 @@
     }
 
     &__brand-title {
-      font-size: 24px;
+      font-size: 1.5rem;
     }
 
     .form-container {

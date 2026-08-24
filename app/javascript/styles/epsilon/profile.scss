@@ -1,0 +1,88 @@
+.epsilon-layout {
+  .scrollable:has([class*='account_header__header']),
+  .scrollable:has([class*='followers__title']),
+  .scrollable:has([class*='account_edit__profileImage']) {
+    box-sizing: border-box;
+    margin-bottom: 16px;
+    border: 1px solid var(--eps-border) !important;
+    border-radius: var(--eps-radius) !important;
+    box-shadow: var(--eps-shadow-card) !important;
+    background: var(--eps-surface) !important;
+  }
+
+  .scrollable:has([class*='account_header__header']) {
+    [class*='account_header__header'] {
+      margin: 16px 16px 0 !important;
+      border-radius: calc(var(--eps-radius) - 8px) !important;
+      border-bottom: 0 !important;
+    }
+
+    [class*='account_header__avatarWrapper'] {
+      margin-inline-start: 24px !important;
+    }
+  }
+
+  .scrollable:has(> .item-list[class*='account_timeline__statusWrapper']) {
+    > .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    .status {
+      margin: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      border: 1px solid var(--eps-border) !important;
+      border-radius: var(--eps-radius-lg) !important;
+
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+          background: var(--eps-nav-hover) !important;
+        }
+      }
+    }
+  }
+
+  .account-gallery__container {
+    padding: 12px !important;
+  }
+
+  .scrollable:has([class*='followers__title']) {
+    > .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px !important;
+      border: none !important;
+      background: transparent !important;
+    }
+
+    [class*='account_list_item__wrapper'] {
+      border: 1px solid var(--eps-border) !important;
+      border-radius: var(--eps-radius-lg) !important;
+      background: transparent !important;
+      transition:
+        border-color var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease;
+
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+          background: var(--eps-nav-hover) !important;
+        }
+      }
+    }
+  }
+
+  .scrollable:has([class*='account_edit__profileImage']) {
+    [class*='account_edit__profileImage'] {
+      margin: 16px 16px 0 !important;
+      border-radius: calc(var(--eps-radius) - 16px) !important;
+    }
+  }
+}

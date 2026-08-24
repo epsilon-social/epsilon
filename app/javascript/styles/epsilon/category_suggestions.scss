@@ -4,26 +4,26 @@ $eps-card-text-muted: rgb(255 255 255 / 60%);
 $eps-card-hover-overlay: rgb(255 255 255 / 6%);
 
 .epsilon-category-suggestions {
-  border: 1px solid transparent;
+  border: 1px solid var(--eps-card-border);
   border-radius: var(--eps-radius);
+  box-shadow: 0 8px 22px -8px rgba(0, 0, 0, 22%);
   padding: 20px;
   margin-bottom: 16px;
   background: var(--eps-card-bg);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
 
   &__title {
     margin: 0 0 6px;
     color: $eps-card-text;
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 600;
     line-height: 1.3;
+    letter-spacing: -0.01em;
   }
 
   &__description {
     margin: 0 0 18px;
     color: $eps-card-text-muted;
-    font-size: 13px;
+    font-size: 0.8125rem;
     line-height: 1.5;
 
     em {
@@ -49,7 +49,7 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
       linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
       $eps-card-gradient border-box;
     color: $eps-card-text;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     line-height: 1;
     cursor: pointer;
@@ -57,20 +57,26 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
       background 0.15s ease,
       color 0.15s ease;
 
-    &:hover {
-      background:
-        linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
-          padding-box,
-        linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
-        $eps-card-gradient border-box;
+    @media (hover: hover) {
+      &:hover {
+        background:
+          linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
+            padding-box,
+          linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+          $eps-card-gradient border-box;
+      }
     }
 
     &--active {
       background: $eps-card-gradient border-box;
       color: #16171a;
 
-      &:hover {
-        color: $eps-card-text;
+      @media (hover: hover) {
+        &:hover {
+          background:
+            linear-gradient(rgba(0, 0, 0, 8%), rgba(0, 0, 0, 8%)) border-box,
+            $eps-card-gradient border-box;
+        }
       }
     }
   }
@@ -87,7 +93,7 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
     border: none;
     background: none;
     color: $eps-card-text-muted;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
     transition: color 0.15s ease;
@@ -103,7 +109,7 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
     border-radius: 999px;
     background: #fff;
     color: #16171a;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.15s ease;

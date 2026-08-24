@@ -5,6 +5,38 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-08-24
+
+### Added
+
+- **Page « À propos » repensée** : Remplacement de la fiche d'instance Mastodon générique par une véritable page de marque (manifeste). Positionnement de réseau social européen et souverain, six piliers de valeurs présentés en cartes (Européen & souverain, Modération à visage humain, Sans manipulation, Vie privée respectée, Ouvert & interopérable, Par thèmes plutôt qu'addiction), section « Notre engagement », mentions légales conservées et accessibles. Textes en français et anglais (i18n).
+- **Logo dans la barre latérale** : Wordmark Epsilon affiché dans la barre latérale gauche.
+
+### Changed
+
+- **Système de design (tokens)** :
+  - Bleu de marque affiné vers un ton plus profond et saturé (`#5d95ff` → `#4571ff`), avec un token de halo (`--eps-brand-glow`).
+  - Arrondis resserrés : rayon principal `35px` → `24px` (rendu moins « bulle »), et nouvelle échelle cohérente `--eps-radius-sm/md/lg` (12 / 16 / 24 px) — 24 px pour les cartes, 16 px pour les menus et dialogues, 12 px pour les petits éléments.
+  - Échelle de durées d'animation (`--eps-dur-fast/base/slow`) pour des transitions homogènes.
+  - Tokens de bordure de carte par thème (transparente en clair, `#262626` en sombre).
+- **Barre supérieure** : Supprimée au format desktop (conservée uniquement en mobile, ≤ 768 px) ; le logo passe dans la barre latérale gauche.
+- **Pages de profil** : L'ensemble du profil (fil, médias, en vedette, abonnés / abonnements, édition) est regroupé dans une grande carte. Bannière détachée des bords en « carte dans la carte » avec coins concentriques, avatar réaligné, publications aplaties en lignes bordées ; lignes d'abonnés / abonnements présentées en cartes individuelles. Bouton « Retour » sans encadré.
+- **Alignement des colonnes** : Hauts de la barre latérale gauche, de la colonne centrale et du panneau de droite alignés.
+- **Modales** : Les modales natives (édition de profil, confirmations, import d'image) adoptent le rendu « verre » de la modale de composition — fond d'écran flouté, surface claire — en supprimant le filtre d'assombrissement natif ; arrondis harmonisés.
+- **Boutons de menus / dropdowns** : Les popovers en modules CSS (filtre de profil, autocomplétion, aide du @handle) reprennent le style du dropdown de référence (surface verre, arrondi, ombre) ; boutons uniformisés (pilules, animation d'appui sur tous les boutons).
+- **État sélectionné au survol (desktop)** : Les éléments sélectionnés restent visiblement sélectionnés au survol (changement de fond, pas seulement de couleur de texte).
+- **Espacement & finitions** : Meilleurs espacements sur la composition (desktop, mobile, format moyen), densité et cibles tactiles portées à ≥ 44 px, polissage général des survols.
+- **Carte de suggestions de catégories** : Bordure complète en thème sombre (`#262626`), suppression du liseré en haut, couleurs de carte de marque mises à jour.
+
+### Fixed
+
+- **Modification d'un statut** : Le bouton « Modifier » du menu d'un statut ouvre désormais la modale de composition.
+- **Onglets de profil** : Le survol des onglets (Activité / Médias / En vedette) rendait le texte invisible (`--color-text-brand-soft` remappé en transparent) — restauré sur le bleu de marque, ce qui répare aussi une douzaine d'autres états de survol.
+- **Erreurs de formulaire (inscription / connexion)** : Les erreurs de validation (nom d'utilisateur déjà pris, etc.) s'affichent désormais dans la nouvelle interface ; le bouton de connexion ne repasse plus au violet Mastodon d'avant la refonte lors d'un appui maintenu.
+- **Survol tactile (iOS)** : La sélection d'une catégorie (`/start/categories`) s'affiche immédiatement au tap (survols tactiles collants neutralisés via `@media (hover: hover)`).
+- **Modale d'import d'image** : Fond transparent en thème clair corrigé (surface verre).
+- **Indicateur d'édition** : L'encart natif « vous modifiez ce message » dans la modale de composition est restylé.
+
 ## [0.3.2] - 2026-08-21
 
 ### Security

@@ -41,9 +41,10 @@ $eps-navbar-height: 56px;
       transparent 50%
     ),
     #f4f7fa;
-  --eps-surface: rgba(255, 255, 255, 65%);
-  --eps-surface-hover: rgba(255, 255, 255, 85%);
-  --eps-card-bg: #2a2a29; // dark card (category cards): warm taupe/stone in light mode
+  --eps-surface: rgba(255, 255, 255, 72%);
+  --eps-surface-hover: rgba(255, 255, 255, 88%);
+  --eps-card-bg: #2f2f30; // dark card (category cards): warm taupe/stone in light mode
+  --eps-card-border: transparent; // no visible border on the dark card in light theme
   --eps-scrim-tint: rgba(255, 255, 255, 12%);
   --eps-text-primary: #111;
   --eps-text-secondary: #666;
@@ -53,14 +54,18 @@ $eps-navbar-height: 56px;
   --eps-nav-hover: rgba(0, 0, 0, 5%);
   --eps-nav-active-bg: rgba(93, 149, 255, 10%);
   --eps-nav-active-text: #fff;
-  --eps-brand-primary: #5d95ff;
-  --eps-radius: 35px;
+  --eps-brand-primary: #4571ff;
+  --eps-brand-glow: rgba(93, 149, 255, 40%);
+  --eps-radius: 24px;
   --eps-radius-pill: 9999px;
   --eps-btn-primary-bg: #111;
   --eps-btn-primary-text: #fff;
   --eps-input-search: rgba(225, 225, 230, 35%);
   --eps-box-shadow: rgba(149, 157, 165, 10%) 0px 8px 13px;
-  --eps-button-brand: #5d95ff;
+  --eps-shadow-card:
+    0 8px 22px -8px rgba(60, 70, 90, 20%),
+    inset 0 1px 0 rgba(255, 255, 255, 55%);
+  --eps-button-brand: #4571ff;
   --eps-button-brand-text: #fff;
   --eps-text-white: #fff;
   --color-text-primary: var(--eps-text-primary) !important;
@@ -71,7 +76,7 @@ $eps-navbar-height: 56px;
   --color-border-brand: var(--eps-brand-primary) !important;
   --color-bg-brand-base: var(--eps-brand-primary) !important;
   --color-bg-brand-soft: rgba(93, 149, 255, 15%) !important;
-  --color-text-brand-soft: rgba(0, 0, 0, 0%) !important;
+  --color-text-brand-soft: var(--eps-brand-primary) !important;
   --color-bg-brand-softest: rgba(0, 0, 0, 0%) !important;
   --color-bg-overlay-highlight: var(--eps-nav-hover) !important;
   --eps-favourite: #f43f5e;
@@ -91,9 +96,10 @@ $eps-navbar-height: 56px;
       transparent 35%
     ),
     #1f1e1e;
-  --eps-surface: rgba(22, 23, 26, 35%);
-  --eps-surface-hover: rgba(22, 23, 26, 45%);
-  --eps-card-bg: rgb(0 20 24); // dark card (category cards)
+  --eps-surface: rgba(26, 28, 33, 55%);
+  --eps-surface-hover: rgba(32, 35, 41, 66%);
+  --eps-card-bg: #141d1c; // dark card (category cards)
+  --eps-card-border: #262626; // full border around the dark card in dark theme
   --eps-scrim-tint: rgba(255, 255, 255, 6%);
   --eps-text-primary: #fff;
   --eps-text-secondary: #8e929d;
@@ -103,13 +109,18 @@ $eps-navbar-height: 56px;
   --eps-nav-active-bg: #000;
   --eps-nav-active-text: #fff;
   --eps-brand-primary: #84c3ff;
-  --eps-radius: 35px;
+  --eps-brand-glow: rgba(132, 195, 255, 40%);
+  --eps-compose-border: rgba(255, 255, 255, 8%);
+  --eps-box-shadow: rgba(0, 0, 0, 35%) 0px 8px 13px;
+  --eps-shadow-card:
+    0 6px 20px -8px rgba(0, 0, 0, 60%), inset 0 1px 0 rgba(255, 255, 255, 7%);
+  --eps-radius: 24px;
   --eps-radius-pill: 9999px;
   --eps-btn-primary-bg: #fff;
   --eps-btn-primary-text: #000;
   --eps-input-search: rgba(100, 100, 100, 55%);
-  --eps-button-brand: #0f0f0f;
-  --eps-button-brand-text: #8e929d;
+  --eps-button-brand: #5d95ff;
+  --eps-button-brand-text: #fff;
   --eps-text-white: #fff;
   --color-text-primary: var(--eps-text-primary) !important;
   --color-text-secondary: var(--eps-text-secondary) !important;
@@ -119,7 +130,7 @@ $eps-navbar-height: 56px;
   --color-border-brand: var(--eps-brand-primary) !important;
   --color-bg-brand-base: var(--eps-brand-primary) !important;
   --color-bg-brand-soft: rgba(93, 149, 255, 15%) !important;
-  --color-text-brand-soft: rgba(0, 0, 0, 0%) !important;
+  --color-text-brand-soft: var(--eps-brand-primary) !important;
   --color-bg-brand-softest: rgba(0, 0, 0, 0%) !important;
   --color-bg-overlay-highlight: var(--eps-nav-hover) !important;
   --eps-favourite: #f43f5e;
@@ -171,6 +182,17 @@ body.theme-contrast {
   --surface-background: transparent !important;
   --color-base: transparent !important;
   --color-surface: transparent !important;
+
+  // Theme-invariant scales. --eps-radius (primary surface) and
+  // --eps-radius-pill are defined per-theme in the mixins above.
+  --eps-radius-sm: 12px; // list items, small controls
+  --eps-radius-md: 16px; // menus, dropdowns, dialogs
+  --eps-radius-lg: 24px; // cards, carousel, bottom navbar
+
+  // Motion durations (vocabulary — transition migration lands with §3 motion).
+  --eps-dur-fast: var(--eps-dur-fast);
+  --eps-dur-base: var(--eps-dur-base);
+  --eps-dur-slow: var(--eps-dur-slow);
 }
 
 body::before {
@@ -292,7 +314,9 @@ body.theme-system {
 }
 
 .modal-root__overlay {
-  background: rgba(0, 0, 0, 45%) !important;
+  background: rgba(0, 0, 0, 40%) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
   opacity: 1 !important;
 }
 
@@ -343,6 +367,11 @@ body.theme-system {
   padding-right: clamp(16px, 4vw, 56px) !important;
   padding-bottom: 0 !important;
 
+  // Desktop has no top navbar (mobile-only) — reclaim the reserved 56px.
+  @media (width >= 769px) {
+    padding-top: 0 !important;
+  }
+
   @media (width <= 768px) {
     gap: 0;
     padding-left: 8px !important;
@@ -385,6 +414,12 @@ body.theme-system {
     padding-top: $eps-navbar-height;
     padding-bottom: 56px;
 
+    // Desktop: no navbar to clear — start at the viewport top.
+    @media (width >= 769px) {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
     @media (width <= 1264px) {
       flex: 0 0 104px !important;
       width: 104px;
@@ -407,7 +442,7 @@ body.theme-system {
       -webkit-mask-image: none;
       mask-image: none;
       transform: translateX(-100%);
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: transform var(--eps-dur-slow) cubic-bezier(0.25, 0.8, 0.25, 1);
 
       &.epsilon-layout__left--open {
         transform: translateX(0);
@@ -463,9 +498,10 @@ body.theme-system {
       padding: 0;
       background: transparent !important;
       color: var(--eps-text-primary);
-      font-size: 22px;
+      font-size: 1.375rem;
       font-weight: 700;
       line-height: 1.2;
+      letter-spacing: -0.01em;
     }
 
     #tabs-bar__portal .column-header__title-wrapper {
@@ -558,6 +594,10 @@ body.theme-system {
       flex: 1 1 auto !important;
       margin: 0 !important;
       padding: 0 !important;
+
+      // Native `contain: … paint` clips card shadows (cards are full column
+      // width); drop it so the elevation shadow renders past the card edge.
+      contain: none !important;
     }
 
     .columns-area__panels {
@@ -600,22 +640,23 @@ body.theme-system {
       min-width: 100% !important;
       box-sizing: border-box;
       background: var(--eps-surface) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
-      backdrop-filter: blur(12px) !important;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 30px !important;
+      border-radius: var(--eps-radius) !important;
+      box-shadow: var(--eps-shadow-card) !important;
       margin-bottom: 16px !important;
       padding: 16px !important;
       color: var(--eps-text-primary) !important;
       animation: epsilon-slide-up 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
       transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        background-color 0.2s ease !important;
+        transform var(--eps-dur-base) ease,
+        border-color var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease !important;
 
-      &:hover {
-        border-color: var(--eps-border-hover) !important;
-        background: var(--eps-surface-hover) !important;
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+          background: var(--eps-surface-hover) !important;
+        }
       }
     }
 
@@ -625,24 +666,57 @@ body.theme-system {
       pointer-events: none !important;
     }
 
+    // ==========================================
+    // EPSILON EXPERIMENT (removable) : ACTION-BAR TIGHT GROUP
+    // Native wrappers use flex-grow:1 → the 5 icons spread edge-to-edge.
+    // This packs them into a left-aligned group and pushes the menu right.
+    // To revert to the native spread: delete this whole block (up to the
+    // matching "END EPSILON EXPERIMENT : ACTION-BAR TIGHT GROUP" marker).
+    // ==========================================
+    .status__action-bar {
+      justify-content: flex-start !important;
+      gap: 34px !important;
+    }
+
+    .status__action-bar__button-wrapper {
+      flex: 0 0 auto !important;
+
+      &:last-child {
+        margin-inline-start: auto !important;
+      }
+    }
+
+    // END EPSILON EXPERIMENT : ACTION-BAR TIGHT GROUP
+    // ==========================================
+
+    // Touch targets (a11y, not an experiment): native action-bar buttons are
+    // only 24px tall — below the 44px minimum. Add vertical padding so the tap
+    // area reaches ~44px (icon stays 24px, so the visual size is unchanged).
+    .status__action-bar button,
+    .status__action-bar .icon-button {
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+    }
+
     .detailed-status__wrapper {
       box-sizing: border-box;
       margin-bottom: 16px;
       padding: 16px;
       border: 1px solid var(--eps-border);
-      border-radius: 30px;
+      border-radius: var(--eps-radius);
+      box-shadow: var(--eps-shadow-card);
       background: var(--eps-surface);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
       color: var(--eps-text-primary);
       overflow: hidden;
       animation: epsilon-slide-up 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
       transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+        border-color var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease;
 
-      &:hover {
-        border-color: var(--eps-border-hover);
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover);
+        }
       }
 
       .detailed-status {
@@ -698,10 +772,9 @@ body.theme-system {
       padding: 12px !important;
       margin-bottom: 16px;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 36px !important;
+      border-radius: var(--eps-radius) !important;
+      box-shadow: var(--eps-shadow-card) !important;
       background: var(--eps-surface) !important;
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
     }
 
     .notification-group,
@@ -709,18 +782,21 @@ body.theme-system {
       box-sizing: border-box;
       margin: 0 !important;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 30px !important;
-      background: var(--eps-surface) !important;
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
+      border-radius: var(--eps-radius) !important;
+
+      // Flat item on the structural glass panel — no nested backdrop-filter
+      // (avoids stacked translucency + N blurs per timeline).
+      background: transparent !important;
       overflow: hidden;
       transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+        border-color var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease;
 
-      &:hover {
-        border-color: var(--eps-border-hover) !important;
-        background: var(--eps-surface-hover) !important;
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+          background: var(--eps-nav-hover) !important;
+        }
       }
 
       .status {
@@ -735,7 +811,7 @@ body.theme-system {
 
     .notification-group,
     .notification-ungrouped {
-      padding: 14px 12px !important;
+      padding: 12px !important;
     }
 
     .follow_requests-unlocked_explanation {
@@ -787,11 +863,11 @@ body.theme-system {
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        color: #5d95ff;
-        filter: drop-shadow(0 0 12px rgba(93, 149, 255, 40%));
+        color: var(--eps-brand-primary);
+        filter: drop-shadow(0 0 12px var(--eps-brand-glow));
         transition:
-          opacity 0.2s ease,
-          transform 0.2s ease;
+          opacity var(--eps-dur-base) ease,
+          transform var(--eps-dur-base) ease;
 
         &:hover {
           opacity: 0.8;
@@ -834,6 +910,12 @@ body.theme-system {
       display: none;
     }
 
+    // Desktop: no navbar to clear — keep only the 24px breathing room.
+    @media (width >= 769px) {
+      margin-top: 0 !important;
+      padding-top: 24px !important;
+    }
+
     @media (width <= 1024px) {
       display: none !important;
     }
@@ -855,6 +937,57 @@ body.theme-system {
   margin: 0;
   margin-top: 24px;
   box-sizing: border-box;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    margin-bottom: 22px;
+    color: var(--eps-brand-primary);
+    text-decoration: none;
+    transition:
+      opacity var(--eps-dur-base) ease,
+      transform var(--eps-dur-base) ease;
+
+    &:hover {
+      opacity: 0.85;
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    // Wide sidebar: the custom Epsilon wordmark, large.
+    .logo--wordmark {
+      height: 36px;
+      width: auto;
+      fill: currentColor;
+      filter: drop-shadow(0 0 12px var(--eps-brand-glow));
+    }
+
+    // Icon mark: only shown in the collapsed rail.
+    &-mark {
+      display: none;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 12px var(--eps-brand-glow));
+    }
+
+    // Collapsed rail (769–1264px): mark only, centered.
+    @media (width >= 769px) and (width <= 1264px) {
+      justify-content: center;
+      padding: 0;
+
+      .logo--wordmark {
+        display: none;
+      }
+
+      &-mark {
+        display: block;
+      }
+    }
+  }
 
   &__divider {
     height: 1px;
@@ -890,10 +1023,10 @@ body.theme-system {
       color: inherit;
       width: 100%;
       transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+        opacity var(--eps-dur-base) ease,
+        transform var(--eps-dur-base) ease;
 
-      q &:hover {
+      &:hover {
         opacity: 0.8;
       }
     }
@@ -915,8 +1048,8 @@ body.theme-system {
     max-width: 200px;
     opacity: 1;
     transition:
-      max-width 0.3s ease,
-      opacity 0.2s ease;
+      max-width var(--eps-dur-slow) ease,
+      opacity var(--eps-dur-base) ease;
 
     strong {
       color: var(--eps-text-primary);
@@ -930,7 +1063,7 @@ body.theme-system {
   &__nav {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     flex: 1;
     background: var(--eps-surface) !important;
     -webkit-backdrop-filter: none !important;
@@ -955,9 +1088,9 @@ body.theme-system {
     padding: 12px 16px;
     color: var(--eps-text-primary);
     text-decoration: none;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    border-radius: 12px;
+    border-radius: var(--eps-radius-sm);
     transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
     transform-origin: left center;
     overflow: hidden;
@@ -985,27 +1118,25 @@ body.theme-system {
       max-width: 200px;
       opacity: 1;
       transition:
-        max-width 0.3s ease,
-        opacity 0.2s ease;
+        max-width var(--eps-dur-slow) ease,
+        opacity var(--eps-dur-base) ease;
     }
 
     &:hover,
     &:focus-visible {
       background: var(--eps-nav-hover);
-      border-radius: 999px;
+      border-radius: var(--eps-radius-pill);
       outline: none;
     }
 
     &:focus {
-      border-radius: 999px;
+      border-radius: var(--eps-radius-pill);
     }
 
     &--active {
-      --eps-text-primary:                              !important;
-
       background: var(--eps-nav-active-bg) !important;
       position: relative;
-      border-radius: 999px;
+      border-radius: var(--eps-radius-pill);
 
       svg {
         fill: var(--eps-brand-primary) !important;
@@ -1057,15 +1188,15 @@ body.theme-system {
     margin-bottom: 12px;
     padding: 12px 16px;
     border: none;
-    border-radius: 999px;
+    border-radius: var(--eps-radius-pill);
     background: var(--eps-brand-primary);
     color: var(--eps-text-white);
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
     cursor: pointer;
-    transition: filter 0.15s ease;
+    transition: filter var(--eps-dur-fast) ease;
 
     &:hover {
       filter: brightness(1.05);
@@ -1081,8 +1212,8 @@ body.theme-system {
       max-width: 200px;
       opacity: 1;
       transition:
-        max-width 0.3s ease,
-        opacity 0.2s ease;
+        max-width var(--eps-dur-slow) ease,
+        opacity var(--eps-dur-base) ease;
     }
   }
 
@@ -1098,9 +1229,9 @@ body.theme-system {
     background: transparent;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    border-radius: 999px;
+    border-radius: var(--eps-radius-pill);
     transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
     transform-origin: left center;
     width: 100%;
@@ -1136,19 +1267,19 @@ body.theme-system {
     opacity: 0;
     transition:
       grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.3s ease;
+      opacity var(--eps-dur-slow) ease;
 
     &--open {
       grid-template-rows: 1fr;
       opacity: 1;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
     &-inner {
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
   }
 
@@ -1190,14 +1321,14 @@ body.theme-system {
 
       p {
         color: var(--eps-text-secondary);
-        font-size: 12px;
+        font-size: 0.75rem;
         line-height: 1.5;
         margin: 0;
 
         a {
           color: inherit;
           text-decoration: none;
-          transition: color 0.2s ease;
+          transition: color var(--eps-dur-base) ease;
 
           &:hover {
             color: var(--eps-text-primary);
@@ -1209,15 +1340,18 @@ body.theme-system {
 
   @media (width <= 1264px) {
     &__meta {
-      max-width: 0;
-      opacity: 0;
-      margin: 0;
+      display: none;
     }
 
     &__profile {
-      padding: 24px;
+      padding: 0;
       justify-content: center;
       gap: 0;
+      margin-bottom: 22px;
+
+      &-link {
+        justify-content: center;
+      }
 
       .account__display-name {
         display: none !important;
@@ -1232,7 +1366,7 @@ body.theme-system {
     &__nav {
       align-items: center;
       padding: 16px 8px;
-      border-radius: 24px !important;
+      border-radius: var(--eps-radius-lg) !important;
       border: 1px solid var(--eps-border) !important;
     }
 
@@ -1242,7 +1376,7 @@ body.theme-system {
       height: 32px;
       justify-content: center;
       gap: 0;
-      border-radius: 16px !important;
+      border-radius: var(--eps-radius-md) !important;
 
       span {
         max-width: 0;
@@ -1261,7 +1395,7 @@ body.theme-system {
       padding: 12px;
       justify-content: center;
       gap: 0;
-      border-radius: 16px !important;
+      border-radius: var(--eps-radius-md) !important;
 
       span {
         max-width: 0;
@@ -1289,7 +1423,7 @@ body.theme-system {
         padding: 0 4px;
 
         p {
-          font-size: 9.5px;
+          font-size: 0.59375rem;
           line-height: 1.4;
           text-align: center;
           display: flex;
@@ -1311,7 +1445,7 @@ body.theme-system {
 .epsilon-sidebar__guest {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: 16px;
   margin: 0 12px 24px;
   background: var(--eps-surface) !important;
@@ -1321,7 +1455,7 @@ body.theme-system {
   &-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     margin-top: 12px;
   }
 
@@ -1332,11 +1466,11 @@ body.theme-system {
     gap: 8px;
     padding: 12px 16px;
     border-radius: var(--eps-radius-pill);
-    font-size: 15px;
+    font-size: 0.9375rem;
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    transition: all var(--eps-dur-base) ease;
     background: var(--eps-btn-primary-bg);
     color: var(--eps-btn-primary-text);
 
@@ -1367,7 +1501,7 @@ body.theme-system {
     align-items: center;
     padding: 16px 8px;
     border: 1px solid var(--eps-border);
-    border-radius: 24px !important;
+    border-radius: var(--eps-radius-lg) !important;
 
     .epsilon-sidebar__guest-btn {
       padding: 12px;
@@ -1375,7 +1509,7 @@ body.theme-system {
       height: 32px;
       justify-content: center;
       gap: 0;
-      border-radius: 16px !important;
+      border-radius: var(--eps-radius-md) !important;
 
       span {
         display: none;
@@ -1419,7 +1553,7 @@ body.theme-system {
 
   p {
     color: var(--eps-text-secondary) !important;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1.4;
     margin: 0 !important;
     text-align: center;
@@ -1430,13 +1564,13 @@ body.theme-system {
   }
 
   .button {
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     font-weight: 600 !important;
-    font-size: 15px !important;
-    padding: 10px !important;
+    font-size: 0.9375rem !important;
+    padding: 12px !important;
     width: 100% !important;
     text-align: center;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
 
     &::before {
       content: '';
@@ -1532,13 +1666,11 @@ body.theme-system {
 
 .epsilon-compose {
   background: var(--eps-surface) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  backdrop-filter: blur(12px) !important;
   border: 1px solid var(--eps-compose-border) !important;
   border-radius: var(--eps-radius) !important;
   padding: 20px !important;
   margin: 16px 0 !important;
-  box-shadow: none !important;
+  box-shadow: var(--eps-shadow-card) !important;
 
   .compose-form__highlightable,
   .compose-form__modifiers,
@@ -1549,8 +1681,8 @@ body.theme-system {
     padding: 0 !important;
     margin: 0 !important;
     transition:
-      border-color 0.3s ease,
-      box-shadow 0.3s ease !important;
+      border-color var(--eps-dur-slow) ease,
+      box-shadow var(--eps-dur-slow) ease !important;
     outline: none !important;
 
     &:focus,
@@ -1560,6 +1692,41 @@ body.theme-system {
       box-shadow: none !important;
       border: none !important;
       background: transparent !important;
+    }
+  }
+
+  // Native "you are editing this post" preview: reshape the flat tinted bar
+  // (radius 4/4/0/0 + bottom border) into a clean quoted card matching the modal.
+  .edit-indicator {
+    gap: 6px;
+    margin: 0 0 12px !important;
+    padding: 12px 14px !important;
+    border: 1px solid var(--eps-border) !important;
+    border-radius: var(--eps-radius-md) !important;
+    background: var(--eps-surface-hover) !important;
+    overflow: hidden;
+
+    &__header {
+      color: var(--eps-text-secondary) !important;
+    }
+
+    &__cancel {
+      border-radius: var(--eps-radius-pill) !important;
+      color: var(--eps-text-secondary) !important;
+      transition: background-color var(--eps-dur-base) ease;
+
+      &:hover {
+        background: var(--eps-surface) !important;
+        color: var(--eps-text-primary) !important;
+      }
+    }
+
+    &__content {
+      color: var(--eps-text-primary) !important;
+
+      a {
+        color: var(--eps-brand-primary) !important;
+      }
     }
   }
 
@@ -1585,8 +1752,8 @@ body.theme-system {
     background: transparent !important;
     border: none !important;
     color: var(--eps-text-primary) !important;
-    font-size: 16px !important;
-    padding: 10px 0 !important;
+    font-size: 1rem !important;
+    padding: 12px 0 !important;
     min-height: 44px !important;
     resize: none !important;
     scrollbar-width: none;
@@ -1639,14 +1806,14 @@ body.theme-system {
       justify-content: center !important;
       padding: 0 !important;
       color: var(--eps-text-primary) !important;
-      transition: all 0.2s ease !important;
+      transition: all var(--eps-dur-base) ease !important;
 
       &:hover {
         background: var(--eps-border-hover) !important;
       }
 
       i {
-        font-size: 18px !important;
+        font-size: 1.125rem !important;
         line-height: 1 !important;
         margin: 0 !important;
       }
@@ -1663,13 +1830,13 @@ body.theme-system {
     .privacy-dropdown__value {
       background: var(--eps-nav-hover) !important;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 999px !important;
-      padding: 6px 14px !important;
-      color: #5d95ff !important;
+      border-radius: var(--eps-radius-pill) !important;
+      padding: 8px 16px !important;
+      color: var(--eps-brand-primary) !important;
       font-weight: 500 !important;
       display: flex !important;
       align-items: center !important;
-      gap: 6px !important;
+      gap: 8px !important;
       cursor: pointer;
 
       .icon-button {
@@ -1686,8 +1853,8 @@ body.theme-system {
     .language-dropdown__button {
       background: var(--eps-nav-hover) !important;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 999px !important;
-      padding: 6px 14px !important;
+      border-radius: var(--eps-radius-pill) !important;
+      padding: 8px 16px !important;
       color: var(--eps-text-secondary) !important;
       font-weight: 500 !important;
 
@@ -1706,9 +1873,9 @@ body.theme-system {
   .epsilon-compose__submit {
     background: var(--eps-button-brand) !important;
     color: var(--eps-button-brand-text) !important;
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     padding: 8px 24px !important;
-    font-size: 14px !important;
+    font-size: 0.875rem !important;
     font-weight: 700 !important;
     text-transform: none !important;
     height: auto !important;
@@ -1740,12 +1907,12 @@ body.theme-system {
     .search__input {
       background: var(--eps-nav-hover) !important;
       border: none !important;
-      border-radius: 999px !important;
+      border-radius: var(--eps-radius-pill) !important;
       color: var(--eps-text-primary) !important;
-      padding: 14px 16px 14px 44px !important;
-      font-size: 15px !important;
+      padding: 12px 16px 12px 44px !important;
+      font-size: 0.9375rem !important;
       font-weight: 500 !important;
-      transition: all 0.2s ease !important;
+      transition: all var(--eps-dur-base) ease !important;
       box-shadow: none !important;
 
       &::placeholder {
@@ -1778,8 +1945,8 @@ body.theme-system {
     border: none !important;
 
     h4 {
-      color: var(--eps-brand-primary) !important;
-      font-size: 15px !important;
+      color: var(--eps-text-primary) !important;
+      font-size: 0.9375rem !important;
       font-weight: 600 !important;
       margin: 0 !important;
       text-transform: none !important;
@@ -1787,7 +1954,7 @@ body.theme-system {
 
     .epsilon-widgets__link {
       color: var(--eps-text-primary) !important;
-      font-size: 13px !important;
+      font-size: 0.8125rem !important;
       font-weight: 600 !important;
       text-decoration: none !important;
       cursor: pointer;
@@ -1847,13 +2014,13 @@ body.theme-system {
       display: flex !important;
       flex-direction: column !important;
       gap: 4px !important;
-      padding: 10px 0 !important;
+      padding: 12px 0 !important;
       border-bottom: none !important;
       background: transparent !important;
 
       &__name {
         font-weight: 700 !important;
-        font-size: 15px !important;
+        font-size: 0.9375rem !important;
         color: var(--eps-text-primary) !important;
 
         a {
@@ -1864,7 +2031,7 @@ body.theme-system {
 
       &__current {
         color: var(--eps-text-secondary) !important;
-        font-size: 13px !important;
+        font-size: 0.8125rem !important;
       }
     }
   }
@@ -1876,22 +2043,22 @@ body.theme-system {
   /* ========================================== */
   &__categorization {
     background: var(--eps-surface) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    backdrop-filter: blur(12px) !important;
     border: 1px solid var(--eps-border) !important;
     border-radius: var(--eps-radius) !important;
+    box-shadow: var(--eps-shadow-card) !important;
     padding: 24px !important;
     color: var(--eps-text-primary);
 
     h4 {
-      font-size: 18px;
+      font-size: 1.125rem;
       font-weight: 700;
       line-height: 1.3;
+      letter-spacing: -0.01em;
       margin: 0 0 12px;
     }
 
     p {
-      font-size: 14px;
+      font-size: 0.875rem;
       color: var(--eps-text-secondary);
       line-height: 1.4;
       margin: 0 0 20px;
@@ -1899,7 +2066,7 @@ body.theme-system {
       em {
         display: block;
         margin-top: 4px;
-        font-size: 13px;
+        font-size: 0.8125rem;
         opacity: 0.8;
       }
     }
@@ -1916,10 +2083,10 @@ body.theme-system {
         color: var(--eps-text-primary);
         padding: 8px 16px;
         border-radius: var(--eps-radius-pill);
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all var(--eps-dur-base) ease;
 
         &:hover,
         &--active {
@@ -1929,7 +2096,7 @@ body.theme-system {
 
         &--active {
           background: var(--eps-text-primary);
-          color: var(--eps-bg-base);
+          color: var(--eps-btn-primary-text);
         }
       }
     }
@@ -1943,7 +2110,7 @@ body.theme-system {
         background: transparent;
         border: none;
         color: var(--eps-text-secondary);
-        font-size: 14px;
+        font-size: 0.875rem;
         cursor: pointer;
         padding: 0;
 
@@ -1956,12 +2123,12 @@ body.theme-system {
         background: var(--eps-btn-primary-bg);
         color: var(--eps-btn-primary-text);
         border: none;
-        padding: 10px 24px;
+        padding: 12px 24px;
         border-radius: var(--eps-radius-pill);
         font-weight: 600;
-        font-size: 14px;
+        font-size: 0.875rem;
         cursor: pointer;
-        transition: opacity 0.2s ease;
+        transition: opacity var(--eps-dur-base) ease;
 
         &:hover {
           opacity: 0.9;
@@ -1987,19 +2154,20 @@ body.theme-system {
 
 .account-card {
   background: var(--eps-surface) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  backdrop-filter: blur(12px) !important;
   border: 1px solid var(--eps-border) !important;
   border-radius: var(--eps-radius) !important;
+  box-shadow: var(--eps-shadow-card) !important;
   overflow: hidden !important;
   padding-bottom: 16px !important;
   transition:
-    border-color 0.2s ease,
-    transform 0.2s ease !important;
+    border-color var(--eps-dur-base) ease,
+    transform var(--eps-dur-base) ease !important;
 
-  &:hover {
-    border-color: var(--eps-border-hover) !important;
-    background: var(--eps-surface-hover) !important;
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--eps-border-hover) !important;
+      background: var(--eps-surface-hover) !important;
+    }
   }
 
   &__header {
@@ -2044,7 +2212,7 @@ body.theme-system {
     border: 1px solid transparent !important;
     border-radius: var(--eps-radius-pill) !important;
     font-weight: 600 !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
 
     &:hover {
       background: var(--eps-brand-primary) !important;
@@ -2071,9 +2239,9 @@ body.theme-system {
   position: relative;
 
   &__header {
-    font-size: 15px !important;
+    font-size: 0.9375rem !important;
     font-weight: 600 !important;
-    color: var(--eps-brand-primary) !important;
+    color: var(--eps-text-primary) !important;
     margin-bottom: 16px !important;
     padding: 0 !important;
   }
@@ -2114,8 +2282,8 @@ body.theme-system {
       align-items: center !important;
       justify-content: center !important;
       transition:
-        color 0.2s ease,
-        transform 0.2s ease !important;
+        color var(--eps-dur-base) ease,
+        transform var(--eps-dur-base) ease !important;
 
       svg {
         width: 20px !important;
@@ -2164,18 +2332,22 @@ body.theme-system {
       scroll-snap-stop: always !important;
       padding: 16px !important;
       background: var(--eps-surface) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
-      backdrop-filter: blur(12px) !important;
       border: 1px solid var(--eps-border) !important;
-      border-radius: 24px !important;
+      border-radius: var(--eps-radius-lg) !important;
+
+      // No elevation shadow on carousel cards: a horizontal scroller must clip
+      // its edges (to hide off-screen cards), so any shadow would be cut there.
+      // Separation comes from the border + surface tint instead.
       display: grid !important;
       grid-template-columns: 48px 1fr !important;
       grid-template-rows: auto auto auto !important;
       gap: 12px !important;
       align-items: center !important;
 
-      &:hover {
-        border-color: var(--eps-border-hover) !important;
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+        }
       }
 
       > .icon-button {
@@ -2241,7 +2413,7 @@ body.theme-system {
         grid-column: 1 / -1 !important;
         grid-row: 2 !important;
         color: var(--eps-text-primary) !important;
-        font-size: 13.5px !important;
+        font-size: 0.84375rem !important;
         line-height: 1.4 !important;
         opacity: 0.9;
         display: -webkit-box;
@@ -2269,11 +2441,11 @@ body.theme-system {
         width: 100% !important;
         display: flex !important;
         justify-content: center !important;
-        background: var(--eps-nav-active-bg) !important;
+        background: var(--color-bg-brand-soft) !important;
         color: var(--eps-brand-primary) !important;
         border-radius: var(--eps-radius-pill) !important;
         font-weight: 600 !important;
-        font-size: 14px !important;
+        font-size: 0.875rem !important;
 
         &:hover {
           background: var(--eps-brand-primary) !important;
@@ -2293,9 +2465,9 @@ body.theme-system {
 .compose-form {
   .character-counter {
     margin-left: auto !important;
-    font-size: 14.5px !important;
+    font-size: 0.90625rem !important;
     font-weight: 700 !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--eps-dur-slow) ease !important;
     opacity: 0 !important;
     max-width: 0 !important;
     margin-right: 0 !important;
@@ -2340,6 +2512,11 @@ body.theme-system {
 
 #tabs-bar__portal .column-header__button {
   display: none !important;
+}
+
+#tabs-bar__portal .column-back-button {
+  border: none !important;
+  border-radius: 0 !important;
 }
 
 #tabs-bar__portal .account__section-headline {
@@ -2408,9 +2585,9 @@ body.theme-system {
   justify-content: center !important;
   background: transparent !important;
   border: none !important;
-  border-radius: 999px !important;
+  border-radius: var(--eps-radius-pill) !important;
   padding: 10px 20px !important;
-  font-size: 14px !important;
+  font-size: 0.875rem !important;
   font-weight: 400 !important;
   color: var(--eps-text-secondary) !important;
   text-decoration: none !important;
@@ -2434,13 +2611,9 @@ body.theme-system {
   /* État Actif */
   &.active,
   &--active {
-    font-weight: 400 !important;
-    color: var(--eps-text-primary) !important;
+    font-weight: 500 !important;
+    color: #16171a !important;
     background: linear-gradient(90deg, #ccdbff 0%, #a6c4ff 100%) !important;
-
-    body.theme-mastodon-light & {
-      color: var(--eps-btn-primary-bg) !important;
-    }
   }
 }
 
@@ -2488,6 +2661,12 @@ body.theme-system {
   box-sizing: border-box;
   background: transparent;
   transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Desktop (≥769px): no top navbar — the logo moves to the left sidebar.
+  // Kept mobile-only (≤768px) as the slide-out drawer's top bar.
+  @media (width >= 769px) {
+    display: none;
+  }
 
   &--hidden {
     top: -130px;
@@ -2564,10 +2743,10 @@ body.theme-system {
     justify-content: center;
     text-decoration: none;
     color: var(--eps-brand-primary);
-    filter: drop-shadow(0 0 12px rgba(93, 149, 255, 40%));
+    filter: drop-shadow(0 0 12px var(--eps-brand-glow));
     transition:
-      opacity 0.2s ease,
-      transform 0.2s ease;
+      opacity var(--eps-dur-base) ease,
+      transform var(--eps-dur-base) ease;
 
     &:hover {
       opacity: 0.8;
@@ -2603,7 +2782,7 @@ body.theme-system {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.2s ease;
+    transition: opacity var(--eps-dur-base) ease;
 
     &:hover {
       opacity: 0.7;
@@ -2648,7 +2827,7 @@ body.theme-system {
     -webkit-backdrop-filter: blur(16px) !important;
     backdrop-filter: blur(16px) !important;
     border: 1px solid var(--eps-border) !important;
-    border-radius: 24px !important;
+    border-radius: var(--eps-radius-lg) !important;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 10%) !important;
     padding: 0 8px !important;
     align-items: center !important;
@@ -2671,7 +2850,7 @@ body.theme-system {
 
       .button {
         flex: 1;
-        font-size: 14px !important;
+        font-size: 0.875rem !important;
         padding: 8px !important;
         white-space: nowrap;
       }
@@ -2689,14 +2868,15 @@ body.theme-system {
     flex: 1 !important;
     height: 100% !important;
     padding: 0 !important;
-    transition: color 0.2s ease !important;
+    transition: color var(--eps-dur-base) ease !important;
     text-decoration: none;
 
     svg {
       width: 26px !important;
       height: 26px !important;
       fill: currentColor !important;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+      transition: transform var(--eps-dur-slow)
+        cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     }
 
     .icon-with-badge__badge {
@@ -2712,6 +2892,12 @@ body.theme-system {
     &.active {
       color: var(--eps-brand-primary) !important;
 
+      // Trigger the overshoot spring declared on `svg` above (was unused):
+      // the icon springs up into place when the tab becomes active.
+      svg {
+        transform: translateY(-2px) scale(1.08) !important;
+      }
+
       &::after {
         content: '';
         position: absolute;
@@ -2721,7 +2907,8 @@ body.theme-system {
         height: 4px;
         border-radius: 50%;
         background-color: var(--eps-brand-primary);
-        animation: epsilon-slide-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        animation: epsilon-slide-up var(--eps-dur-slow)
+          cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
       }
     }
   }
@@ -2793,12 +2980,12 @@ body.theme-system {
   .search__input {
     background: var(--eps-nav-hover) !important;
     border: none !important;
-    border-radius: 9999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
-    padding: 14px 16px 14px 44px !important;
-    font-size: 15px !important;
+    padding: 12px 16px 12px 44px !important;
+    font-size: 0.9375rem !important;
     font-weight: 500 !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
     box-shadow: none !important;
 
     &::placeholder {
@@ -2842,7 +3029,7 @@ body.theme-system {
   z-index: 1040 !important;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
+  transition: opacity var(--eps-dur-slow) ease;
 
   &--open {
     opacity: 1;
@@ -2865,6 +3052,10 @@ body.theme-system {
       justify-content: flex-start !important;
       gap: 12px !important;
 
+      &-link {
+        justify-content: flex-start !important;
+      }
+
       .account__display-name {
         display: flex !important;
       }
@@ -2883,9 +3074,9 @@ body.theme-system {
       width: auto !important;
       height: auto !important;
       justify-content: flex-start !important;
-      padding: 14px 16px !important;
+      padding: 12px 16px !important;
       gap: 16px !important;
-      border-radius: 12px !important;
+      border-radius: var(--eps-radius-sm) !important;
 
       span {
         max-width: 200px !important;
@@ -2905,7 +3096,7 @@ body.theme-system {
       justify-content: center !important;
       padding: 12px 16px !important;
       gap: 8px !important;
-      border-radius: 12px !important;
+      border-radius: var(--eps-radius-sm) !important;
 
       span {
         max-width: 200px !important;
@@ -2918,8 +3109,8 @@ body.theme-system {
       width: stretch;
       height: auto !important;
       justify-content: flex-start !important;
-      padding: 14px 16px !important;
-      border-radius: 12px !important;
+      padding: 12px 16px !important;
+      border-radius: var(--eps-radius-sm) !important;
       gap: 16px !important;
 
       span {
@@ -2937,7 +3128,7 @@ body.theme-system {
 
       .link-footer p {
         justify-content: flex-start !important;
-        font-size: 12px !important;
+        font-size: 0.75rem !important;
         text-align: left !important;
       }
     }
@@ -2966,9 +3157,21 @@ body.theme-system {
 
 /* ========================================== */
 
+@media (width >= 769px) {
+  .epsilon-layout__center .epsilon-compose {
+    margin-top: 0 !important;
+  }
+}
+
+@media (width <= 768px) {
+  .epsilon-layout__center .epsilon-compose {
+    margin-top: 20px !important;
+  }
+}
+
 .epsilon-home-filter {
   position: relative;
-  margin-bottom: 24px !important;
+  margin-bottom: 16px !important;
   display: inline-block;
   z-index: 100 !important;
 
@@ -2983,8 +3186,8 @@ body.theme-system {
     gap: 8px;
     padding: 10px 20px !important;
     background: transparent;
-    border-radius: 999px;
-    font-size: 14px;
+    border-radius: var(--eps-radius-pill);
+    font-size: 0.875rem;
     font-weight: 500;
     color: var(--eps-text-primary);
     cursor: pointer;
@@ -2993,7 +3196,7 @@ body.theme-system {
     border: 1px solid var(--eps-brand-primary);
 
     @media (width <= 768px) {
-      padding: 14px 20px !important;
+      padding: 12px 20px !important;
     }
 
     &:hover,
@@ -3026,7 +3229,7 @@ body.theme-system {
     display: flex !important;
     flex-direction: column !important;
     gap: 16px !important;
-    border-radius: 16px !important;
+    border-radius: var(--eps-radius-md) !important;
     background: var(--eps-surface) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     backdrop-filter: blur(12px) !important;
@@ -3046,10 +3249,10 @@ body.theme-system {
       align-items: center !important;
       gap: 12px !important;
       color: var(--eps-text-primary) !important;
-      font-size: 14px !important;
+      font-size: 0.875rem !important;
       cursor: pointer !important;
       user-select: none !important;
-      transition: color 0.2s ease !important;
+      transition: color var(--eps-dur-base) ease !important;
 
       &:hover {
         opacity: 0.8;
@@ -3073,7 +3276,7 @@ body.theme-system {
 
       label {
         color: var(--eps-text-primary) !important;
-        font-size: 14px !important;
+        font-size: 0.875rem !important;
         cursor: pointer !important;
         user-select: none !important;
         margin: 0 !important;
@@ -3087,14 +3290,14 @@ body.theme-system {
   -webkit-backdrop-filter: blur(12px) !important;
   backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(255, 255, 255, 10%) !important;
-  border-radius: 16px !important;
+  border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 30%) !important;
   overflow: hidden !important;
   margin-top: 8px !important;
 
   .search__popout__section-header {
     padding: 12px 16px !important;
-    font-size: 12px !important;
+    font-size: 0.75rem !important;
     font-weight: 600 !important;
     color: var(--eps-text-secondary) !important;
     text-transform: uppercase !important;
@@ -3103,7 +3306,7 @@ body.theme-system {
 
   .search__popout__menu__item {
     padding: 12px 16px !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
 
     &:hover,
     &--selected {
@@ -3143,12 +3346,12 @@ body.theme-system {
   .search__input {
     background: var(--eps-nav-hover) !important;
     border: none !important;
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
-    padding: 14px 16px 14px 44px !important;
-    font-size: 15px !important;
+    padding: 12px 16px 12px 44px !important;
+    font-size: 0.9375rem !important;
     font-weight: 500 !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
     box-shadow: none !important;
 
     &::placeholder {
@@ -3179,24 +3382,24 @@ body.theme-system {
 
   h3 {
     color: var(--eps-text-primary) !important;
-    font-size: 16px !important;
+    font-size: 1rem !important;
     font-weight: 600 !important;
   }
 }
 
 ._comp_bundle_column_error__error {
-  background: var(--eps-bg-surface) !important;
+  background: var(--eps-surface) !important;
   border: none !important;
 
   button {
     background: var(--eps-nav-hover) !important;
     color: var(--eps-text-primary) !important;
     border: none !important;
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     padding: 10px 20px !important;
     margin-top: 16px !important;
     font-weight: 500 !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--eps-dur-base) ease !important;
 
     &:hover {
       opacity: 0.8;
@@ -3206,7 +3409,7 @@ body.theme-system {
 
 .load-gap {
   border-bottom: 0;
-  border-radius: 16px !important;
+  border-radius: var(--eps-radius-md) !important;
   margin-bottom: 8px !important;
 }
 
@@ -3255,7 +3458,7 @@ body.theme-system {
   -webkit-backdrop-filter: blur(12px) !important;
   backdrop-filter: blur(12px) !important;
   border: 1px solid var(--eps-border) !important;
-  border-radius: 16px !important;
+  border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
   padding: 6px !important;
 
@@ -3267,13 +3470,39 @@ body.theme-system {
   &__item {
     a,
     button {
-      border-radius: 10px !important;
+      border-radius: var(--eps-radius-sm) !important;
 
       &:hover,
       &:focus,
       &:active {
         background: var(--eps-nav-hover) !important;
       }
+    }
+  }
+}
+
+[class*='account_timeline__filterOverlay'],
+[class*='combobox__popover'],
+[class*='account_header__handleHelp']:not([class*='handleHelpButton']) {
+  background: var(--eps-surface) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--eps-border) !important;
+  border-radius: var(--eps-radius-md) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
+}
+
+[class*='account_timeline__filterSelectButton'] {
+  padding: 6px 12px !important;
+  border: none !important;
+  border-radius: var(--eps-radius-pill) !important;
+  background: transparent !important;
+  color: var(--eps-text-primary) !important;
+  transition: background-color var(--eps-dur-base) ease !important;
+
+  @media (hover: hover) {
+    &:hover {
+      background: var(--eps-nav-hover) !important;
     }
   }
 }
@@ -3302,7 +3531,7 @@ body.theme-system {
     a,
     button {
       color: var(--eps-text-primary) !important;
-      border-radius: 12px !important;
+      border-radius: var(--eps-radius-sm) !important;
 
       &:hover,
       &:focus,
@@ -3324,7 +3553,7 @@ body.theme-system {
   -webkit-backdrop-filter: blur(12px) !important;
   backdrop-filter: blur(12px) !important;
   border: 1px solid var(--eps-border) !important;
-  border-radius: 16px !important;
+  border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
 }
 
@@ -3337,7 +3566,7 @@ body.theme-system {
   .emoji-mart-search input {
     background: var(--eps-nav-hover) !important;
     border: 1px solid var(--eps-border) !important;
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
   }
 
@@ -3354,7 +3583,7 @@ body.theme-system {
   -webkit-backdrop-filter: blur(20px) !important;
   backdrop-filter: blur(20px) !important;
   border: 1px solid var(--eps-border) !important;
-  border-radius: 20px !important;
+  border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
 
   &__header {
@@ -3368,7 +3597,7 @@ body.theme-system {
   -webkit-backdrop-filter: blur(16px) !important;
   backdrop-filter: blur(16px) !important;
   border: 1px solid var(--eps-border) !important;
-  border-radius: 16px !important;
+  border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
 
   .emoji-mart-bar,
@@ -3379,7 +3608,7 @@ body.theme-system {
   .emoji-mart-search input {
     background: var(--eps-nav-hover) !important;
     border: 1px solid var(--eps-border) !important;
-    border-radius: 999px !important;
+    border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
   }
 
@@ -3396,3 +3625,197 @@ body.theme-system {
   border-radius: var(--eps-radius) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
 }
+
+/* ========================================== */
+
+/* EPSILON : ACCESSIBILITY (MOTION / MATERIAL) */
+
+/* ========================================== */
+
+// Reduced motion: neutralize entrance animations (per-card slide-up), springs
+// and smooth-scroll. End states are preserved (animations jump to their final
+// frame). Triggered by the OS setting AND Mastodon's in-app toggle.
+@mixin epsilon-reduced-motion {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// OS setting.
+@media (prefers-reduced-motion: reduce) {
+  @include epsilon-reduced-motion;
+}
+
+// In-app "Réduire la vitesse des animations" (html.reduce-motion).
+html.reduce-motion {
+  @include epsilon-reduced-motion;
+}
+
+// Reduced transparency: drop every backdrop blur and swap the translucent
+// surface tokens for opaque equivalents, so glass panels read as solid cards.
+@media (prefers-reduced-transparency: reduce) {
+  html[data-color-scheme='light'],
+  :root[data-theme='light'],
+  :root[data-theme='mastodon-light'],
+  body.theme-mastodon-light,
+  body.theme-light {
+    --eps-surface: #fff;
+    --eps-surface-hover: #f2f5f9;
+    --eps-scrim-tint: #eef2f7;
+    --eps-border: rgba(0, 0, 0, 12%);
+    --eps-border-hover: rgba(0, 0, 0, 22%);
+  }
+
+  html[data-color-scheme='dark'],
+  :root[data-theme='default'],
+  :root[data-theme='dark'],
+  :root[data-theme='contrast'],
+  body.theme-default,
+  body.theme-contrast {
+    --eps-surface: #26282c;
+    --eps-surface-hover: #2e3035;
+    --eps-scrim-tint: #26282c;
+    --eps-border: rgba(255, 255, 255, 14%);
+    --eps-border-hover: rgba(255, 255, 255, 24%);
+  }
+
+  *,
+  *::before,
+  *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+// Increased contrast: opaque surfaces + defined, high-contrast borders and
+// stronger secondary text. Triggered by the OS setting AND Mastodon's in-app
+// "Contraste : Élevé" (html[data-contrast="high"]).
+@mixin epsilon-contrast-light {
+  --eps-surface: #fff;
+  --eps-surface-hover: #eef2f7;
+  --eps-text-secondary: #3a3a3a;
+  --eps-border: rgba(0, 0, 0, 45%);
+  --eps-border-hover: rgba(0, 0, 0, 65%);
+}
+
+@mixin epsilon-contrast-dark {
+  --eps-surface: #202226;
+  --eps-surface-hover: #2a2c31;
+  --eps-text-secondary: #c4c8d0;
+  --eps-border: rgba(255, 255, 255, 45%);
+  --eps-border-hover: rgba(255, 255, 255, 65%);
+}
+
+@mixin epsilon-flatten-glass {
+  *,
+  *::before,
+  *::after {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+// OS setting.
+@media (prefers-contrast: more) {
+  html[data-color-scheme='light'],
+  :root[data-theme='light'],
+  :root[data-theme='mastodon-light'],
+  body.theme-mastodon-light,
+  body.theme-light {
+    @include epsilon-contrast-light;
+  }
+
+  html[data-color-scheme='dark'],
+  :root[data-theme='default'],
+  :root[data-theme='dark'],
+  :root[data-theme='contrast'],
+  body.theme-default,
+  body.theme-contrast {
+    @include epsilon-contrast-dark;
+  }
+
+  @include epsilon-flatten-glass;
+}
+
+// In-app "Contraste : Élevé" (html[data-contrast="high"]).
+html[data-contrast='high'][data-color-scheme='light'],
+html[data-contrast='high'] body.theme-mastodon-light,
+html[data-contrast='high'] body.theme-light {
+  @include epsilon-contrast-light;
+}
+
+html[data-contrast='high'][data-color-scheme='dark'],
+html[data-contrast='high'] body.theme-default,
+html[data-contrast='high'] body.theme-contrast {
+  @include epsilon-contrast-dark;
+}
+
+html[data-contrast='high'] {
+  @include epsilon-flatten-glass;
+}
+
+/* ========================================== */
+
+/* EPSILON : PRESS FEEDBACK (pointer-down)     */
+
+/* ========================================== */
+
+// Respond on press, not release (Apple "Response"): a quick scale-in gives
+// direct tactile feedback. Suppressed when motion is reduced — via the OS
+// media query AND Mastodon's in-app toggle (html.reduce-motion).
+html:not(.reduce-motion) {
+  @media (prefers-reduced-motion: no-preference) {
+    .epsilon-sidebar__compose:active,
+    .epsilon-sidebar__guest-btn:active,
+    .epsilon-sidebar__item:active,
+    .epsilon-filter-btn:active,
+    .epsilon-compose__submit:active,
+    .epsilon-bottom-navbar__item:active,
+    .tabs-bar__link:active,
+    .account__section-headline a:active,
+    .account__section-headline button:active,
+    .notification__filter-bar a:active,
+    .notification__filter-bar button:active,
+    .tag-pill:active,
+    .epsilon-category-tile:active,
+    .epsilon-category-suggestions__pill:active,
+    .epsilon-category-settings__item:active,
+    .account-card .button:active,
+    .sign-in-banner .button:active,
+    .disabled-account-banner .button:active {
+      transform: scale(0.96);
+    }
+
+    // Small round controls take a slightly deeper press.
+    .epsilon-layout__center .status__action-bar .icon-button:active,
+    .epsilon-compose .icon-button:active {
+      transform: scale(0.86);
+    }
+  }
+}
+
+/* ========================================== */
+
+/* EPSILON EXPERIMENT (removable) : NAV HIERARCHY BY WEIGHT */
+
+/* ========================================== */
+
+// Sidebar nav items were all weight 600 (active read only via the pill).
+// Lighten inactive items and bolden the active one so hierarchy reads by
+// weight. To revert: delete this whole block (through the END marker).
+.epsilon-sidebar__item {
+  font-weight: 500 !important;
+}
+
+.epsilon-sidebar__item--active {
+  font-weight: 700 !important;
+}
+
+// END EPSILON EXPERIMENT : NAV HIERARCHY BY WEIGHT
+
+/* ========================================== */

@@ -5,7 +5,7 @@ import { browserHistory } from 'mastodon/components/router';
 import api from '../api';
 
 import { showAlert } from './alerts';
-import { ensureComposeIsVisible, setComposeToStatus } from './compose';
+import { ensureComposeIsVisible, notifyEpsilonComposeOpen, setComposeToStatus } from './compose';
 import { importFetchedStatus, importFetchedAccount } from './importer';
 import { fetchContext } from './statuses_typed';
 import { deleteFromTimelines } from './timelines';
@@ -136,6 +136,13 @@ export const editStatus = (id) => (dispatch, getState) => {
     dispatch(fetchStatusSourceSuccess());
     ensureComposeIsVisible(getState);
     dispatch(setComposeToStatus(status, response.data.text, response.data.spoiler_text));
+    // ==========================================
+    // EPSILON : UI OPEN COMPOSE MODAL
+    // "Edit" prepares the composer after fetching the post source but, like
+    // mention/direct, never navigates — pop the Epsilon modal so the edit is
+    // visible (already filled with the post content).
+    notifyEpsilonComposeOpen();
+    // ==========================================
   }).catch(error => {
     dispatch(fetchStatusSourceFail(error));
   });

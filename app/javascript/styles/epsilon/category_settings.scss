@@ -21,15 +21,16 @@ $eps-card-input-bg: rgb(255 255 255 / 5%);
   &__title {
     margin: 0 0 8px;
     color: $eps-card-text;
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: 700;
     line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   &__hint {
     margin: 0 0 22px;
     color: $eps-card-text-muted;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 1.5;
   }
 
@@ -46,7 +47,7 @@ $eps-card-input-bg: rgb(255 255 255 / 5%);
     border-radius: 999px;
     background: $eps-card-input-bg;
     color: $eps-card-text;
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.2;
 
     &::placeholder {
@@ -101,7 +102,7 @@ $eps-card-input-bg: rgb(255 255 255 / 5%);
       linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
       $eps-card-gradient border-box;
     color: $eps-card-text;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     line-height: 1;
     cursor: pointer;
@@ -109,12 +110,14 @@ $eps-card-input-bg: rgb(255 255 255 / 5%);
       background 0.15s ease,
       color 0.15s ease;
 
-    &:hover {
-      background:
-        linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
-          padding-box,
-        linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
-        $eps-card-gradient border-box;
+    @media (hover: hover) {
+      &:hover {
+        background:
+          linear-gradient($eps-card-hover-overlay, $eps-card-hover-overlay)
+            padding-box,
+          linear-gradient(var(--eps-card-bg), var(--eps-card-bg)) padding-box,
+          $eps-card-gradient border-box;
+      }
     }
 
     &--active {

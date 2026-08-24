@@ -15,7 +15,7 @@ $eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
   &__description {
     margin-bottom: 24px;
     color: var(--eps-text-secondary);
-    font-size: 15px;
+    font-size: 0.9375rem;
     line-height: 1.5;
     text-align: center;
     overflow-wrap: anywhere;
@@ -99,8 +99,10 @@ $eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
     background 0.15s ease,
     color 0.15s ease;
 
-  &:hover {
-    background: var(--eps-nav-hover);
+  @media (hover: hover) {
+    &:hover {
+      background: var(--eps-nav-hover);
+    }
   }
 
   &--selected {
@@ -111,11 +113,11 @@ $eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
       color: var(--eps-text-white);
     }
 
-    &:hover {
-      color: var(--eps-text-primary);
-
-      .epsilon-category-tile__name {
-        color: var(--eps-text-primary);
+    @media (hover: hover) {
+      &:hover {
+        background:
+          linear-gradient(rgba(0, 0, 0, 12%), rgba(0, 0, 0, 12%)),
+          var(--eps-brand-primary);
       }
     }
   }
@@ -127,7 +129,7 @@ $eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
 
   &__name {
     color: var(--eps-text-primary);
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 500;
     overflow-wrap: anywhere;
     word-break: normal;
@@ -136,6 +138,6 @@ $eps-onboarding-gradient: linear-gradient(135deg, #ccdbff 0%, #a6c4ff 100%);
 
   &__stats {
     color: var(--eps-text-secondary);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }

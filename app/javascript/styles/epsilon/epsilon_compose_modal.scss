@@ -24,20 +24,26 @@
 
 body.epsilon-compose-open .modal-root__overlay {
   background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 
-.safety-action-modal {
+.safety-action-modal,
+.dialog-modal {
   background: var(--eps-surface) !important;
-  border: 1px solid var(--eps-border) !important;
+  border: 1px solid var(--eps-compose-border) !important;
   border-radius: var(--eps-radius) !important;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  box-shadow: var(--eps-shadow-card) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 
   &__top,
   &__bottom {
     background: transparent !important;
     border: none !important;
     border-radius: 0 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 
   &__actions {
@@ -60,4 +66,8 @@ body.epsilon-compose-open .modal-root__overlay {
       }
     }
   }
+}
+
+.dialog-modal__header {
+  border-bottom: 0 !important;
 }

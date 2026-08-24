@@ -77,7 +77,8 @@ import {
   OnboardingFollows,
   Explore,
   Search,
-  About,
+  // EPSILON : custom branded /about (manifesto) replaces native About
+  EpsilonAbout,
   PrivacyPolicy,
   TermsOfService,
   AccountFeatured,
@@ -212,7 +213,11 @@ class SwitchingColumnsArea extends PureComponent {
 
             <WrappedRoute path='/getting-started' component={GettingStarted} content={children} />
             <WrappedRoute path='/keyboard-shortcuts' component={KeyboardShortcuts} content={children} />
-            <WrappedRoute path='/about' component={About} content={children} />
+            {/* ========================================== */}
+            {/* EPSILON : ABOUT PAGE (custom manifesto)    */}
+            {/* ========================================== */}
+            <WrappedRoute path='/about' component={EpsilonAbout} content={children} />
+            {/* ========================================== */}
             <WrappedRoute path='/privacy-policy' component={PrivacyPolicy} content={children} />
             <WrappedRoute path='/terms-of-service/:date?' component={TermsOfService} content={children} />
 

@@ -19,10 +19,9 @@
     margin-bottom: 16px;
     padding: 12px !important;
     border: 1px solid var(--eps-border) !important;
-    border-radius: 36px !important;
+    border-radius: var(--eps-radius) !important;
+    box-shadow: var(--eps-shadow-card) !important;
     background: var(--eps-surface) !important;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
 
     .item-list {
       display: flex;
@@ -33,28 +32,44 @@
       background: transparent !important;
     }
 
+    // Flat items on the structural glass panel — no nested backdrop-filter
+    // (avoids stacked translucency + N blurs inside the container).
     .story,
     .trends__item,
     .explore-suggestions-card {
       box-sizing: border-box;
       margin: 0;
       border: 1px solid var(--eps-border);
-      border-radius: 24px;
-      background: var(--eps-surface);
-      -webkit-backdrop-filter: blur(12px);
-      backdrop-filter: blur(12px);
+      border-radius: var(--eps-radius-lg);
+      background: transparent;
       transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease;
+        border-color var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease;
 
-      &:hover {
-        border-color: var(--eps-border-hover);
-        background: var(--eps-surface-hover);
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover);
+          background: var(--eps-nav-hover);
+        }
       }
     }
 
+    // Posts tab: neutralize the timeline card's own glass so it doesn't
+    // double-blur inside this container; render as a flat bordered row.
     .status {
       margin: 0 !important;
+      background: transparent !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+      border: 1px solid var(--eps-border) !important;
+      border-radius: var(--eps-radius-lg) !important;
+
+      @media (hover: hover) {
+        &:hover {
+          border-color: var(--eps-border-hover) !important;
+          background: var(--eps-nav-hover) !important;
+        }
+      }
     }
   }
 }

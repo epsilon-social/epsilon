@@ -239,6 +239,15 @@ export function About () {
   return import('../../about');
 }
 
+// ==========================================
+// EPSILON : ABOUT PAGE
+// Custom branded /about (manifesto) replacing the native instance page.
+// ==========================================
+export function EpsilonAbout () {
+  return import('../../epsilon/about');
+}
+// ==========================================
+
 export function PrivacyPolicy () {
   return import('../../privacy_policy');
 }

@@ -39,5 +39,7 @@
 @use 'epsilon/layout';
 @use 'epsilon/auth';
 @use 'epsilon/explore';
+@use 'epsilon/profile';
+@use 'epsilon/about' as epsilon-about;
 
 /* ========================================== */

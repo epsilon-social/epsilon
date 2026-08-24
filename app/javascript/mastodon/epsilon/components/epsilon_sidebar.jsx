@@ -26,7 +26,9 @@ import TrendingUpIcon from '@/material-icons/400-24px/trending_up.svg?react';
 import TuneActiveIcon from '@/material-icons/400-24px/tune-fill.svg?react';
 import TuneIcon from '@/material-icons/400-24px/tune.svg?react';
 import { Icon } from 'mastodon/components/icon';
-import { useLocation } from 'react-router-dom';
+import { WordmarkLogo } from 'mastodon/components/logo';
+import epsilonLogo from '@/images/logo.svg';
+import { useLocation, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { openModal } from 'mastodon/actions/modal';
 import { useAppDispatch } from 'mastodon/store';
@@ -202,6 +204,11 @@ const EpsilonSidebar = () => {
 
   return (
     <div className='epsilon-sidebar'>
+      <Link to={me ? '/home' : '/explore'} className='epsilon-sidebar__logo' aria-label='Epsilon'>
+        <WordmarkLogo />
+        <img src={epsilonLogo} alt='' aria-hidden='true' className='epsilon-sidebar__logo-mark' />
+      </Link>
+
       <div className='epsilon-sidebar__profile'>
         {signedIn && me && <EpsilonProfileBlock />}
       </div>
