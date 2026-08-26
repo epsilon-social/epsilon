@@ -5,6 +5,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.6] - 2026-08-26
+
+### Changed
+
+- **Rebranding des emails transactionnels** : Refonte de l'habillage de tous les mails à l'identité Epsilon. Header sombre aplati (`#16171a`, sans mesh PNG), palette remappée sur les tokens `$eps-*` (accent/liens/boutons en bleu de marque `#4571ff`, hover `#3b60d9` — aligné sur le token web `--eps-brand-primary`, cf. 0.3.3), logos header/footer Epsilon (wordmark + icône), footer nettoyé (retrait de « Mastodon hosted on … » et du hostname sous le logo), titre du document piloté par l'instance, icônes « heading » brand-neutres recolorées en bleu (couleurs sémantiques succès/danger/login conservées). Textes du mail de bienvenue dé-mastodonisés (fr + en) : nom produit → « Epsilon », « serveur Mastodon » (réseau) → « fédiverse » ; objet « Bienvenue sur Epsilon » / « Welcome to Epsilon ». Modifs core balisées `EPSILON` (HAML + SCSS). Suppression des assets morts `header-bg-{start,end}.png`.
+
+### Removed
+
+- Assets emails inutilisés `mailer-new/common/header-bg-start.png` et `header-bg-end.png` (header désormais aplati).
+
 ## [0.3.5] - 2026-08-26
 
 ### Added

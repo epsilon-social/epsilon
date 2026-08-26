@@ -1,10 +1,30 @@
 @use '../fonts/inter';
 
+// ==========================================
+// EPSILON : EMAIL REBRANDING
+$eps-brand: #4571ff; // liens / accents (= --eps-brand-primary light, layout.scss) — resync manuel si le token web change
+$eps-brand-hover: #3b60d9; // brand assombri ~15% (hover liens/boutons)
+$eps-dark: #16171a; // header / bannières sombres (noir neutre web)
+$eps-text: #111; // --eps-text-primary (light)
+$eps-text-secondary: #666; // --eps-text-secondary (light)
+$eps-text-footer: #999; // texte footer
+$eps-text-on-dark: #8e929d; // texte secondaire sur fond sombre
+$eps-page-bg: #f7faf0; // crème (mesh aplati)
+$eps-extra-bg: #eef7f6; // section extra (cyan très doux)
+$eps-frame-bg: #eef4ff; // frame emphasis (teinte brand douce)
+$eps-mini-border: #e7ebf0; // bordure mini-cartes
+$eps-card-border: #e5e7eb; // bordures cartes
+$eps-check-bg: #e8f7f5; // checklist cochée (fond)
+$eps-check-border: #bfe6df; // checklist cochée (bordure)
+$eps-btn-bg: $eps-brand; // bouton CTA primaire (variante brand)
+$eps-btn-bg-hover: $eps-brand-hover; // hover bouton CTA
+// ==========================================
+
 body {
-  accent-color: #6364ff;
+  accent-color: $eps-brand;
   overflow-wrap: anywhere;
   margin: 0;
-  background-color: #f3f2f5;
+  background-color: $eps-page-bg;
   padding: 0;
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
@@ -46,8 +66,8 @@ table + p {
   min-width: 280px;
   font-family: Inter, 'Lucida Grande', sans-serif;
   overflow-wrap: anywhere;
-  color: #17063b;
-  background-color: #f3f2f5;
+  color: $eps-text;
+  background-color: $eps-page-bg;
 }
 
 .email-container {
@@ -64,7 +84,7 @@ table + p {
 
 .email-card-td {
   overflow: hidden;
-  box-shadow: 0 4px 16px 0 rgba(23, 6, 59, 4%);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 4%);
   background-color: #fff;
 }
 
@@ -79,9 +99,9 @@ table + p {
 .email-inner-card-td {
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 16px 0 rgba(23, 6, 59, 8%);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 8%);
   background-color: #fff;
-  border: 1px solid #dfdee3;
+  border: 1px solid $eps-card-border;
 }
 
 .email-inner-card-td {
@@ -93,12 +113,12 @@ table + p {
   padding: 18px;
   overflow: hidden;
   background-color: #fff;
-  border: 1px solid #dfdee3;
+  border: 1px solid $eps-card-border;
 }
 
 // Account
 .email-account-banner-table {
-  background-color: #f3f2f5;
+  background-color: $eps-page-bg;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -147,13 +167,13 @@ table + p {
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
-  color: #17063b;
+  color: $eps-text;
 }
 
 .email-account-handle {
   font-size: 14px;
   line-height: 20px;
-  color: #746a89;
+  color: $eps-text-secondary;
 }
 
 .email-account-stats-table {
@@ -161,12 +181,12 @@ table + p {
     padding-right: 16px;
     font-size: 14px;
     line-height: 20px;
-    color: #746a89;
+    color: $eps-text-secondary;
   }
 
   b {
     font-weight: 600;
-    color: #17063b;
+    color: $eps-text;
   }
 
   span {
@@ -184,7 +204,7 @@ table + p {
   p,
   ul,
   ol {
-    color: #17063b;
+    color: $eps-text;
     font-size: 14px;
     line-height: 20px;
 
@@ -193,11 +213,11 @@ table + p {
     }
 
     a:not([class]) {
-      color: #6364ff;
+      color: $eps-brand;
       text-decoration: none;
 
       &:hover {
-        color: #563acc !important;
+        color: $eps-brand-hover !important;
       }
     }
   }
@@ -232,11 +252,11 @@ table + p {
 }
 
 .email-border-top {
-  border-top: 1px solid #dfdee3;
+  border-top: 1px solid $eps-card-border;
 }
 
 .email-border-bottom {
-  border-bottom: 1px solid #dfdee3;
+  border-bottom: 1px solid $eps-card-border;
 }
 
 .email-desktop-flex {
@@ -266,8 +286,7 @@ table + p {
 // Header
 .email-header-td {
   padding: 16px 32px;
-  background-color: #1b001f;
-  background-image: url('../../images/mailer-new/common/header-bg-start.png');
+  background-color: $eps-dark;
   background-position: left top;
   background-repeat: repeat;
 }
@@ -308,7 +327,7 @@ table + p {
   padding-top: 26px;
   font-size: 11px;
   line-height: 13px;
-  color: #8d808f;
+  color: $eps-text-on-dark;
   text-align: left;
 }
 
@@ -347,7 +366,7 @@ table + p {
   }
 
   p {
-    color: #a399a5;
+    color: $eps-text-on-dark;
     font-size: 18px;
     line-height: 21.6px;
     font-weight: 500;
@@ -366,7 +385,7 @@ table + p {
   border-radius: 12px;
   background-color: #fff;
   border: 2px solid #fff;
-  box-shadow: 0 4px 16px 0 rgba(23, 6, 59, 8%);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 8%);
 }
 
 .email-header-card {
@@ -378,7 +397,7 @@ table + p {
   border-radius: 12px 12px 0 0;
   width: 236px;
   height: 80px;
-  background-color: #f3f2f5 !important;
+  background-color: $eps-page-bg !important;
   background-position: center !important;
   background-size: cover !important;
 }
@@ -397,7 +416,7 @@ table + p {
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-all;
-  color: #17063b;
+  color: $eps-text;
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
@@ -409,7 +428,7 @@ table + p {
 
 .email-header-card-description {
   margin-bottom: 12px;
-  color: #746a89;
+  color: $eps-text-secondary;
   font-size: 12px;
   line-height: 16px;
   max-height: 32px;
@@ -429,12 +448,11 @@ table + p {
 
 .email-header-after-inside-div {
   height: 30px;
-  background-color: #1b001f;
+  background-color: $eps-dark;
 }
 
 // Body content
 .email-body-td {
-  background-image: url('../../images/mailer-new/common/header-bg-end.png');
   background-position: left top;
   background-repeat: no-repeat;
 }
@@ -445,7 +463,7 @@ table + p {
 }
 
 .email-body-columns-td {
-  border-top: 1px solid #dfdee3;
+  border-top: 1px solid $eps-card-border;
   padding: 32px 24px 8px;
 }
 
@@ -458,14 +476,14 @@ table + p {
   & > p {
     font-size: 14px;
     line-height: 20px;
-    color: #17063b;
+    color: $eps-text;
 
     a {
-      color: #6364ff;
+      color: $eps-brand;
       text-decoration: none;
 
       &:hover {
-        color: #563acc !important;
+        color: $eps-brand-hover !important;
       }
     }
   }
@@ -474,7 +492,7 @@ table + p {
 // Texts
 .email-h2 {
   margin-bottom: 4px;
-  color: #17063b;
+  color: $eps-text;
   font-size: 18px;
   font-weight: 600;
   line-height: 28px;
@@ -482,14 +500,14 @@ table + p {
 
 .email-h-sub {
   margin-bottom: 16px;
-  color: #746a89;
+  color: $eps-text-secondary;
   font-size: 14px;
   line-height: 16px;
 }
 
 .email-p {
   margin-bottom: 16px;
-  color: #746a89;
+  color: $eps-text-secondary;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -506,13 +524,13 @@ table + p {
 }
 
 .email-footer-p {
-  color: #9b94ab;
+  color: $eps-text-footer;
   text-align: center;
   font-size: 12px;
   line-height: 20px;
 
   a {
-    color: #9b94ab;
+    color: $eps-text-footer;
     text-decoration: underline;
   }
 
@@ -527,7 +545,7 @@ table + p {
   max-width: 100%;
   border-collapse: separate;
   border-radius: 8px;
-  background-color: #6364ff;
+  background-color: $eps-btn-bg;
 }
 
 .email-btn-td {
@@ -594,26 +612,26 @@ table + p {
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
-  color: #17063b;
+  color: $eps-text;
 }
 
 .email-status-header-handle {
   font-size: 14px;
   line-height: 20px;
-  color: #746a89;
+  color: $eps-text-secondary;
 }
 
 .email-quote-header-name {
   font-size: 14px;
   font-weight: 600;
   line-height: 18px;
-  color: #17063b;
+  color: $eps-text;
 }
 
 .email-quote-header-handle {
   font-size: 13px;
   line-height: 18px;
-  color: #746a89;
+  color: $eps-text-secondary;
 }
 
 .email-status-content {
@@ -621,7 +639,7 @@ table + p {
 }
 
 .email-status-spoiler {
-  color: #746a89;
+  color: $eps-text-secondary;
   font-style: italic;
   margin-bottom: 8px;
 }
@@ -635,17 +653,17 @@ table + p {
     font-size: 14px;
     line-height: 20px;
     margin-bottom: 20px;
-    color: #17063b;
+    color: $eps-text;
     white-space: pre-wrap;
     unicode-bidi: plaintext;
   }
 
   a {
-    color: #6364ff;
+    color: $eps-brand;
     text-decoration: none;
 
     &:hover {
-      color: #563acc !important;
+      color: $eps-brand-hover !important;
     }
   }
 
@@ -669,18 +687,18 @@ table + p {
   margin-top: 16px;
   font-size: 14px;
   line-height: 20px;
-  color: #17063b;
+  color: $eps-text;
 
   img {
     border-radius: 8px;
   }
 
   a {
-    color: #6364ff;
+    color: $eps-brand;
     text-decoration: none;
 
     &:hover {
-      color: #563acc !important;
+      color: $eps-brand-hover !important;
     }
   }
 }
@@ -689,21 +707,21 @@ table + p {
   margin-top: 16px;
   font-size: 12px;
   line-height: 16px;
-  color: #746a89;
+  color: $eps-text-secondary;
 
   a {
-    color: #746a89;
+    color: $eps-text-secondary;
   }
 
   a:hover {
-    color: #746a89 !important;
+    color: $eps-text-secondary !important;
     text-decoration: underline !important;
   }
 }
 
 // Purple frame for emphasis
 .email-frame-table {
-  background-color: #efefff;
+  background-color: $eps-frame-bg;
   border-radius: 8px;
 }
 
@@ -724,8 +742,7 @@ table + p {
 // Banner item
 .email-banner-table {
   border-radius: 12px;
-  background-color: #1b001f;
-  background-image: url('../../images/mailer-new/common/header-bg-start.png');
+  background-color: $eps-dark;
   background-position: left top;
   background-repeat: repeat;
 }
@@ -756,7 +773,7 @@ table + p {
   }
 
   .email-btn-a {
-    color: #181820;
+    color: $eps-text;
     padding-left: 10px;
     padding-right: 10px;
   }
@@ -776,13 +793,13 @@ table + p {
   border-radius: 12px;
   border-width: 1px;
   border-style: solid;
-  border-color: #efefff;
+  border-color: $eps-frame-bg;
   background-color: #fff;
 }
 
 .email-checklist-checked {
-  border-color: #c4e6d7;
-  background-color: #eaf6f1;
+  border-color: $eps-check-border;
+  background-color: $eps-check-bg;
 }
 
 .email-checklist-td {
@@ -818,20 +835,20 @@ table + p {
 .email-checklist-text-td {
   h3 {
     margin: 0 0 4px;
-    color: #17063b;
+    color: $eps-text;
     font-size: 14px;
     font-weight: 600;
     line-height: 16.8px;
 
     .email-checklist-checked & {
-      color: #746a89;
+      color: $eps-text-secondary;
       text-decoration: line-through;
     }
   }
 
   p {
     margin: 0 0 12px;
-    color: #746a89;
+    color: $eps-text-secondary;
     font-size: 14px;
     line-height: 16.8px;
   }
@@ -867,13 +884,13 @@ table + p {
 }
 
 .email-link-with-arrow {
-  color: #6364ff;
+  color: $eps-brand;
   font-size: 14px;
   font-weight: 600;
   line-height: 16.8px;
 
   &:hover {
-    color: #563acc !important;
+    color: $eps-brand-hover !important;
   }
 
   span {
@@ -884,7 +901,7 @@ table + p {
 
 .email-column-action-td {
   padding: 24px 0;
-  color: #6364ff;
+  color: $eps-brand;
   font-size: 14px;
   font-weight: 600;
   line-height: 16.8px;
@@ -902,7 +919,7 @@ table + p {
 
 .email-mini-td {
   border-radius: 12px;
-  border: 1px solid #e8e6eb;
+  border: 1px solid $eps-mini-border;
   background-color: #fff;
   padding: 15px 16px;
 }
@@ -922,14 +939,14 @@ table + p {
   vertical-align: top;
 
   h3 {
-    color: #17063b;
+    color: $eps-text;
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
   }
 
   p {
-    color: #746a89;
+    color: $eps-text-secondary;
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
@@ -962,14 +979,14 @@ table + p {
   }
 
   h3 {
-    color: #17063b;
+    color: $eps-text;
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
   }
 
   p {
-    color: #746a89;
+    color: $eps-text-secondary;
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
@@ -1017,7 +1034,7 @@ table + p {
 
 .email-extra-td {
   padding: 32px 32px 24px;
-  background-color: #f0f0ff;
+  background-color: $eps-extra-bg;
   background-image: url('../../images/mailer-new/welcome/purple-extra-soft-spacer.png'); // Using an image to maintain the color even in forced dark modes
 
   .email-column-td {
@@ -1034,7 +1051,7 @@ table + p {
 .email-feature-td {
   padding: 24px;
   background-color: #fff;
-  border: 1px solid #e8e6eb;
+  border: 1px solid $eps-mini-border;
   border-radius: 12px;
 }
 

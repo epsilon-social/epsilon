@@ -2420,7 +2420,7 @@ fr:
       apps_android_action: Disponible sur Google Play
       apps_ios_action: Télécharger sur l'App Store
       apps_step: Téléchargez nos applications officielles.
-      apps_title: Applications Mastodon
+      apps_title: Applications Epsilon
       checklist_subtitle: 'Commencez votre aventure sur le web social:'
       checklist_title: Premières étapes
       edit_profile_action: Personnaliser
@@ -2428,16 +2428,16 @@ fr:
       edit_profile_title: Personnaliser votre profil
       explanation: Voici quelques conseils pour vous aider à démarrer
       feature_action: En savoir plus
-      feature_audience: Mastodon vous offre une possibilité unique de gérer votre audience sans intermédiaires. Mastodon peut être déployé sur votre propre infrastructure, ce qui vous permet de suivre et d'être suivi depuis n'importe quel autre serveur Mastodon et de n'être contrôlé par personne d'autre que vous.
+      feature_audience: Epsilon vous offre une possibilité unique de gérer votre audience sans intermédiaires. Construit sur le fédiverse ouvert, il vous permet de suivre et d'être suivi depuis n'importe quel autre serveur, sans être contrôlé par personne d'autre que vous.
       feature_audience_title: Construisez votre audience en toute confiance
-      feature_control: Vous savez mieux que quiconque ce que vous voulez voir sur votre fil principal. Pas d’algorithme ou de publicité qui vous fait perdre votre temps. Suivez n'importe qui sur n'importe quel serveur Mastodon depuis votre compte, recevez leurs messages dans l'ordre chronologique, et créez-vous un coin d’internet qui vous ressemble.
+      feature_control: Vous savez mieux que quiconque ce que vous voulez voir sur votre fil principal. Pas d’algorithme ou de publicité qui vous fait perdre votre temps. Suivez n'importe qui à travers le fédiverse depuis votre compte, recevez leurs messages dans l'ordre chronologique, et créez-vous un coin d’internet qui vous ressemble.
       feature_control_title: Gardez le contrôle de votre fil
-      feature_creativity: Mastodon prend en charge les messages audio, vidéo et photo, les descriptions d'accessibilité, les sondages, les avertissements de contenu, les avatars animés, les émojis personnalisés, le contrôle des vignettes et bien plus encore pour vous aider à vous exprimer en ligne. Que vous publiiez votre art, votre musique ou votre podcast, Mastodon est là pour vous.
+      feature_creativity: Epsilon prend en charge les messages audio, vidéo et photo, les descriptions d'accessibilité, les sondages, les avertissements de contenu, les avatars animés, les émojis personnalisés, le contrôle des vignettes et bien plus encore pour vous aider à vous exprimer en ligne. Que vous publiiez votre art, votre musique ou votre podcast, Epsilon est là pour vous.
       feature_creativity_title: Créativité inégalée
-      feature_moderation: Mastodon vous redonne le contrôle. Chaque serveur établit ses propres règles, appliquées localement et non pas de manière verticale comme sur les médias sociaux commerciaux, donnant davantage de souplesse pour répondre aux besoins de différentes communautés. Rejoignez un serveur avec des règles qui vous conviennent, ou bien hébergez le vôtre.
+      feature_moderation: Epsilon vous redonne le contrôle. Chaque serveur établit ses propres règles, appliquées localement et non pas de manière verticale comme sur les médias sociaux commerciaux, donnant davantage de souplesse pour répondre aux besoins de différentes communautés. Rejoignez un serveur avec des règles qui vous conviennent, ou bien hébergez le vôtre.
       feature_moderation_title: La modération comme elle doit être
       follow_action: Suivre
-      follow_step: Suivre des personnes intéressantes est l'essence de Mastodon.
+      follow_step: Suivre des personnes intéressantes est l'essence d'Epsilon.
       follow_title: Personnaliser votre fil principal
       follows_subtitle: Suivez des comptes populaires
       follows_title: Qui suivre
@@ -2451,10 +2451,10 @@ fr:
       post_action: Rédiger
       post_step: Dites bonjour au monde avec du texte, des photos, des vidéos ou des sondages.
       post_title: Rédiger votre premier message
-      share_step: Faites savoir à vos ami·e·s comment vous trouver sur Mastodon.
-      share_title: Partager votre profil Mastodon
+      share_step: Faites savoir à vos ami·e·s comment vous trouver sur Epsilon.
+      share_title: Partager votre profil Epsilon
       sign_in_action: Se connecter
-      subject: Bienvenue sur Mastodon
+      subject: Bienvenue sur Epsilon
       title: Bienvenue à bord, %{name} !
   users:
     follow_limit_reached: Vous ne pouvez pas suivre plus de %{limit} personnes
