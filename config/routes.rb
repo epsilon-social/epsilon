@@ -78,6 +78,13 @@ Rails.application.routes.draw do
       resource :setup, only: [:show, :update], controller: :setup
       resource :challenge, only: [:create]
       post 'captcha_confirmation', to: 'confirmations#confirm_captcha', as: :captcha_confirmation
+
+      # ==========================================
+      # EPSILON : SESSION BRIDGE (OAuth Bearer -> Devise web session)
+      # ==========================================
+      get 'bridge', to: 'bridge#show'
+      # ==========================================
+
       namespace :sessions do
         resource :security_key_options, only: :show
       end

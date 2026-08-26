@@ -176,4 +176,49 @@ RSpec.describe Rack::Attack, type: :request do
 
     it_behaves_like 'throttled endpoint'
   end
+
+  # ==========================================
+  # EPSILON : SESSION BRIDGE
+  # ==========================================
+  describe 'throttle excessive session bridge issuance by account' do
+    let(:user)  { Fabricate(:user) }
+    let(:token) { Fabricate(:accessible_access_token, resource_owner_id: user.id, scopes: 'read') }
+    let(:throttle) { 'throttle_epsilon_session_bridge/user' }
+    let(:limit)  { 10 }
+    let(:period) { 5.minutes }
+    let(:discriminator) { user.id }
+    let(:request) { -> { post path, headers: { 'REMOTE_ADDR' => remote_ip, 'Authorization' => "Bearer #{token.token}" } } }
+
+    context 'with exact path' do
+      let(:path) { '/api/v1/epsilon/session_bridge' }
+
+      it_behaves_like 'throttled endpoint'
+    end
+
+    context 'with path with format' do
+      let(:path) { '/api/v1/epsilon/session_bridge.json' }
+
+      it_behaves_like 'throttled endpoint'
+    end
+  end
+
+  describe 'throttle excessive session bridge consumption by IP address' do
+    let(:throttle) { 'throttle_epsilon_auth_bridge/ip' }
+    let(:limit)  { 60 }
+    let(:period) { 5.minutes }
+    let(:request) { -> { get path, headers: { 'REMOTE_ADDR' => remote_ip } } }
+
+    context 'with exact path' do
+      let(:path) { '/auth/bridge' }
+
+      it_behaves_like 'throttled endpoint'
+    end
+
+    context 'with path with format' do
+      let(:path) { '/auth/bridge.html' }
+
+      it_behaves_like 'throttled endpoint'
+    end
+  end
+  # ==========================================
 end

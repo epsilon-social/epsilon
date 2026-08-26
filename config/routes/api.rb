@@ -95,6 +95,10 @@ namespace :api, format: false do
       end
 
       # ==========================================
+      # EPSILON : SESSION BRIDGE (OAuth Bearer -> Devise web session)
+      # ==========================================
+      post 'session_bridge', to: 'session_bridge#create'
+      # ==========================================
     end
 
     namespace :timelines do

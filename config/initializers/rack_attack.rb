@@ -153,6 +153,23 @@ class Rack::Attack
     req.warden_user_id if (req.put? || req.patch?) && (req.path_matches?('/auth') || req.path_matches?('/auth/password'))
   end
 
+  # ==========================================
+  # EPSILON : SESSION BRIDGE
+  # ==========================================
+  # Issuance: authenticated first-party Bearer. A legitimate client only calls
+  # this a handful of times a day (cold starts), so keep the limit tight.
+  throttle('throttle_epsilon_session_bridge/user', limit: 10, period: 5.minutes) do |req|
+    req.authenticated_user_id if req.post? && req.path_matches?('/api/v1/epsilon/session_bridge')
+  end
+
+  # Consumption: unauthenticated (only the one-time bridge token). Not covered by
+  # any existing /auth throttle (path_matches?('/auth') anchors to /auth exactly),
+  # so it needs its own rule, keyed by IP.
+  throttle('throttle_epsilon_auth_bridge/ip', limit: 60, period: 5.minutes) do |req|
+    req.throttleable_remote_ip if req.get? && req.path_matches?('/auth/bridge')
+  end
+  # ==========================================
+
   self.throttled_responder = lambda do |request|
     now        = Time.now.utc
     match_data = request.env['rack.attack.match_data']

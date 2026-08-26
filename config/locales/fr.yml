@@ -1889,6 +1889,7 @@ fr:
     authentication_methods:
       otp: application d'authentification à deux facteurs
       password: mot de passe
+      session_bridge: pont de session
       sign_in_token: code de sécurité par courriel
       webauthn: clés de sécurité
     description_html: Si vous voyez une activité que vous ne reconnaissez pas, envisagez de changer votre mot de passe et d'activer l'authentification à deux facteurs.

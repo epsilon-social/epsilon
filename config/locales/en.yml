@@ -1889,6 +1889,7 @@ en:
     authentication_methods:
       otp: two-factor authentication app
       password: password
+      session_bridge: session bridge
       sign_in_token: email security code
       webauthn: security keys
     description_html: If you see activity that you don't recognize, consider changing your password and enabling two-factor authentication.
