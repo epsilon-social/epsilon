@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-08-26
+
+### Added
+
+- **Safe-areas iOS (coque mobile)** : Compensation des zones système de l'iPhone (encoche / Dynamic Island / indicateur home) via `env(safe-area-inset-*)` sur les surfaces `fixed`/`sticky` — barre supérieure et son dégradé, barre de navigation inférieure, paddings du layout, tiroir latéral gauche, modale de composition. Neutre hors coque (Safari, desktop, PWA → `env()` vaut 0) ; s'active uniquement quand la WebView est en plein écran (edge-to-edge).
+
 ## [0.3.3] - 2026-08-24
 
 ### Added
