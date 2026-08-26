@@ -376,7 +376,9 @@ body.theme-system {
     gap: 0;
     padding-left: 8px !important;
     padding-right: 8px !important;
-    padding-top: $eps-navbar-height !important;
+    padding-top: calc(
+      #{$eps-navbar-height} + env(safe-area-inset-top)
+    ) !important;
   }
 
   &__left {
@@ -435,7 +437,9 @@ body.theme-system {
       height: 100vh !important;
       height: 100dvh !important;
       margin: 0 !important;
-      padding-top: 0 !important;
+      padding-top: env(safe-area-inset-top) !important;
+      padding-bottom: env(safe-area-inset-bottom) !important;
+      padding-left: env(safe-area-inset-left) !important;
       background: var(--eps-bg-base) !important;
       border-right: 1px solid var(--eps-border) !important;
       z-index: 1050 !important;
@@ -2652,12 +2656,12 @@ body.theme-system {
   top: 0;
   left: 0;
   width: 100%;
-  height: $eps-navbar-height;
+  height: calc(#{$eps-navbar-height} + env(safe-area-inset-top));
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: env(safe-area-inset-top) 16px 0;
   box-sizing: border-box;
   background: transparent;
   transition: top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2678,7 +2682,7 @@ body.theme-system {
     left: 0;
     z-index: 0;
     width: 100%;
-    height: 84px;
+    height: calc(84px + env(safe-area-inset-top));
     pointer-events: none;
     background-color: var(--eps-scrim-tint);
     -webkit-backdrop-filter: blur(14px);
@@ -2686,13 +2690,13 @@ body.theme-system {
     -webkit-mask-image: linear-gradient(
       to bottom,
       black 0%,
-      black 48px,
+      black calc(48px + env(safe-area-inset-top)),
       transparent 100%
     );
     mask-image: linear-gradient(
       to bottom,
       black 0%,
-      black 48px,
+      black calc(48px + env(safe-area-inset-top)),
       transparent 100%
     );
   }
@@ -2804,7 +2808,7 @@ body.theme-system {
 
 @media (width <= 768px) {
   .epsilon-layout__center {
-    padding-bottom: 100px !important;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
   }
 
   .epsilon-layout__center #tabs-bar__portal .column-header,
@@ -2817,7 +2821,7 @@ body.theme-system {
   .epsilon-bottom-navbar {
     display: flex !important;
     position: fixed !important;
-    bottom: 12px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
     left: 16px !important;
     right: 16px !important;
     width: auto !important;
