@@ -5,6 +5,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-08-26
+
+### Added
+
+- **Pont de session (application native)** : Nouvel échange permettant à la coque mobile (WebView) d'ouvrir une session web à partir de son jeton OAuth, sans redemander les identifiants au démarrage à froid. Flux en deux temps — émission (`POST /api/v1/epsilon/session_bridge`, authentifiée par Bearer) puis consommation (`GET /auth/bridge`) — où le jeton d'échange à usage unique transite par Redis (haché, TTL 30 s, consommé de façon atomique) et n'apparaît jamais dans une URL journalisée. La session ouverte est strictement équivalente à une connexion normale (mêmes `SessionActivation`, cookie de session et portée du jeton web).
+
+### Security
+
+- **Pont de session — garde-fous** : Réservé à l'application first-party Epsilon (`EPSILON_FIRST_PARTY_CLIENT_ID`, fail-closed) ; refusé aux comptes staff / privilégiés (deny-by-default) et aux comptes non fonctionnels ; ré-vérification de l'état du compte et du jeton au moment de la consommation ; `reset_session` à l'ouverture (anti-fixation) ; limitation de débit (10 émissions / 5 min / compte, 60 consommations / 5 min / IP) ; isolation entre instances (domaine local inclus dans la clé Redis) ; journalisation dans `LoginActivity` (méthode `session_bridge`). Couverture de tests complète : services d'émission / consommation, endpoints, équivalence avec un login normal, anti-fixation et throttles.
+
 ## [0.3.4] - 2026-08-26
 
 ### Added
