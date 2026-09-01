@@ -18,6 +18,7 @@ import NotificationsActiveIcon from '@/material-icons/400-24px/notifications-fil
 import NotificationsIcon from '@/material-icons/400-24px/notifications.svg?react';
 import HomeActiveIcon from '@/material-icons/400-24px/home-fill.svg?react';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
+import SearchIcon from '@/material-icons/400-24px/search.svg?react';
 import SettingsIcon from '@/material-icons/400-24px/settings.svg?react';
 import StarActiveIcon from '@/material-icons/400-24px/heart-fill.svg?react';
 import StarIcon from '@/material-icons/400-24px/heart.svg?react';
@@ -61,6 +62,7 @@ import {
 
 const messages = defineMessages({
   home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
+  search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
   notifications: { id: 'tabs_bar.notifications', defaultMessage: 'Notifications' },
   explore: { id: 'explore.title', defaultMessage: 'Trending' },
   firehose: { id: 'column.firehose', defaultMessage: 'Live feeds' },
@@ -253,6 +255,10 @@ const EpsilonSidebar = () => {
 
         {signedIn && (
           <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={getNavClass('/home', true)} />
+        )}
+
+        {signedIn && (
+          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={getNavClass('/search')} />
         )}
 
         {signedIn && showTrending && (

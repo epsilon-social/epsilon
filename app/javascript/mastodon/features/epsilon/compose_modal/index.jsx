@@ -8,6 +8,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 
 import { resetCompose, mountCompose, unmountCompose } from 'mastodon/actions/compose';
 import ComposeFormContainer from 'mastodon/features/compose/containers/compose_form_container';
+import { emitWebOverlay } from 'mastodon/features/epsilon/native_bridge/emit';
 import { useAppSelector, useAppDispatch } from 'mastodon/store';
 
 const EpsilonComposeContext = createContext({
@@ -145,7 +146,11 @@ export const EpsilonComposeProvider = ({ children }) => {
     }
 
     document.body.classList.add('epsilon-compose-open');
-    return () => document.body.classList.remove('epsilon-compose-open');
+    emitWebOverlay('compose', true);
+    return () => {
+      document.body.classList.remove('epsilon-compose-open');
+      emitWebOverlay('compose', false);
+    };
   }, [open]);
 
   useEffect(() => {

@@ -10,7 +10,13 @@
   max-width: 880px;
   min-height: 100dvh;
   margin: 0 auto;
-  padding: 40px 20px;
+
+  // Full-bleed dans la coque (le flux OAuth n'a plus de compensation native) :
+  // on garde les marges de base et on dégage les zones système. Neutre sur le
+  // web (env() vaut 0 hors WebView edge-to-edge).
+  padding: max(40px, env(safe-area-inset-top))
+    max(20px, env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
   display: grid;
   grid-template-columns: 264px minmax(0, 480px);
   justify-content: center;
@@ -478,6 +484,19 @@
 
     .form-container {
       padding: 26px 22px !important;
+    }
+
+    // iOS zoome au focus quand la police est < 16px (les inputs valent 14px) :
+    // on remonte à 16px sur mobile, sans toucher au design desktop ni désactiver
+    // le zoom global (régression accessibilité).
+    input[type='text'],
+    input[type='email'],
+    input[type='password'],
+    input[type='tel'],
+    input[type='number'],
+    select,
+    textarea {
+      font-size: 16px;
     }
 
     .progress-tracker {

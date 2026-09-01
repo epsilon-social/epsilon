@@ -312,6 +312,9 @@ interface DropdownProps<Item extends object | null = MenuItem> {
   status?: ImmutableMap<string, unknown>;
   needsStatusRefresh?: boolean;
   forceDropdown?: boolean;
+  // EPSILON : source name forwarded to the native overlay bridge when the menu
+  // opens as an ACTIONS modal (distinguishes profile ⋯ from post ⋯).
+  overlaySource?: string;
   className?: string;
   renderItem?: RenderItemFn<Item>;
   renderHeader?: RenderHeaderFn<Item>;
@@ -338,6 +341,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
   status,
   needsStatusRefresh,
   forceDropdown = false,
+  overlaySource,
   className,
   renderItem,
   renderHeader,
@@ -439,6 +443,10 @@ export const Dropdown = <Item extends object | null = MenuItem>({
                 actions: items,
                 onClick: handleItemClick,
                 className,
+                // EPSILON : tag for the native overlay bridge. Explicit prop wins
+                // (profile ⋯), else a status-bound menu is a post ⋯.
+                overlaySource:
+                  overlaySource ?? (status ? 'post-actions' : undefined),
               },
             }),
           );
@@ -466,6 +474,8 @@ export const Dropdown = <Item extends object | null = MenuItem>({
       forceDropdown,
       handleClose,
       statusId,
+      status,
+      overlaySource,
       needsStatusRefresh,
       className,
     ],

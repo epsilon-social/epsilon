@@ -2941,6 +2941,28 @@ body.theme-system {
 
 /* ========================================== */
 
+/* EPSILON : IN-APP CONTEXT (coque mobile)    */
+
+/* ========================================== */
+
+// Dans la coque Expo (UA « EpsilonMobile/ »), la tab bar native remplace
+// notre barre du bas : on la masque et on reporte le dégagement bas.
+html.epsilon-in-app {
+  .epsilon-bottom-navbar {
+    display: none !important;
+  }
+
+  @media (width <= 768px) {
+    .epsilon-layout__center {
+      // Plus de barre flottante à réserver : on retombe sur la marge de confort
+      // (16px, norme iOS) tout en gardant l'inset de l'indicateur home.
+      padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
+    }
+  }
+}
+
+/* ========================================== */
+
 /* EPSILON FIX : KILL MASTODON NATIVE NAVBAR  */
 
 /* ========================================== */
@@ -2987,7 +3009,9 @@ body.theme-system {
     border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
     padding: 12px 16px 12px 44px !important;
-    font-size: 0.9375rem !important;
+
+    // 16px minimum : évite le zoom au focus iOS (était 0.9375rem = 15px).
+    font-size: 1rem !important;
     font-weight: 500 !important;
     transition: all var(--eps-dur-base) ease !important;
     box-shadow: none !important;
@@ -3353,7 +3377,9 @@ body.theme-system {
     border-radius: var(--eps-radius-pill) !important;
     color: var(--eps-text-primary) !important;
     padding: 12px 16px 12px 44px !important;
-    font-size: 0.9375rem !important;
+
+    // 16px minimum : évite le zoom au focus iOS (était 0.9375rem = 15px).
+    font-size: 1rem !important;
     font-weight: 500 !important;
     transition: all var(--eps-dur-base) ease !important;
     box-shadow: none !important;

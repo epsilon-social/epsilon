@@ -15,6 +15,7 @@ import { InlineFollowSuggestions } from 'mastodon/features/home_timeline/compone
 import { useIdentity } from 'mastodon/identity_context';
 import EpsilonCategorySuggestions from 'mastodon/features/epsilon/category_suggestions';
 import { EpsilonComposeProvider, useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
+import { EpsilonNativeBridge } from 'mastodon/features/epsilon/native_bridge';
 import { EpsilonScrollRestore } from 'mastodon/features/epsilon/scroll_restore';
 import { FormattedMessage } from 'react-intl';
 
@@ -132,6 +133,7 @@ EpsilonLayoutContent.propTypes = {
 
 const EpsilonLayout = ({ children }) => (
   <EpsilonComposeProvider>
+    <EpsilonNativeBridge />
     <EpsilonScrollRestore />
     <EpsilonLayoutContent>{children}</EpsilonLayoutContent>
   </EpsilonComposeProvider>

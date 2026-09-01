@@ -5,6 +5,20 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.7] - 2026-09-01
+
+### Added
+
+- **Détection du contexte in-app (coque mobile)** : Ajout d'une classe `epsilon-in-app` sur `<html>` lorsque la page est servie dans la WebView Expo, détectée via le préfixe stable `EpsilonMobile/` de l'User-Agent. Script inline exécuté avant le premier rendu (pas de flash), passé par `javascript_inline_tag` (empreinte CSP). Neutre pour le web (l'UA ne matche pas). Aucun couplage à la coque au-delà de l'UA.
+- **Pont d'overlays natif** : Nouveau canal `postMessage` entre le web et la coque. Web → natif : émission de `epsilon:web-overlay { visible, source }` chaque fois qu'un overlay s'ouvre/se ferme, la coque agrégeant les sources indépendamment (jamais de compteur global). L'observation de la pile de modales est **générique** (aucune liste en dur) — tout nouveau modalType retombe sur un `source` kebab-case, donc aucun overlay ne peut être silencieusement manqué. Sources nommées : `navigation`, `compose`, `logout`, `report`, `block`, `mute`, `filter`, `domain-block`, `media-viewer`, `post-actions`, `profile-actions`. Les menus ⋯ de post et de profil (même modalType `ACTIONS`) sont distingués via une prop `overlaySource`. Natif → web : `epsilon:open-menu` ouvre le tiroir latéral en réutilisant l'action `openNavigation` existante. Listener durci (string seule, `JSON.parse` protégé, filtre `epsilon:`). Strictement no-op hors WebView (`window.ReactNativeWebView` feature-detecté).
+- **Lien « Rechercher » dans la barre latérale** : Ajout d'un accès direct à la recherche (`/search`) dans la sidebar gauche, pour les utilisateurs connectés.
+
+### Changed
+
+- **Masquage de la barre de navigation web du bas en coque** : Sous `.epsilon-in-app`, la barre flottante du bas est masquée (la tab bar native de la coque la remplace) et le dégagement bas du layout retombe sur la marge de confort (`max(16px, safe-area-inset-bottom)`). Neutre pour le web.
+- **Écran de connexion — safe-areas et anti-zoom iOS** : Paddings de la page d'auth ancrés sur `env(safe-area-inset-*)` (plein écran propre en coque, neutre sur web/desktop/PWA où `env()` vaut 0). Champs de formulaire portés à 16px sur mobile pour empêcher le zoom automatique d'iOS au focus, sans désactiver le zoom global (pas de régression d'accessibilité).
+- **Champ de recherche à 16px** : Taille de police du champ de recherche remontée de 15px à 16px (même motif anti-zoom iOS).
+
 ## [0.3.6] - 2026-08-26
 
 ### Changed

@@ -246,6 +246,8 @@ export const Account: React.FC<AccountProps> = ({
         icon='ellipsis-h'
         iconComponent={MoreHorizIcon}
         title={intl.formatMessage(messages.more)}
+        // EPSILON : native overlay bridge — profile ⋯ menu (account row)
+        overlaySource='profile-actions'
       />
     );
   }

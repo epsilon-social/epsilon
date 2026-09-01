@@ -82,6 +82,8 @@ export const AccountMenu: FC<{ accountId: string }> = ({ accountId }) => {
       icon='ellipsis-v'
       iconComponent={MoreHorizIcon}
       className={classes.buttonMenu}
+      // EPSILON : native overlay bridge — profile ⋯ menu
+      overlaySource='profile-actions'
     />
   );
 };
