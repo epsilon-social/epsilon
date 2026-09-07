@@ -46,6 +46,15 @@ Rails.application.routes.draw do
       get 'nodeinfo', to: 'node_info#index', as: :nodeinfo, defaults: { format: 'json' }
       get 'webfinger', to: 'webfinger#show', as: :webfinger
     end
+
+    # ==========================================
+    # EPSILON : UNIVERSAL LINKS (Apple App Site Association)
+    # Served outside the :well_known module scope on purpose — the controller
+    # lives under Epsilon::WellKnown. No .json extension, no redirect.
+    # ==========================================
+    get 'apple-app-site-association', to: 'epsilon/well_known/apple_app_site_association#show'
+    # ==========================================
+
     get 'change-password', to: redirect('/auth/edit'), as: nil
     get 'proxy', to: redirect { |_, request| "/authorize_interaction?#{request.params.to_query}" }, as: nil
   end

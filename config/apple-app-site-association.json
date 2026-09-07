@@ -1,0 +1,59 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["W7U5D39APG.social.epsilon.app"],
+        "components": [
+          {
+            "/": "/auth/bridge*",
+            "exclude": true,
+            "comment": "Exclude session bridge restoration endpoints"
+          },
+          {
+            "/": "/auth/sign_out*",
+            "exclude": true,
+            "comment": "Exclude web sign out endpoints"
+          },
+          {
+            "/": "/api/*",
+            "exclude": true,
+            "comment": "Exclude REST API endpoints"
+          },
+          {
+            "/": "/oauth/*",
+            "exclude": true,
+            "comment": "Exclude OAuth web authorization endpoints"
+          },
+          {
+            "/": "/system/*",
+            "exclude": true,
+            "comment": "Exclude internal system endpoints"
+          },
+          {
+            "/": "/sidekiq*",
+            "exclude": true,
+            "comment": "Exclude Sidekiq administration endpoints"
+          },
+          {
+            "/": "/pghero*",
+            "exclude": true,
+            "comment": "Exclude PgHero database monitoring endpoints"
+          },
+          {
+            "/": "/admin*",
+            "exclude": true,
+            "comment": "Exclude administration dashboard endpoints"
+          },
+          {
+            "/": "/auth/confirmation*",
+            "comment": "Allow email confirmation links to open directly in Epsilon"
+          },
+          {
+            "/": "/*",
+            "comment": "Allow all timeline, explore, post, profile, tag, and search links"
+          }
+        ]
+      }
+    ]
+  }
+}
