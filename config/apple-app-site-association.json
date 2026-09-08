@@ -45,6 +45,16 @@
             "comment": "Exclude administration dashboard endpoints"
           },
           {
+            "/": "/auth/sign_in",
+            "exclude": true,
+            "comment": "Exclude sign-in redirects from universal-link routing"
+          },
+          {
+            "/": "/auth/sign_in/*",
+            "exclude": true,
+            "comment": "Exclude sign-in subpaths from universal-link routing"
+          },
+          {
             "/": "/auth/confirmation*",
             "comment": "Allow email confirmation links to open directly in Epsilon"
           },
