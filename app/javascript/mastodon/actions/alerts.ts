@@ -25,6 +25,18 @@ const messages = defineMessages({
     id: 'alert.rate_limited.message',
     defaultMessage: 'Please retry after {retry_time, time, medium}.',
   },
+  // ==========================================
+  // EPSILON : OFFLINE UPLOAD ALERT
+  // ==========================================
+  networkTitle: {
+    id: 'alert.network.title',
+    defaultMessage: 'Connection lost',
+  },
+  networkMessage: {
+    id: 'alert.network.message',
+    defaultMessage: 'Check your connection and try again.',
+  },
+  // ==========================================
 });
 
 export const dismissAlert = createAction<{ key: number }>('alerts/dismiss');
@@ -66,6 +78,20 @@ export const showAlertForError = (error: unknown, skipNotFound = false) => {
   if (error instanceof AxiosError && error.code === AxiosError.ECONNABORTED) {
     return ignoreAlert();
   }
+
+  // ==========================================
+  // EPSILON : OFFLINE UPLOAD ALERT
+  // A network error (request sent, no response received — e.g. connectivity
+  // lost mid-upload) should read as a connectivity issue, not a generic
+  // "unexpected error". The draft/media are preserved, so the user can retry.
+  // ==========================================
+  if (error instanceof AxiosError && !error.response) {
+    return showAlert({
+      title: messages.networkTitle,
+      message: messages.networkMessage,
+    });
+  }
+  // ==========================================
 
   console.error(error);
 

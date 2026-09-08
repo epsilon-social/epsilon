@@ -2952,6 +2952,10 @@ html.epsilon-in-app {
     display: none !important;
   }
 
+  .notification-list {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px) !important;
+  }
+
   @media (width <= 768px) {
     .epsilon-layout__center {
       // Plus de barre flottante à réserver : on retombe sur la marge de confort
