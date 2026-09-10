@@ -1,0 +1,54 @@
+// Pull-to-refresh in-app (feed home). Wrapper : &__content (compose + fil) est
+// translaté vers le bas en JS (suivi du doigt) ; &__indicator (la roue) est posé
+// en absolu au sommet et apparaît dans le gap qui s'ouvre — entre la barre de
+// recherche et le compose. Position/opacité pilotées en JS ; le spin pendant le
+// fetch est géré ici (classe --refreshing). Voir le composant EpsilonPullToRefresh.
+
+.epsilon-ptr {
+  position: relative;
+
+  &__indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  &__icon {
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--eps-border);
+    border-top-color: var(--eps-brand-primary);
+    border-radius: 50%;
+  }
+
+  &--refreshing &__icon {
+    animation: epsilon-ptr-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes epsilon-ptr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Reduced motion : pas de rotation continue → pulsation d'opacité douce.
+@media (prefers-reduced-motion: reduce) {
+  .epsilon-ptr--refreshing .epsilon-ptr__icon {
+    animation: epsilon-ptr-pulse 1s ease-in-out infinite;
+  }
+}
+
+@keyframes epsilon-ptr-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}

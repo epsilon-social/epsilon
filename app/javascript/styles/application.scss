@@ -40,6 +40,7 @@
 @use 'epsilon/auth';
 @use 'epsilon/explore';
 @use 'epsilon/profile';
+@use 'epsilon/pull_to_refresh';
 @use 'epsilon/about' as epsilon-about;
 
 /* ========================================== */

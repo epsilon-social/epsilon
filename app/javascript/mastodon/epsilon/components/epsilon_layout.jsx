@@ -16,6 +16,7 @@ import { useIdentity } from 'mastodon/identity_context';
 import EpsilonCategorySuggestions from 'mastodon/features/epsilon/category_suggestions';
 import { EpsilonComposeProvider, useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 import { EpsilonNativeBridge } from 'mastodon/features/epsilon/native_bridge';
+import { EpsilonPullToRefresh } from 'mastodon/features/epsilon/pull_to_refresh';
 import { EpsilonScrollRestore } from 'mastodon/features/epsilon/scroll_restore';
 import { FormattedMessage } from 'react-intl';
 
@@ -70,6 +71,13 @@ const EpsilonLayoutContent = ({ children }) => {
   const showInlineCompose =
     showCompose && !isComposeOpen && !isReplyingOrQuoting;
 
+  // Pull-to-refresh : uniquement dans la coque (geste natif-like) et sur le feed
+  // home. Hors coque (Safari mobile), on laisse le pull-to-refresh natif du
+  // navigateur pour éviter les doublons.
+  const isInApp =
+    typeof document !== 'undefined' &&
+    document.documentElement.classList.contains('epsilon-in-app');
+
   return (
     <div className={classNames('epsilon-layout', { 'epsilon-layout--nav-open': isNavOpen })}>
       <div
@@ -95,9 +103,17 @@ const EpsilonLayoutContent = ({ children }) => {
           {isHome && <EpsilonHomeFilter />}
         </div>
 
-
-          {showInlineCompose && <ComposeFormContainer singleColumn />}
-        {children}
+        {isHome && isInApp ? (
+          <EpsilonPullToRefresh>
+            {showInlineCompose && <ComposeFormContainer singleColumn />}
+            {children}
+          </EpsilonPullToRefresh>
+        ) : (
+          <>
+            {showInlineCompose && <ComposeFormContainer singleColumn />}
+            {children}
+          </>
+        )}
       </main>
 
       <aside className='epsilon-layout__right'>

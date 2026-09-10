@@ -5,6 +5,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.9] - 2026-09-10
+
+### Added
+
+- **Pull-to-refresh sur le fil d'accueil (coque)** : Geste natif-like — tirer le haut du fil fait glisser **tout le contenu** (compose + fil) vers le bas en suivant le doigt (rubber-band au-delà du seuil), une roue apparaît dans l'espace qui s'ouvre **entre la barre de recherche et le compose** ; au relâché franc le fil se rafraîchit (`expandHomeTimeline`, posts récents via `since_id`) puis tout revient en ressort et la roue disparaît (relâché doux → retour sans refresh). Composant `EpsilonPullToRefresh`, **scopé in-app + fil d'accueil** ; hors coque, on laisse le pull-to-refresh natif du navigateur. Détails d'implémentation : geste écouté sur `window` (scroll-page de la coque) ; listener `touchmove` **non-passif attaché uniquement pendant un tirage démarré à `scrollY 0`** (zéro impact sur le scroll normal) ; **hystérésis directionnelle** (~6px avant de décider pull vs scroll → ne « vole » pas le toucher, plus de scroll figé après un refresh) ; peinture 1:1 en `requestAnimationFrame` sans re-render React, avec **annulation du repaint en attente au relâché** (sinon un repaint tardif écrasait le ressort → saut/téléport du contenu) ; `will-change` posé uniquement le temps du geste (le fil n'étant pas virtualisé en coque = gros calque) ; fallback `prefers-reduced-motion` (pulsation au lieu de rotation).
+
+### Changed
+
+- **Le fil d'accueil ne se met plus à jour tout seul en coque** : Sous coque, les push « update » du stream temps réel pour le home sont ignorés (`updateTimeline`, garde `EPSILON_IN_APP`) → les nouveaux posts n'arrivent **qu'au pull-to-refresh** (ou reload). Le stream reste connecté : notifications, suppressions et éditions de posts déjà affichés restent intactes ; le web garde le live complet. Balisé `EPSILON`.
+
 ## [0.3.8] - 2026-09-10
 
 ### Changed

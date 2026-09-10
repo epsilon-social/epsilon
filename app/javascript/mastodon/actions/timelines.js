@@ -10,6 +10,14 @@ import { timelineDelete } from './timelines_typed';
 
 export { disconnectTimeline } from './timelines_typed';
 
+// ==========================================
+// EPSILON : CONTEXTE IN-APP (coque WKWebView)
+// Classe posée au boot sur <html> par epsilon-in-app-context.js.
+// ==========================================
+const EPSILON_IN_APP =
+  typeof document !== 'undefined' &&
+  document.documentElement.classList.contains('epsilon-in-app');
+
 export const TIMELINE_UPDATE  = 'TIMELINE_UPDATE';
 export const TIMELINE_CLEAR   = 'TIMELINE_CLEAR';
 
@@ -43,6 +51,17 @@ export const loadPending = timeline => ({
 export function updateTimeline(timeline, status, { accept = undefined, bogusQuotePolicy = false } = {}) {
   return (dispatch, getState) => {
     if (typeof accept === 'function' && !accept(status)) {
+      return;
+    }
+
+    // ==========================================
+    // EPSILON : PAS D'AUTO-UPDATE DU FIL HOME EN IN-APP
+    // Dans la coque, le fil ne se met pas à jour tout seul via le stream : les
+    // nouveaux posts n'arrivent que sur pull-to-refresh (ou reload). On ignore
+    // donc les push « update » du stream pour le home. Les notifs, suppressions
+    // et éditions passent par d'autres chemins → intactes.
+    // ==========================================
+    if (timeline === 'home' && EPSILON_IN_APP) {
       return;
     }
 
