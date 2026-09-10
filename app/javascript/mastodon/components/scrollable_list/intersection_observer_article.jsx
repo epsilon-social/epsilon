@@ -8,6 +8,20 @@ import { Article } from './components';
 // Diff these props in the "unrendered" state
 const updateOnPropsForUnrendered = ['id', 'index', 'listLength', 'cachedHeight'];
 
+// ==========================================
+// EPSILON : SCROLL — VIRTUALISATION DÉSACTIVÉE EN IN-APP
+// En scroll-page iOS (coque WKWebView), l'IntersectionObserver tourne sans
+// rootMargin (bindToDocument → connect({})), donc chaque post est remplacé par
+// un placeholder invisible dès qu'il quitte le viewport. iOS n'ayant pas
+// d'overflow-anchor pour compenser, ça provoque un saut à chaque post, et des
+// écrans blancs / gels sous scroll rapide (l'observer ne suit pas l'inertie).
+// On garde donc tous les items montés en in-app. Le web conserve la
+// virtualisation (le navigateur a l'ancrage natif).
+// ==========================================
+const EPSILON_IN_APP =
+  typeof document !== 'undefined' &&
+  document.documentElement.classList.contains('epsilon-in-app');
+
 export default class IntersectionObserverArticle extends Component {
 
   static propTypes = {
@@ -26,6 +40,11 @@ export default class IntersectionObserverArticle extends Component {
   };
 
   shouldComponentUpdate (nextProps, nextState) {
+    // EPSILON : in-app, jamais virtualisé → rendu normal (voir en-tête)
+    if (EPSILON_IN_APP) {
+      return true;
+    }
+
     const isUnrendered = !this.state.isIntersecting && (this.state.isHidden || this.props.cachedHeight);
     const willBeUnrendered = !nextState.isIntersecting && (nextState.isHidden || nextProps.cachedHeight);
     if (!!isUnrendered !== !!willBeUnrendered) {
@@ -43,13 +62,18 @@ export default class IntersectionObserverArticle extends Component {
   componentDidMount () {
     const { intersectionObserverWrapper, id } = this.props;
 
+    this.componentMounted = true;
+
+    // EPSILON : pas de virtualisation in-app → on n'observe pas (voir en-tête)
+    if (EPSILON_IN_APP) {
+      return;
+    }
+
     intersectionObserverWrapper.observe(
       id,
       this.node,
       this.handleIntersection,
     );
-
-    this.componentMounted = true;
   }
 
   componentWillUnmount () {
@@ -107,7 +131,8 @@ export default class IntersectionObserverArticle extends Component {
     const { children, id, index, listLength, cachedHeight } = this.props;
     const { isIntersecting, isHidden } = this.state;
 
-    if (!isIntersecting && (isHidden || cachedHeight)) {
+    // EPSILON : in-app, on ne masque jamais (pas de placeholder invisible)
+    if (!EPSILON_IN_APP && !isIntersecting && (isHidden || cachedHeight)) {
       return (
         <Article
           ref={this.handleRef}

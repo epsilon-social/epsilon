@@ -41,7 +41,38 @@ function main() {
     );
     store.dispatch(setupBrowserNotifications());
 
-    if (
+    // ==========================================
+    // EPSILON : SERVICE WORKER — DÉSACTIVÉ EN IN-APP
+    // Dans la coque WKWebView, le SW peut servir un shell d'app périmé depuis son
+    // cache. Le push n'en dépend pas non plus (WKWebView ne supporte pas le Web
+    // Push, et le push in-app passe par le relais APNs natif). On ne l'enregistre
+    // donc pas in-app, et on démonte tout SW + caches « mastodon-* » laissés par
+    // un build précédent (les testeurs actuels en ont un d'installé).
+    // ==========================================
+    const epsilonInApp =
+      document.documentElement.classList.contains('epsilon-in-app');
+
+    if (epsilonInApp) {
+      if ('serviceWorker' in navigator) {
+        void navigator.serviceWorker
+          .getRegistrations()
+          .then((registrations) => {
+            registrations.forEach((registration) => {
+              void registration.unregister();
+            });
+          });
+      }
+
+      if ('caches' in window) {
+        void caches.keys().then((keys) => {
+          keys
+            .filter((key) => key.startsWith('mastodon-'))
+            .forEach((key) => {
+              void caches.delete(key);
+            });
+        });
+      }
+    } else if (
       me &&
       'serviceWorker' in navigator &&
       (isDevelopment() || isProduction()) // Disallow testing environment

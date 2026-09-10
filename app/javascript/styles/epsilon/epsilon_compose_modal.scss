@@ -1,3 +1,9 @@
+// Entrée de la modale : SANS animation pour l'instant. Le contenu (compose-form)
+// contient des surfaces/boutons EN VERRE (backdrop-filter, ex. le bouton publish)
+// → animer le conteneur (« pop ») recalcule leur flou frame par frame sur iOS =
+// jank. On revient donc à un affichage instantané (comme les modales natives).
+// À réintroduire seulement si on rend le contenu opaque, ou via un wrapper sans
+// flou. Le scrim + blur reste one-shot (jamais animé). Sortie = démontage.
 .epsilon-compose-overlay {
   position: fixed;
   inset: 0;

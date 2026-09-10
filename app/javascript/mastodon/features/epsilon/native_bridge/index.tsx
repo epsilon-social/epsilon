@@ -3,7 +3,11 @@ import { useEffect, useRef } from 'react';
 import { openNavigation } from 'mastodon/actions/navigation';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
-import { emitWebOverlay } from './emit';
+import {
+  emitWebOverlay,
+  closeActiveOverlays,
+  reopenActiveOverlays,
+} from './emit';
 
 // Named sources for the overlays the native side cares about. Everything else
 // that opens in the modal stack falls back to a kebab-cased modalType, so a new
@@ -94,6 +98,30 @@ export const EpsilonNativeBridge: React.FC = () => {
       window.removeEventListener('message', handleMessage);
     };
   }, [dispatch]);
+
+  // ── Page teardown: balance the overlay signals ───────────────────────────
+  // A full-page navigation (e.g. to a Rails /settings/* page) tears down the SPA
+  // without running React cleanup, so any open overlay never emits its close and
+  // the native tab bar stays hidden. Emit the closes on pagehide; re-assert on a
+  // bfcache restore (pageshow with persisted).
+  useEffect(() => {
+    const handlePageHide = () => {
+      closeActiveOverlays();
+    };
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        reopenActiveOverlays();
+      }
+    };
+
+    window.addEventListener('pagehide', handlePageHide);
+    window.addEventListener('pageshow', handlePageShow);
+
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('pageshow', handlePageShow);
+    };
+  }, []);
 
   // ── Web -> native: sidebar lives in its own Redux slice ──────────────────
   const navigationOpen = useAppSelector((state) => state.navigation.open);

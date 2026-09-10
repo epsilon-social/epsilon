@@ -147,7 +147,7 @@ const EpsilonNotificationsLink = ({ getNavClass, intl }) => {
   return (
     <ColumnLink
       to='/notifications'
-      className={getNavClass('/notifications')}
+      className={`${getNavClass('/notifications')} epsilon-sidebar__item--in-app-hidden`}
       text={intl.formatMessage(messages.notifications)}
       icon={
         <IconWithBadge
@@ -221,7 +221,7 @@ const EpsilonSidebar = () => {
         ) : (
           <div className='epsilon-sidebar__guest'>
             {showTrending && (
-              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={getNavClass('/explore')} />
+              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`} />
             )}
             {showFirehose && (
               <ColumnLink to={firehoseLink} icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(firehoseText)} className={getNavClass('/public')} />
@@ -254,15 +254,15 @@ const EpsilonSidebar = () => {
         )}
 
         {signedIn && (
-          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={getNavClass('/home', true)} />
+          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={`${getNavClass('/home', true)} epsilon-sidebar__item--in-app-hidden`} />
         )}
 
         {signedIn && (
-          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={getNavClass('/search')} />
+          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--in-app-hidden`} />
         )}
 
         {signedIn && showTrending && (
-          <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={getNavClass('/explore')}/>
+          <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`}/>
         )}
 
         {signedIn && showFirehose && (

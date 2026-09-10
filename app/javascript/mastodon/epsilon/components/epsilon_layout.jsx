@@ -71,7 +71,7 @@ const EpsilonLayoutContent = ({ children }) => {
     showCompose && !isComposeOpen && !isReplyingOrQuoting;
 
   return (
-    <div className='epsilon-layout'>
+    <div className={classNames('epsilon-layout', { 'epsilon-layout--nav-open': isNavOpen })}>
       <div
         className={classNames('epsilon-layout__backdrop', { 'epsilon-layout__backdrop--open': isNavOpen })}
         onClick={handleCloseMenu}
@@ -81,9 +81,12 @@ const EpsilonLayoutContent = ({ children }) => {
         <EpsilonSidebar />
       </aside>
 
-      <main className='epsilon-layout__center'>
-        <EpsilonTopNavbar />
+      {/* Frère direct de .epsilon-layout (hors de __center) : le push-drawer
+          transforme __center, et un position:fixed sous un ancêtre transformé
+          changerait de bloc conteneur (saut au démarrage de l'anim). */}
+      <EpsilonTopNavbar />
 
+      <main className='epsilon-layout__center'>
         <div className='epsilon-home-top-bar'>
           <div className='epsilon-mobile-search'>
             {showSearchBar && <Search singleColumn />}

@@ -5,6 +5,31 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-09-10
+
+### Changed
+
+- **Thème forcé en auto dans la coque** : Sous coque (UA `EpsilonMobile/`), `color_scheme` / `page_color_scheme` renvoient toujours `auto` (le chrome natif — navbar, splash — reste aligné sur le thème système). Le compte garde son choix côté web. Le sélecteur clair/sombre est masqué dans les réglages en coque (`in_app_request?`). Modifs core balisées `EPSILON` (`theme_helper.rb`, vue `appearance`).
+- **Perf iOS — fil opaque, transitions neutralisées** : En coque, les surfaces du fil passent en opaque et les transitions var-based (`--eps-dur-*`) sont neutralisées, car sur WKWebView le mesh/glass était recomposé à chaque frame de scroll (jank). Le tiroir latéral reste un simple slide (panneau opaque) ; les modales natives et la modale compose s'ouvrent sans animation. Neutre pour le web.
+- **Zoom de page bloqué en coque** : `minimum-scale=1` + `viewport-fit=cover`, et annulation des évènements `gesture*` WebKit pour empêcher le pinch-zoom de page (jamais de `maximum-scale`/`user-scalable=no`, conforme Apple). Les images restent zoomables via le viewer média (transform-based). Web non affecté.
+- **Sidebar en coque — doublons des onglets natifs masqués** : Les entrées Accueil, Recherche, Explorer/Tendances et Notifications sont masquées sous `.epsilon-in-app` (la tab bar native de la coque les fournit). « Nouveau post » est conservé (il ouvre une modale, ne navigue pas).
+
+### Fixed
+
+- **Scroll iOS — sauts par post & écrans blancs/gels** : Virtualisation JS désactivée en coque (`IntersectionObserverArticle`) — en scroll-page, l'observer sans `rootMargin` remplaçait chaque post sorti du viewport par un placeholder, et iOS n'a pas d'`overflow-anchor` pour compenser (saut à chaque post, blancs sous inertie). Tous les items restent montés en coque ; le web garde la virtualisation. Balisé `EPSILON`.
+- **Débordement horizontal de page en coque** : `overflow-x: clip` sur `html.epsilon-in-app` + masquage des chevrons du carrousel de suggestions (positionnés hors cadre) qui laissaient « paner » la page et révéler une bande de fond à droite.
+- **Tab bar native restée masquée après les réglages** : Une navigation pleine page vers une page Rails (`/settings/*`) démonte la SPA sans exécuter le cleanup React → l'overlay ne renvoyait jamais son `close` et la tab bar native restait cachée. On rejoue les `close` sur `pagehide` et on les ré-assère sur restauration bfcache (`pageshow` persisted).
+- **Service Worker périmé en coque** : Le SW n'est plus enregistré sous coque (WKWebView ne fait pas de Web Push ; le push passe par le relais APNs natif) et les SW + caches `mastodon-*` laissés par un build précédent sont démontés au démarrage. Évite de servir un shell d'app périmé. Balisé `EPSILON` (`main.tsx`).
+- **Onglets Explorer** : Retrait du `gap` natif, scopé aux seuls onglets d'Explorer (plus de décalage).
+- **Dropdown d'autosuggest (@mention/emoji) sans fond** : Le conteneur utilisait `--color-bg-primary`, remappé transparent par Epsilon → suggestions illisibles. Il reçoit désormais la même surface que les autres dropdowns (opaque en contraste élevé).
+- **Notifications mention — icône ⋯ hors cadre** : Le padding du wrapper `.notification-ungrouped--mention` s'ajoutait à la mise en page du statut → l'action ⋯ débordait. Padding retiré, le statut gère l'espace.
+- **Topbar en contraste élevé sans fond** : Le scrim de la topbar reposait sur le flou, retiré par le mode contraste élevé → barre sans fond. En HC (OS + toggle in-app), la topbar reçoit un aplat opaque (base claire `#f4f7fa` / stone sombre `#1f1e1e`) + un filet net ; scrim masqué.
+- **Barre « non lu » coupée en mobile** : L'indicateur `border-inline-start` (mentions/conversations non lues) se retrouvait collé/coupé sur mobile ; masqué sous 768px.
+
+### Removed
+
+- **Halos de marque (glows)** : Retrait de tous les `drop-shadow`/`box-shadow` en `--eps-brand-glow` (logo topbar, logo sidebar, halos de survol des boutons) et suppression du token `--eps-brand-glow` (clair + sombre), devenu sans usage.
+
 ## [0.3.7] - 2026-09-01
 
 ### Added

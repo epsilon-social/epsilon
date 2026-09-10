@@ -55,7 +55,6 @@ $eps-navbar-height: 56px;
   --eps-nav-active-bg: rgba(93, 149, 255, 10%);
   --eps-nav-active-text: #fff;
   --eps-brand-primary: #4571ff;
-  --eps-brand-glow: rgba(93, 149, 255, 40%);
   --eps-radius: 24px;
   --eps-radius-pill: 9999px;
   --eps-btn-primary-bg: #111;
@@ -109,7 +108,6 @@ $eps-navbar-height: 56px;
   --eps-nav-active-bg: #000;
   --eps-nav-active-text: #fff;
   --eps-brand-primary: #84c3ff;
-  --eps-brand-glow: rgba(132, 195, 255, 40%);
   --eps-compose-border: rgba(255, 255, 255, 8%);
   --eps-box-shadow: rgba(0, 0, 0, 35%) 0px 8px 13px;
   --eps-shadow-card:
@@ -189,10 +187,19 @@ body.theme-contrast {
   --eps-radius-md: 16px; // menus, dropdowns, dialogs
   --eps-radius-lg: 24px; // cards, carousel, bottom navbar
 
-  // Motion durations (vocabulary — transition migration lands with §3 motion).
-  --eps-dur-fast: var(--eps-dur-fast);
-  --eps-dur-base: var(--eps-dur-base);
-  --eps-dur-slow: var(--eps-dur-slow);
+  // Motion durations — VOLONTAIREMENT à 0s (= transitions var-based neutralisées).
+  // Leur donner de vraies valeurs rallume ~24 transitions, dont des
+  // `transition: all` posées sur des éléments EN VERRE (backdrop-filter) : les
+  // boutons d'action de chaque post (.status__action-bar .icon-button), les
+  // .button, etc. Au moindre changement d'état (tap/:active/focus), iOS/WKWebView
+  // doit animer toutes leurs propriétés en recalculant le flou de chaque bouton
+  // frame par frame → jank catastrophique (des dizaines de flous animés).
+  // On garde donc ces transitions neutres. Les animations réellement voulues
+  // sont posées en durée codée en dur, et UNIQUEMENT sur des surfaces sans flou
+  // (slide du panneau sidebar). À réactiver sélectivement après audit perf iOS.
+  --eps-dur-fast: 0s;
+  --eps-dur-base: 0s;
+  --eps-dur-slow: 0s;
 }
 
 body::before {
@@ -211,7 +218,7 @@ body {
   background: transparent !important;
   background-color: transparent !important;
   color: var(--eps-text-primary) !important;
-  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
 }
 
 body:not(.admin) {
@@ -219,7 +226,7 @@ body:not(.admin) {
   overflow-x: hidden !important;
   height: auto !important;
   min-height: 100vh !important;
-  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
 }
 
 body:not(.admin) #mastodon,
@@ -296,6 +303,16 @@ body.theme-system {
   border-radius: var(--eps-radius) !important;
 }
 
+// Barre bleue « non lu » (border-inline-start 4px sur .status__wrapper.unread /
+// .conversation.unread) : coupée dans les notifs mention depuis le retrait du
+// padding → on la masque en mobile.
+@media (width <= 768px) {
+  .status__wrapper.unread::before,
+  .conversation.unread::before {
+    display: none !important;
+  }
+}
+
 .media-gallery__item-thumbnail {
   border-radius: var(--eps-radius) !important;
 }
@@ -319,6 +336,13 @@ body.theme-system {
   backdrop-filter: blur(12px) !important;
   opacity: 1 !important;
 }
+
+// NB : les modales natives (report, block, mute, logout, media viewer…) ne sont
+// PAS animées à l'entrée. Leurs surfaces portent un backdrop-filter (glass) ;
+// animer un dialogue flouté force iOS à recalculer le blur à chaque frame →
+// jank. Elles restent donc instantanées (comme en natif) = fluides. Seule la
+// modale compose a une entrée, car son contenu animé n'a pas de flou. Pour les
+// animer proprement, il faudrait rendre ces dialogues opaques (perdre le glass).
 
 .avatar,
 .account__avatar,
@@ -395,7 +419,7 @@ body.theme-system {
 
     /* z-index: 100 !important; */
     overflow-y: auto !important;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -446,7 +470,11 @@ body.theme-system {
       -webkit-mask-image: none;
       mask-image: none;
       transform: translateX(-100%);
-      transition: transform var(--eps-dur-slow) cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      // Durée codée en dur (les tokens --eps-dur-* sont neutralisés à 0s, cf.
+      // commentaire des tokens). Le panneau est OPAQUE (var(--eps-bg-base), sans
+      // backdrop-filter) → le translater est GPU-cheap = fluide.
+      transition: transform 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
 
       &.epsilon-layout__left--open {
         transform: translateX(0);
@@ -818,6 +846,13 @@ body.theme-system {
       padding: 12px !important;
     }
 
+    // Mention : la notif contient un statut complet (avec sa propre mise en page
+    // et l'action ⋯). Le padding 12px du wrapper s'ajoute → l'icône « more »
+    // déborde du cadre. On le retire pour les mentions ; le statut gère l'espace.
+    .notification-ungrouped--mention {
+      padding: 0 !important;
+    }
+
     .follow_requests-unlocked_explanation {
       margin: 0 0 12px !important;
       padding: 2px 22px !important;
@@ -868,7 +903,6 @@ body.theme-system {
         justify-content: center;
         text-decoration: none;
         color: var(--eps-brand-primary);
-        filter: drop-shadow(0 0 12px var(--eps-brand-glow));
         transition:
           opacity var(--eps-dur-base) ease,
           transform var(--eps-dur-base) ease;
@@ -904,7 +938,7 @@ body.theme-system {
     right: 0;
     overflow-x: hidden !important;
     overflow-y: auto !important;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
     scrollbar-width: none;
     padding-top: calc(#{$eps-navbar-height} + 24px);
     padding-bottom: 0;
@@ -966,7 +1000,6 @@ body.theme-system {
       height: 36px;
       width: auto;
       fill: currentColor;
-      filter: drop-shadow(0 0 12px var(--eps-brand-glow));
     }
 
     // Icon mark: only shown in the collapsed rail.
@@ -975,7 +1008,6 @@ body.theme-system {
       width: 34px;
       height: 34px;
       flex-shrink: 0;
-      filter: drop-shadow(0 0 12px var(--eps-brand-glow));
     }
 
     // Collapsed rail (769–1264px): mark only, centered.
@@ -2221,7 +2253,6 @@ body.theme-system {
     &:hover {
       background: var(--eps-brand-primary) !important;
       color: #fff !important;
-      box-shadow: 0 0 12px var(--eps-brand-glow) !important;
     }
 
     &.button--destructive {
@@ -2230,7 +2261,6 @@ body.theme-system {
       &:hover {
         background: #ff5d5d !important;
         color: #fff !important;
-        box-shadow: 0 0 12px rgba(255, 93, 93, 40%) !important;
       }
     }
   }
@@ -2747,7 +2777,6 @@ body.theme-system {
     justify-content: center;
     text-decoration: none;
     color: var(--eps-brand-primary);
-    filter: drop-shadow(0 0 12px var(--eps-brand-glow));
     transition:
       opacity var(--eps-dur-base) ease,
       transform var(--eps-dur-base) ease;
@@ -2948,7 +2977,53 @@ body.theme-system {
 // Dans la coque Expo (UA « EpsilonMobile/ »), la tab bar native remplace
 // notre barre du bas : on la masque et on reporte le dégagement bas.
 html.epsilon-in-app {
+  // Pas de scroll horizontal de page in-app. Un élément qui dépasse le viewport
+  // (ex. les chevrons du carrousel de suggestions en left/right: -24px) laissait
+  // « paner » toute la page et révéler une bande de fond à droite. Le
+  // `overflow-x: hidden` natif est sur `body`, mais le vrai scroller est `html`
+  // → on écrête ici. `clip` n'affecte ni le scroll vertical ni position: sticky,
+  // et ne casse pas le scroll interne des carrousels/onglets (leur propre
+  // overflow-x). Supporté iOS 16+.
+  overflow-x: clip;
+
+  // ── PERF iOS : surfaces opaques + ombre allégée (fluidité du scroll) ───────
+  // Le vrai coût du scroll in-app n'est PAS le flou (les cartes de post n'en ont
+  // pas) mais : des surfaces semi-transparentes (55–72 %) posées AU-DESSUS du
+  // fond mesh `position: fixed` (4 radial-gradients) → iOS re-blende ce dégradé
+  // à 4 couches à travers chaque carte à CHAQUE frame de scroll (coût « fixed
+  // background » iOS bien connu) ; + une box-shadow floue 22px repeinte par
+  // carte. On rend donc les surfaces OPAQUES (le fil occulte le mesh → plus de
+  // re-blend) et on allège l'ombre. Le mesh reste visible dans les marges.
+  // Scopé in-app uniquement (le web garde le rendu verre). Thème via
+  // prefers-color-scheme (la coque force le thème auto = suit l'OS).
+  --eps-shadow-card: 0 1px 3px rgba(0, 0, 0, 12%);
+
+  @media (prefers-color-scheme: light) {
+    --eps-surface: #fff;
+    --eps-surface-hover: #f2f5f9;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    --eps-surface: #26282c;
+    --eps-surface-hover: #2e3035;
+  }
+
   .epsilon-bottom-navbar {
+    display: none !important;
+  }
+
+  // Entrées de sidebar qui doublonnent un onglet natif (Home, Search,
+  // Trending/Explore, Notifications) : masquées in-app pour ne pas empiler la
+  // destination dans l'onglet actif. New Post reste (ouvre une modale, ne
+  // navigue pas).
+  .epsilon-sidebar__item--in-app-hidden {
+    display: none !important;
+  }
+
+  // Flèches de défilement du carrousel de suggestions : inutiles au doigt et
+  // positionnées hors cadre (left/right: -24px) → on les retire in-app, ce qui
+  // supprime la cause directe du dépassement (le clip ci-dessus fait le reste).
+  .inline-follow-suggestions__body__scroll-button {
     display: none !important;
   }
 
@@ -2962,6 +3037,14 @@ html.epsilon-in-app {
       // (16px, norme iOS) tout en gardant l'inset de l'indicateur home.
       padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
     }
+
+    // NB : le drawer « push » (translater __center + la navbar à l'ouverture) a
+    // été retiré — coût iOS trop élevé : la colonne centrale n'est pas
+    // virtualisée in-app (calque géant) et la navbar porte un scrim flouté
+    // (blur re-calculé à chaque frame en mouvement). Le tiroir revient donc en
+    // overlay : seul le panneau (.epsilon-layout__left, opaque) glisse par-dessus
+    // le contenu statique → fluide. Le modificateur .epsilon-layout--nav-open
+    // reste posé côté JSX (inutilisé) au cas où on retenterait un push allégé.
   }
 }
 
@@ -3487,6 +3570,19 @@ html.epsilon-in-app {
 
 /* ========================================== */
 
+// Dropdown d'autosuggest (mentions/emoji du compose) : le natif utilise
+// --color-bg-primary, remappé « transparent » par Epsilon → plus de fond visible.
+// Même surface glass que les autres dropdowns (opaque en HC via --eps-surface).
+.autosuggest-textarea__suggestions {
+  background: var(--eps-surface) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--eps-border) !important;
+  border-radius: var(--eps-radius-sm) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
+  overflow: hidden !important;
+}
+
 .dropdown-menu {
   background: var(--eps-surface) !important;
   -webkit-backdrop-filter: blur(12px) !important;
@@ -3735,6 +3831,12 @@ html.reduce-motion {
   --eps-text-secondary: #3a3a3a;
   --eps-border: rgba(0, 0, 0, 45%);
   --eps-border-hover: rgba(0, 0, 0, 65%);
+
+  // Topbar opaque (le scrim flou est retiré en HC) : aplat = base claire du thème.
+  .epsilon-top-navbar {
+    background: #f4f7fa !important;
+    border-bottom: 0.5px solid var(--eps-border) !important;
+  }
 }
 
 @mixin epsilon-contrast-dark {
@@ -3743,6 +3845,12 @@ html.reduce-motion {
   --eps-text-secondary: #c4c8d0;
   --eps-border: rgba(255, 255, 255, 45%);
   --eps-border-hover: rgba(255, 255, 255, 65%);
+
+  // Topbar opaque : aplat = « stone » sombre du thème.
+  .epsilon-top-navbar {
+    background: #1f1e1e !important;
+    border-bottom: 0.5px solid var(--eps-border) !important;
+  }
 }
 
 @mixin epsilon-flatten-glass {
@@ -3751,6 +3859,12 @@ html.reduce-motion {
   *::after {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+  }
+
+  // Le scrim de la topbar reposait sur le flou (retiré ci-dessus) → on le masque ;
+  // la couleur opaque est posée par epsilon-contrast-light/dark.
+  .epsilon-top-navbar__scrim {
+    display: none !important;
   }
 }
 

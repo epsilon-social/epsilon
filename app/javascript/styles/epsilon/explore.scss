@@ -10,6 +10,14 @@
 // :first-child is always true.
 
 .epsilon-layout {
+  // EPSILON : onglets d'Explore (People/Hashtags/News/Posts) — on retire juste
+  // le gap natif (12px) : avec 4 onglets il faisait déborder la barre et cassait
+  // la symétrie de space-around. Scopé Explore (sibling après le search-header)
+  // → n'affecte ni les profils, ni les filtres de notifs, ni les autres tabs-bar.
+  .explore__search-header ~ .account__section-headline {
+    gap: 0 !important;
+  }
+
   .explore__search-header ~ .scrollable {
     box-sizing: border-box;
     display: flex;

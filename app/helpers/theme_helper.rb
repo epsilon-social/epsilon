@@ -59,6 +59,15 @@ module ThemeHelper
   end
 
   def color_scheme
+    # ==========================================
+    # EPSILON : THÈME AUTO FORCÉ EN IN-APP
+    # Dans la coque (UA « EpsilonMobile/ »), on ignore le réglage de compte et on
+    # suit l'OS (data-color-scheme='auto' → theme-selection.js). Le compte garde
+    # son choix côté web ; l'app reste toujours en auto, pour que le chrome natif
+    # (navbar, splash) puisse s'aligner sur le thème système.
+    # ==========================================
+    return 'auto' if in_app_request?
+
     current_user&.setting_color_scheme || 'auto'
   end
 
@@ -67,7 +76,15 @@ module ThemeHelper
   end
 
   def page_color_scheme
+    # EPSILON : in-app → auto forcé (gagne sur force_color_scheme). Voir color_scheme.
+    return 'auto' if in_app_request?
+
     content_for(:force_color_scheme).presence || color_scheme
+  end
+
+  # EPSILON : contexte in-app (coque WKWebView) détecté par l'User-Agent.
+  def in_app_request?
+    request.user_agent.to_s.include?('EpsilonMobile/')
   end
 
   private

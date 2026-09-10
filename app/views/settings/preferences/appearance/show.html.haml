@@ -33,15 +33,17 @@
                    wrapper: :with_label,
                    required: false
 
-      .input.horizontal-options
-        = ff.input :'web.color_scheme',
-                   as: :radio_buttons,
-                   collection: user_settings_collection('web.color_scheme'),
-                   include_blank: false,
-                   label: I18n.t('simple_form.labels.defaults.setting_color_scheme'),
-                   label_method: ->(contrast) { I18n.t("color_scheme.#{contrast}", default: contrast) },
-                   wrapper: :with_label,
-                   required: false
+      -# EPSILON : choix clair/sombre masqué en in-app (forcé auto, cf theme_helper)
+      - unless in_app_request?
+        .input.horizontal-options
+          = ff.input :'web.color_scheme',
+                     as: :radio_buttons,
+                     collection: user_settings_collection('web.color_scheme'),
+                     include_blank: false,
+                     label: I18n.t('simple_form.labels.defaults.setting_color_scheme'),
+                     label_method: ->(contrast) { I18n.t("color_scheme.#{contrast}", default: contrast) },
+                     wrapper: :with_label,
+                     required: false
       .input.horizontal-options
         = ff.input :'web.contrast',
                    as: :radio_buttons,
