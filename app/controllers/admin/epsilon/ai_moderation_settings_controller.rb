@@ -19,7 +19,22 @@ module Admin
         end
       end
 
+      # Flush the fail-open backlog on demand (statuses published during an
+      # outage). The scheduler stays self-gating: it still probes the API and
+      # only re-checks a capped batch, so the button can't saturate Mistral.
+      def remoderate
+        authorize :epsilon_ai_moderation_setting, :update?
+
+        ::Epsilon::AiRemoderationScheduler.perform_async
+        redirect_to admin_epsilon_ai_moderation_setting_path, notice: I18n.t('admin.epsilon.ai_moderation.remoderation.enqueued')
+      end
+
       private
+
+      def health
+        @health ||= ::Epsilon::AiModerationHealth.new
+      end
+      helper_method :health
 
       def set_setting
         @setting = ::Epsilon::AiModerationSetting.current
@@ -36,7 +51,8 @@ module Admin
           :sensitive_violence,
           :sensitive_vulgarity,
           :sensitive_sexual,
-          :review_threshold
+          :review_threshold,
+          :rejected_retention_days
         )
         # rubocop:enable Rails/StrongParametersExpect
       end

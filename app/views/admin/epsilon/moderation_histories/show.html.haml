@@ -1,0 +1,112 @@
+- content_for :page_title do
+  = t('admin.epsilon.ai_moderation.history.title')
+
+.eps-mod-history
+  .eps-mod-history__toolbar
+    .eps-mod-history__filter
+      %span.eps-mod-history__filter-label= t('admin.epsilon.ai_moderation.history.range_label')
+      .eps-mod-history__pills
+        - %w(day week month year all).each do |range|
+          - pill_classes = class_names('eps-mod-history__pill', 'eps-mod-history__pill--active' => @range == range)
+          = link_to t("admin.epsilon.ai_moderation.history.range.#{range}"), admin_epsilon_moderation_history_path(history_filters(range: range)), class: pill_classes
+    .eps-mod-history__filter
+      %span.eps-mod-history__filter-label= t('admin.epsilon.ai_moderation.history.decision_label')
+      .eps-mod-history__pills
+        - (['all'] + Epsilon::ModerationEvent.decisions.keys).each do |decision|
+          - pill_classes = class_names('eps-mod-history__pill', 'eps-mod-history__pill--active' => @decision == decision)
+          = link_to t("admin.epsilon.ai_moderation.history.decision.#{decision}"), admin_epsilon_moderation_history_path(history_filters(decision: decision)), class: pill_classes
+    = form_with url: admin_epsilon_moderation_history_path, method: :get, class: 'eps-mod-history__search' do
+      = hidden_field_tag :range, @range
+      = hidden_field_tag :decision, @decision
+      = text_field_tag :q, @query, placeholder: t('admin.epsilon.ai_moderation.history.search_placeholder')
+      = button_tag t('admin.epsilon.ai_moderation.history.search'), type: :submit, class: 'button'
+
+  .eps-mod-history__stats
+    .eps-stat
+      .eps-stat__num= @grand_total
+      .eps-stat__label= t('admin.epsilon.ai_moderation.history.total')
+    - Epsilon::ModerationEvent.decisions.each_key do |decision|
+      .eps-stat
+        .eps-stat__num= @totals[decision].to_i
+        .eps-stat__label= t("admin.epsilon.ai_moderation.history.decision.#{decision}")
+    .eps-stat
+      .eps-stat__num= @sensitive_total
+      .eps-stat__label= t('admin.epsilon.ai_moderation.history.sensitive')
+
+  %h3.eps-mod-history__section-title= t('admin.epsilon.ai_moderation.history.breakdown')
+
+  - if @buckets.any?
+    .table-wrapper
+      %table.table
+        %thead
+          %tr
+            %th= t('admin.epsilon.ai_moderation.history.period')
+            %th= t('admin.epsilon.ai_moderation.history.total')
+            - Epsilon::ModerationEvent.decisions.each_key do |decision|
+              %th= t("admin.epsilon.ai_moderation.history.decision.#{decision}")
+            %th= t('admin.epsilon.ai_moderation.history.sensitive')
+            %th= t('admin.epsilon.ai_moderation.history.avg_severity')
+        %tbody
+          - @buckets.each do |bucket|
+            %tr
+              %td= bucket[:label]
+              %td= bucket[:total]
+              - Epsilon::ModerationEvent.decisions.each_key do |decision|
+                %td= bucket[:by_decision][decision]
+              %td= bucket[:sensitive]
+              %td= bucket[:avg_severity] ? bucket[:avg_severity].to_f.round(3) : '—'
+  - else
+    %p.muted-hint= t('admin.epsilon.ai_moderation.history.empty')
+
+  %h3.eps-mod-history__section-title= t('admin.epsilon.ai_moderation.history.top_accounts')
+
+  - if @top_accounts.any?
+    .table-wrapper
+      %table.table
+        %tbody
+          - @top_accounts.each do |acct, count|
+            %tr
+              %th= link_to acct, admin_epsilon_moderation_history_path(history_filters(q: acct))
+              %td= count
+  - else
+    %p.muted-hint= t('admin.epsilon.ai_moderation.history.empty')
+
+  %h3.eps-mod-history__section-title= t('admin.epsilon.ai_moderation.history.detail')
+
+  - if @events.any?
+    .table-wrapper
+      %table.table
+        %thead
+          %tr
+            %th= t('admin.epsilon.ai_moderation.history.date')
+            %th= t('admin.epsilon.ai_moderation.moderations.account')
+            %th= t('admin.epsilon.ai_moderation.history.decision_label')
+            %th= t('admin.epsilon.ai_moderation.history.severity')
+            %th= t('admin.epsilon.ai_moderation.history.category')
+            %th= t('admin.epsilon.ai_moderation.history.post')
+            %th= t('admin.epsilon.ai_moderation.history.report')
+        %tbody
+          - @events.each do |event|
+            %tr
+              %td= l(event.created_at)
+              %td= link_to event.acct, admin_epsilon_moderation_history_path(history_filters(q: event.acct))
+              %td
+                = t("admin.epsilon.ai_moderation.history.decision.#{event.decision}")
+                - if event.sensitive?
+                  %span.muted-hint= t('admin.epsilon.ai_moderation.history.cw_tag')
+              %td= event.peak_score ? event.peak_score.to_f.round(3) : '—'
+              %td= event.category
+              %td
+                - if event.status_id && @existing_status_ids.include?(event.status_id)
+                  = link_to t('admin.epsilon.ai_moderation.history.view'), admin_account_status_path(event.account_id, event.status_id)
+                - else
+                  %span.muted-hint —
+              %td
+                - report = @reports_by_status_id[event.status_id]
+                - if report
+                  = link_to t('admin.epsilon.ai_moderation.history.view'), admin_report_path(report)
+                - else
+                  %span.muted-hint —
+    = paginate @events
+  - else
+    %p.muted-hint= t('admin.epsilon.ai_moderation.history.empty')

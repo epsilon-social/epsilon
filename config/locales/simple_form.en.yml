@@ -81,6 +81,7 @@ en:
         ban_violence: Threshold above which content will be automatically rejected for violence
         ban_vulgarity: Threshold above which content will be automatically rejected for vulgarity
         custom_prompt: Custom prompt to send to the AI moderation service. Only used when native moderation is disabled.
+        rejected_retention_days: Days a rejected post is kept (hidden, but restorable from reports) before being permanently deleted. Set to 0 to keep them forever.
         review_threshold: Threshold above which content will be flagged for manual review
         sensitive_sexual: Threshold above which content will be marked as sensitive for sexual content
         sensitive_violence: Threshold above which content will be marked as sensitive for violence
@@ -296,6 +297,7 @@ en:
         ban_violence: Ban threshold - Violence
         ban_vulgarity: Ban threshold - Vulgarity
         custom_prompt: Custom AI prompt
+        rejected_retention_days: Rejected content retention (days)
         review_threshold: Manual review threshold
         sensitive_sexual: Sensitive threshold - Sexual
         sensitive_violence: Sensitive threshold - Violence

@@ -68,4 +68,22 @@ RSpec.describe Admin::Epsilon::AiModerationSettingsController do
       end
     end
   end
+
+  describe 'POST #remoderate' do
+    it 'enqueues the re-moderation scheduler and redirects back' do
+      expect { post :remoderate }.to change(Epsilon::AiRemoderationScheduler.jobs, :size).by(1)
+
+      expect(response).to redirect_to(admin_epsilon_ai_moderation_setting_path)
+    end
+
+    context 'when the user lacks the moderation permission' do
+      let(:role) { Fabricate(:user_role, permissions: 0) }
+
+      it 'is forbidden and enqueues nothing' do
+        expect { post :remoderate }.to_not change(Epsilon::AiRemoderationScheduler.jobs, :size)
+
+        expect(response).to have_http_status(403)
+      end
+    end
+  end
 end

@@ -3,11 +3,14 @@
 module Epsilon
   class MistralModerationWorker
     include Sidekiq::Worker
+    include Epsilon::MistralAnalysis
+    include Epsilon::ModerationVerdictActions
 
     sidekiq_options queue: 'epsilon_ai_moderation', retry: 3
 
     sidekiq_retries_exhausted do |msg, exception|
       status_id = msg['args'][0]
+      is_edit = msg['args'][1] || false
       status = Status.find_by(id: status_id)
 
       next if status.nil?
@@ -17,21 +20,42 @@ module Epsilon
 
         if moderation.pending_ai?
           moderation.state = :unmoderated
+          # Flag it as fail-open: it was published without ever being vetted, so
+          # the re-moderation scheduler re-checks it once the API is healthy.
+          moderation.ai_failed_open = true
           moderation.save!
 
           status.updated_at = Time.current
           status.save! if status.changed?
+
+          setting = ::Epsilon::AiModerationSetting.current
+          ::Epsilon::ModerationEvent.record!(
+            status: status,
+            decision: :fail_open,
+            source: setting.use_native_moderation? ? :native : :llm,
+            sensitive: status.sensitive?
+          )
         end
       end
 
       status.reload
 
-      ::FanOutOnWriteService.new.call(status)
+      # Fail-open: publish the held content, locally and to the fediverse. An
+      # edit ships as an update so already-distributed copies are refreshed
+      # rather than re-inserted.
+      if is_edit
+        ::DistributionWorker.perform_async(status.id, { 'update' => true })
+        ::ActivityPub::StatusUpdateDistributionWorker.perform_async(status.id)
+      else
+        ::FanOutOnWriteService.new.call(status)
+        ::ActivityPub::DistributionWorker.perform_async(status.id)
+      end
 
       Rails.logger.error("[EPSILON AI CRITICAL] Échec définitif de la modération du statut #{status_id}. Erreur : #{exception.message}")
     end
 
-    def perform(status_id)
+    # rubocop:disable Style/OptionalBooleanParameter -- Sidekiq passes args positionally, not as kwargs
+    def perform(status_id, is_edit = false)
       status = Status.find_by(id: status_id)
       return if status.nil? || !status.pending_ai?
 
@@ -54,6 +78,11 @@ module Epsilon
       ApplicationRecord.transaction do
         moderation = status.epsilon_ai_status_moderation_or_default
         moderation.state = new_state
+        moderation.ai_content_warning = must_be_sensitive
+        # A real verdict clears any earlier fail-open mark (e.g. a status that was
+        # published during an outage and is now being re-checked, or re-moderated
+        # after an edit).
+        moderation.ai_failed_open = false
         moderation.save!
 
         if must_be_sensitive
@@ -74,180 +103,113 @@ module Epsilon
         end
       end
 
+      ::Epsilon::ModerationEvent.record!(
+        status: status,
+        decision: new_state,
+        source: @setting.use_native_moderation? ? :native : :llm,
+        sensitive: must_be_sensitive,
+        scores: { violence: violence_score, vulgarity: vulg_score, sexual: sex_score },
+        category: category,
+        trigger: trigger_reason
+      )
+
       sentinel = Account.find_by(username: 'EpsilonSafety') || Account.representative
 
       case new_state
       when :approved, :manual_review
         status.reload
 
-        ::FanOutOnWriteService.new.call(status)
+        if is_edit
+          epsilon_distribute_edit!(status)
+        else
+          ::FanOutOnWriteService.new.call(status)
+          ::ActivityPub::DistributionWorker.perform_async(status.id)
+          ::UpdateStatusService.new.call(status, status.account.id, sensitive: true, bypass_ai_moderation: true) if must_be_sensitive
+        end
 
-        ::UpdateStatusService.new.call(status, status.account.id, sensitive: true) if must_be_sensitive
         trigger_system_report!(status, trigger_reason, highest_score, reasoning) if status.manual_review?
 
       when :rejected
         if status.account.local?
-          send_explanation_dm(status, sentinel, :reject, trigger_reason, highest_score, category, clean_content)
-          create_strike_and_delete!(status, trigger_reason, highest_score, sentinel, category)
+          if is_edit
+            epsilon_revert_rejected_edit!(status, sentinel, trigger_reason, highest_score, category, clean_content)
+          else
+            send_explanation_dm(status, sentinel, :reject, trigger_reason, highest_score, category, clean_content)
+            create_strike_and_preserve!(status, trigger_reason, highest_score, sentinel, category)
+          end
         else
           ::RemoveStatusService.new.call(status)
         end
       end
     end
+    # rubocop:enable Style/OptionalBooleanParameter
 
     private
 
-    def analyze_with_mistral(text)
-      if @setting.use_native_moderation?
-        analyze_with_native_moderation(text)
-      else
-        analyze_with_llm(text)
-      end
+    # Distribute an approved edit as an *update* so copies already on timelines
+    # are refreshed in place, matching native UpdateStatusService#broadcast_updates!.
+    def epsilon_distribute_edit!(status)
+      ::DistributionWorker.perform_async(status.id, { 'update' => true })
+      ::ActivityPub::StatusUpdateDistributionWorker.perform_async(status.id)
     end
 
-    # ==========================================
-    # EPSILON : MISTRAL MODERATION
-    # ==========================================
+    # A rejected edit never gets published: we restore the previous, already-
+    # approved revision from the edit history (non-destructive -- nothing bad was
+    # ever made public). But the *attempt* is still recorded (strike + report,
+    # with the offending edit content), so editing a post into banned content is
+    # not consequence-free and stays visible to moderators.
+    def epsilon_revert_rejected_edit!(status, sentinel, reason, score, category, clean_content)
+      previous = status.edits.reorder(id: :desc).second
 
-    def analyze_with_native_moderation(text)
-      api_key = ENV.fetch('MISTRAL_API_KEY', nil)
-      url = 'https://api.mistral.ai/v1/moderations'
-
-      payload = {
-        model: 'mistral-moderation-latest',
-        input: text,
-      }
-
-      response = HTTP.timeout(5).auth("Bearer #{api_key}").post(url, json: payload)
-      unless response.status.success?
-        error_details = response.body.to_s.truncate(200)
-        raise StandardError, "Mistral API Error: #{response.code} - #{error_details}"
+      if previous.nil?
+        send_explanation_dm(status, sentinel, :reject, reason, score, category, clean_content)
+        return create_strike_and_preserve!(status, reason, score, sentinel, category)
       end
 
-      native_scores = response.parse.dig('results', 0, 'category_scores') || {}
+      record_rejected_edit!(status, reason, score, sentinel, category, clean_content)
 
-      {
-        'violence_score' => native_scores['violence_and_threats'].to_f,
-        'vulgarity_score' => native_scores['hate_and_discrimination'].to_f,
-        'sexual_score' => native_scores['sexual'].to_f,
-        'category' => 'Modération Native',
-        'reasoning' => 'Analyse via l\'API de modération standard',
-      }
-    end
-    # ==========================================
+      status.epsilon_ai_status_moderation_or_default.update!(state: :approved)
 
-    # ==========================================
-    # EPSILON : MISTRAL CHAT COMPLETION
-    # ==========================================
+      ::UpdateStatusService.new.call(
+        status,
+        status.account_id,
+        text: previous.text,
+        spoiler_text: previous.spoiler_text,
+        sensitive: previous.sensitive,
+        bypass_ai_moderation: true
+      )
 
-    def analyze_with_llm(text)
-      api_key = ENV.fetch('MISTRAL_API_KEY', nil)
-      url = 'https://api.mistral.ai/v1/chat/completions'
-
-      # ==========================================
-      # EPSILON : AI MODERATION SETTINGS
-      # rubocop:disable I18n/RailsI18n/DecorateString
-      mandatory_footer = <<~FOOTER
-
-        SCORING SCALE (0.0 to 1.0)
-
-        MANDATORY RESPONSE FORMAT:
-        Return ONLY a valid JSON object containing "violence_score", "vulgarity_score", "sexual_score", "category", and "reasoning".
-      FOOTER
-
-      system_prompt = @setting.custom_prompt + mandatory_footer
-      # rubocop:enable I18n/RailsI18n/DecorateString
-
-      payload = {
-        model: 'mistral-small-latest',
-        response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system', content: system_prompt },
-          { role: 'user', content: text },
-        ],
-      }
-
-      response = HTTP.timeout(5).auth("Bearer #{api_key}").post(url, json: payload)
-      raise StandardError, "Mistral API Error: #{response.code}" unless response.status.success?
-
-      raw_json = response.parse.dig('choices', 0, 'message', 'content')
-      JSON.parse(raw_json)
-    end
-    # ==========================================
-
-    def determine_moderation_state(violence, vulg, sex)
-      if violence >= @setting.ban_violence || vulg >= @setting.ban_vulgarity || sex >= @setting.ban_sexual
-        :rejected
-      elsif violence >= @setting.review_threshold || vulg >= @setting.review_threshold || sex >= @setting.review_threshold
-        :manual_review
-      else
-        :approved
-      end
+      send_explanation_dm(status, sentinel, :edit_reverted, reason, score, category, clean_content)
     end
 
-    def determine_if_sensitive(violence, vulg, sex)
-      violence >= @setting.sensitive_violence || vulg >= @setting.sensitive_vulgarity || sex >= @setting.sensitive_sexual
-    end
+    # Strike + report for a rejected edit. No deletion (the post is reverted, not
+    # removed), so the report comment carries the offending edit content and
+    # states the visible post is the safe, reverted version.
+    def record_rejected_edit!(status, reason, score, sentinel, category, offending_content)
+      source_tag = category == 'Modération Native' ? '[API NATIVE]' : '[LLM MISTRAL]'
 
-    def determine_trigger_reason(violence, vulg, sex)
-      scores = { 'violence' => violence, 'vulgarité' => vulg, 'contenu sexuel' => sex }
-      highest = scores.max_by { |_, score| score }
-      highest[0]
-    end
-
-    def trigger_system_report!(status, reason, score, reasoning)
-      comment = I18n.t('epsilon.moderation.system.report',
-                       reason: reason.upcase,
-                       score: score.round(3),
-                       details: "Analyse IA : #{reasoning}")
-
-      ReportService.new.call(Account.representative, status.account, status_ids: [status.id], comment: comment)
-    end
-
-    def create_strike_and_delete!(status, reason, score, sentinel, category)
-      warning_text = I18n.t('epsilon.moderation.message.deleted.reason',
+      warning_text = I18n.t('epsilon.moderation.message.edit_reverted.reason',
                             reason: reason.upcase,
                             score: score.round(3),
-                            content: status.text)
-
-      source_tag = category == 'Modération Native' ? '[API NATIVE]' : '[LLM MISTRAL]'
+                            content: offending_content)
       final_text = "#{warning_text}\n\nScore: #{score.round(3)}\nSource: #{source_tag} - #{category}"
 
       AccountWarning.create!(
         target_account: status.account,
         account: sentinel,
-        action: :delete_statuses,
-        text: final_text
+        action: :none,
+        text: final_text,
+        status_ids: [status.id.to_s]
       )
 
-      RemoveStatusService.new.call(status)
-    end
-
-    def send_explanation_dm(target_status, sender, type, reason, score, category, message)
-      author = target_status.account
-
-      recipient_locale = author.user&.locale || I18n.default_locale
-
-      text = I18n.with_locale(recipient_locale) do
-        if type == :review
-          I18n.t('epsilon.moderation.message.review',
-                 username: author.username,
-                 reason: reason)
-        else
-          I18n.t('epsilon.moderation.message.deleted.dm',
-                 username: author.username,
-                 reason: reason.upcase)
-        end
-      end
-
-      safe_message = message.to_s.gsub('@', '[at]')
-      source_tag = category == 'Modération Native' ? '[API NATIVE]' : '[LLM MISTRAL]'
-      final_text = "#{text}\n\nScore: #{score.round(3)}\nSource: #{source_tag} - #{category}\nMessage: #{safe_message}"
-
-      PostStatusService.new.call(
-        sender,
-        text: final_text,
-        visibility: :direct
+      ReportService.new.call(
+        Account.representative,
+        status.account,
+        status_ids: [status.id],
+        comment: I18n.t('epsilon.moderation.system.edit_reject_report',
+                        reason: reason.upcase,
+                        score: score.round(3),
+                        content: offending_content)
       )
     end
   end

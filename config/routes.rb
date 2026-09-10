@@ -253,7 +253,16 @@ Rails.application.routes.draw do
   # EPSILON : AI MODERATION SETTINGS
   namespace :admin do
     namespace :epsilon do
-      resource :ai_moderation_setting, only: [:show, :update]
+      resource :ai_moderation_setting, only: [:show, :update] do
+        post :remoderate
+      end
+      resource :moderation_history, only: [:show]
+      resources :ai_moderations, only: [:index] do
+        member do
+          post :restore
+          post :remove_content_warning
+        end
+      end
 
       # ==========================================
       # EPSILON : CATEGORIZATION SYSTEM

@@ -36,6 +36,11 @@ module Epsilon::StatusExtension
     return false if local? && account&.user&.role&.can?(:manage_reports)
     return false if reblog?
 
+    # Private messages (direct visibility) are never sent to AI moderation --
+    # scanning one-to-one private conversations is off-limits. This is the single
+    # funnel, so it covers edits too (the edit path delegates here).
+    return false if direct_visibility?
+
     full_text = [text, spoiler_text].join(' ').strip
     return false if full_text.blank?
 

@@ -58,6 +58,7 @@ SimpleNavigation::Configuration.run do |navigation|
       # ==========================================
       # EPSILON : AI MODERATION SETTINGS
       s.item :epsilon_ai_moderation, safe_join([material_symbol('smart_toy'), t('admin.epsilon.ai_moderation.title')]), admin_epsilon_ai_moderation_setting_path, highlights_on: %r{/admin/epsilon/ai_moderation_setting}, if: -> { current_user.can?(:manage_reports) }
+      s.item :epsilon_moderation_history, safe_join([material_symbol('history'), t('admin.epsilon.ai_moderation.history.title')]), admin_epsilon_moderation_history_path, highlights_on: %r{/admin/epsilon/moderation_history}, if: -> { current_user.can?(:manage_reports) }
       # ==========================================
       s.item :appeals, safe_join([material_symbol('feedback'), t('admin.disputes.appeals.title')]), admin_disputes_appeals_path, highlights_on: %r{/admin/disputes/appeals}, if: -> { current_user.can?(:manage_appeals) }
       s.item :accounts, safe_join([material_symbol('groups'), t('admin.accounts.title')]), admin_accounts_path(origin: 'local'), highlights_on: %r{/admin/accounts|admin/account_moderation_notes|/admin/pending_accounts|/admin/users}, if: -> { current_user.can?(:manage_users) }

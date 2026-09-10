@@ -32,6 +32,90 @@ en:
       ai_moderation:
         title: AI Moderation Settings
         updated: AI moderation settings successfully updated
+        history:
+          title: Moderation history
+          counters: Totals
+          total: Total
+          decision:
+            all: All
+            approved: Approved
+            manual_review: Manual review
+            rejected: Rejected
+            reaper_released: Recovered (lost job)
+            fail_open: Published during outage
+          sensitive: With content warning
+          breakdown: Breakdown
+          range_label: Range
+          range:
+            day: 1 day
+            week: 7 days
+            month: 1 month
+            year: 1 year
+            all: All time
+          search_placeholder: Search by account…
+          search: Search
+          period: Period
+          avg_severity: Avg. severity
+          severity: Severity
+          top_accounts: Most moderated accounts
+          detail: Event log
+          date: Date
+          decision_label: Decision
+          category: Category
+          cw_tag: (CW)
+          post: Post
+          report: Report
+          view: View
+          empty: No events yet.
+        reports:
+          restore_hint: This post was removed by AI moderation and preserved. Restore it if this was a false positive — it will be republished and its automated strike removed.
+          remove_cw_hint: This post is published with a content warning added by the AI. Lift it if it's a false positive — the post stays up, only the warning is removed.
+          restore_note: "Restored — this post was rejected by AI moderation but reinstated as a false positive. It has been republished and its automated strike removed."
+        health:
+          title: Pipeline health
+          ok: Operational
+          attention: Attention required
+          ai_enabled: AI moderation
+          enabled: Enabled
+          disabled: Disabled
+          api_key: Mistral API key
+          configured: Configured
+          missing: Missing
+          pending_now: Awaiting a verdict
+          oldest_pending: Oldest awaiting
+          ago: "%{time} ago"
+          stuck: Stuck (past grace window)
+          reaped_24h: Recovered by safety net (24h)
+          failed_open: Published during an outage (to re-check)
+          needs_attention: Needs manual attention
+          queue: Moderation queue
+          queue_value: "%{size} job(s), latency %{latency}s"
+        remoderation:
+          button: Re-moderate now
+          enqueued: Re-moderation started — the backlog will be re-checked once the API responds.
+        moderations:
+          title: AI moderation queue
+          filter: Filter
+          filters:
+            pending: "Awaiting (%{count})"
+            stuck: "Stuck (%{count})"
+            needs_attention: "Needs attention (%{count})"
+            rejected: "Rejected — preserved (%{count})"
+            sensitive: "Content warning (%{count})"
+          account: Account
+          content: Content
+          age: Waiting for
+          attempts: Reaper attempts
+          manage: Manage
+          empty: Nothing here — the pipeline is clear.
+          rejected_hint: These posts were rejected by the AI and are preserved (hidden, restorable) until the retention window elapses. Restore a false positive to republish it.
+          restore: Restore
+          restore_confirm: Restore this post? It will be republished and its automated strike removed.
+          restored: Post restored and republished.
+          sensitive_hint: These published posts were flagged with a content warning by the AI. Lift the warning on a false positive — the post stays published, only the warning is removed.
+          remove_cw: Remove warning
+          remove_cw_confirm: Remove the AI content warning from this post?
+          cw_removed: Content warning removed.
       categorization:
         add_category: Add a category
         add_hashtags_button: Add hashtags
@@ -2500,11 +2584,23 @@ en:
 
           Risk details:
           %{details}
+        reaper_report: |
+          [AI MODERATION — SAFETY NET]
+          This status was never analyzed by the AI (its moderation job was lost). It has been published by the safety-net reaper and requires manual review.
+        reject_report: |
+          [AI MODERATION — AUTO-REMOVED]
+          This status was removed by the automated system (reason: %{reason}, score: %{score}) and preserved for review. Restore it if this was a false positive.
+        edit_reject_report: |
+          [AI MODERATION — REJECTED EDIT]
+          The author tried to edit a post into banned content (reason: %{reason}, score: %{score}); the edit was automatically reverted to the last approved version, so the visible post is the safe one. Offending edit: "%{content}"
       message:
         deleted:
           reason: "Your post has been removed by our automated system (Reason: %{reason}, Score: %{score}).\n\nBlocked original content: \"%{content}\""
           dm: "@%{username} Sorry, your post has been blocked by our automated security system. Detected reason: %{reason}. We strive to keep this space safe for everyone."
         review: "@%{username} Hello, your post is pending manual validation by our moderators as our AI detected a potential risk (%{reason}). It will be published once a human has validated it."
+        edit_reverted:
+          dm: "@%{username} Sorry, your edit was blocked by our automated security system (Detected reason: %{reason}). We've restored the previous version of your post."
+          reason: "The author's edit was blocked by our automated system (Reason: %{reason}, Score: %{score}).\n\nBlocked edit content: \"%{content}\""
   simple_form:
       labels:
         epsilon_ai_moderation_setting:

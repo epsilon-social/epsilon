@@ -1,0 +1,54 @@
+%h3= t('admin.epsilon.ai_moderation.health.title')
+
+%p.hint
+  - if health.healthy?
+    %span.positive-hint= t('admin.epsilon.ai_moderation.health.ok')
+  - else
+    %span.negative-hint= t('admin.epsilon.ai_moderation.health.attention')
+
+%table.table
+  %tbody
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.ai_enabled')
+      %td
+        - if health.ai_enabled?
+          %span.positive-hint= t('admin.epsilon.ai_moderation.health.enabled')
+        - else
+          %span.negative-hint= t('admin.epsilon.ai_moderation.health.disabled')
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.api_key')
+      %td
+        - if health.api_key_present?
+          %span.positive-hint= t('admin.epsilon.ai_moderation.health.configured')
+        - else
+          %span.negative-hint= t('admin.epsilon.ai_moderation.health.missing')
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.pending_now')
+      %td= link_to health.pending_count, admin_epsilon_ai_moderations_path
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.oldest_pending')
+      %td
+        - if health.oldest_pending_at
+          = t('admin.epsilon.ai_moderation.health.ago', time: time_ago_in_words(health.oldest_pending_at))
+        - else
+          %span.neutral-hint —
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.stuck')
+      %td= link_to health.stuck_count, admin_epsilon_ai_moderations_path(filter: 'stuck'), class: ('negative-hint' if health.stuck_count.positive?)
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.reaped_24h')
+      %td= link_to health.reaped_last_24h, admin_reports_path
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.failed_open')
+      %td
+        %span{ class: ('negative-hint' if health.failed_open_count.positive?) }= health.failed_open_count
+        - if health.failed_open_count.positive?
+          = button_to t('admin.epsilon.ai_moderation.remoderation.button'), remoderate_admin_epsilon_ai_moderation_setting_path, method: :post, class: 'button button--block'
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.needs_attention')
+      %td= link_to health.needs_attention_count, admin_epsilon_ai_moderations_path(filter: 'needs_attention'), class: ('negative-hint' if health.needs_attention_count.positive?)
+    %tr
+      %th= t('admin.epsilon.ai_moderation.health.queue')
+      %td= link_to t('admin.epsilon.ai_moderation.health.queue_value', size: health.queue_size, latency: health.queue_latency.round), "#{sidekiq_path}/queues/#{Epsilon::AiModerationHealth::QUEUE}"
+
+%hr.spacer/

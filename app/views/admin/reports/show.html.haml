@@ -62,6 +62,22 @@
         - else
           = render partial: 'admin/shared/status_batch_row', collection: @statuses, as: :status, locals: { f: f }
 
+-# EPSILON : RESTORE AI-REJECTED CONTENT
+- epsilon_restorable = @statuses.to_a.select { |status| status.deleted_at? && status.rejected? }
+- if epsilon_restorable.any?
+  .epsilon-report-restore
+    %p.hint= t('admin.epsilon.ai_moderation.reports.restore_hint')
+    - epsilon_restorable.each do |status|
+      = button_to t('admin.epsilon.ai_moderation.moderations.restore'), restore_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: t('admin.epsilon.ai_moderation.moderations.restore_confirm') }
+
+-# EPSILON : REMOVE AI CONTENT WARNING
+- epsilon_cw = @statuses.to_a.select { |status| epsilon_ai_content_warning?(status) }
+- if epsilon_cw.any?
+  .epsilon-report-restore
+    %p.hint= t('admin.epsilon.ai_moderation.reports.remove_cw_hint')
+    - epsilon_cw.each do |status|
+      = button_to t('admin.epsilon.ai_moderation.moderations.remove_cw'), remove_content_warning_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: t('admin.epsilon.ai_moderation.moderations.remove_cw_confirm') }
+
 %details{ open: @collections.any? }
   %summary
     = t 'admin.reports.collections', count: @collections.size

@@ -1,6 +1,8 @@
 - content_for :page_title do
   = t('admin.epsilon.ai_moderation.title')
 
+= render 'health'
+
 = simple_form_for @setting, url: admin_epsilon_ai_moderation_setting_path, method: :put do |f|
   .fields-group
     = f.input :ai_enabled,
@@ -8,6 +10,13 @@
               wrapper: :with_label,
               label: t('simple_form.labels.epsilon_ai_moderation_setting.ai_enabled'),
               hint: t('simple_form.hints.epsilon_ai_moderation_setting.ai_enabled')
+
+  .fields-group
+    = f.input :rejected_retention_days,
+              wrapper: :with_label,
+              label: t('simple_form.labels.epsilon_ai_moderation_setting.rejected_retention_days'),
+              hint: t('simple_form.hints.epsilon_ai_moderation_setting.rejected_retention_days'),
+              input_html: { min: 0, step: 1 }
 
   %hr.spacer/
 

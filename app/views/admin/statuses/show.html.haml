@@ -10,6 +10,9 @@
                name: :report,
                type: :submit
   = link_to t('admin.statuses.open'), ActivityPub::TagManager.instance.url_for(@status), class: 'button', target: '_blank', rel: 'noopener'
+  -# EPSILON : REMOVE AI CONTENT WARNING
+  - if epsilon_ai_content_warning?(@status)
+    = button_to t('admin.epsilon.ai_moderation.moderations.remove_cw'), remove_content_warning_admin_epsilon_ai_moderation_path(@status.id), class: 'button', data: { confirm: t('admin.epsilon.ai_moderation.moderations.remove_cw_confirm') }
 
 %h3= t('admin.statuses.metadata')
 

@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_17_103734) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "account_aliases", force: :cascade do |t|
     t.bigint "account_id", null: false
@@ -575,6 +576,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_103734) do
     t.decimal "ban_vulgarity", precision: 3, scale: 2, default: "0.8", null: false
     t.datetime "created_at", null: false
     t.text "custom_prompt", default: "You are the content analysis radar for the Epsilon social network.\nYour only role is to analyze the provided text (regardless of its language) and return strict severity scores in JSON format. You do not make banning decisions; you solely measure and classify.", null: false
+    t.integer "rejected_retention_days", default: 90, null: false
     t.decimal "review_threshold", precision: 3, scale: 2, default: "0.5", null: false
     t.decimal "sensitive_sexual", precision: 3, scale: 2, default: "0.25", null: false
     t.decimal "sensitive_violence", precision: 3, scale: 2, default: "0.25", null: false
@@ -584,11 +586,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_103734) do
   end
 
   create_table "epsilon_ai_status_moderations", force: :cascade do |t|
+    t.boolean "ai_content_warning", default: false, null: false
+    t.boolean "ai_failed_open", default: false, null: false
     t.datetime "created_at", null: false
+    t.integer "reaper_attempts", default: 0, null: false
     t.integer "state", default: 0, null: false
     t.bigint "status_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["ai_failed_open"], name: "index_epsilon_ai_status_moderations_on_failed_open", where: "(ai_failed_open = true)"
     t.index ["status_id"], name: "index_epsilon_ai_status_moderations_on_status_id", unique: true
+    t.index ["updated_at"], name: "index_epsilon_ai_status_moderations_pending", where: "(state = 1)"
   end
 
   create_table "epsilon_live_invitations", force: :cascade do |t|
@@ -620,6 +627,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_17_103734) do
     t.index ["live_session_id", "created_at"], name: "index_epsilon_live_questions_on_live_session_id_and_created_at"
     t.index ["live_session_id"], name: "index_epsilon_live_questions_on_live_session_id"
     t.index ["status"], name: "index_epsilon_live_questions_on_status"
+  end
+
+  create_table "epsilon_moderation_events", force: :cascade do |t|
+    t.bigint "account_id"
+    t.string "acct"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.integer "decision", default: 0, null: false
+    t.boolean "sensitive", default: false, null: false
+    t.decimal "sexual_score", precision: 4, scale: 3
+    t.integer "source", default: 0, null: false
+    t.bigint "status_id"
+    t.string "trigger"
+    t.decimal "violence_score", precision: 4, scale: 3
+    t.decimal "vulgarity_score", precision: 4, scale: 3
+    t.index ["account_id"], name: "index_epsilon_moderation_events_on_account_id"
+    t.index ["acct"], name: "index_epsilon_moderation_events_on_acct_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["created_at"], name: "index_epsilon_moderation_events_on_created_at"
+    t.index ["decision"], name: "index_epsilon_moderation_events_on_decision"
   end
 
   create_table "fasp_backfill_requests", force: :cascade do |t|

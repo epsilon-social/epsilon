@@ -6,6 +6,7 @@
   - [ingress, 4]
   - [mailers, 2]
   - [epsilon_ai_moderation, 2]
+  - [epsilon_ai_remoderation, 1]
   - [pull]
   - [scheduler]
   - [fasp]
@@ -13,6 +14,21 @@
 :scheduler:
   :listened_queues_only: true
   :schedule:
+    # EPSILON : AI MODERATION REAPER — releases pending_ai statuses orphaned by a lost job (fail-open safety net)
+    epsilon_ai_moderation_reaper_scheduler:
+      interval: 1 minute
+      class: Epsilon::AiModerationReaperScheduler
+      queue: scheduler
+    # EPSILON : AI REMODERATION — re-checks fail-open statuses (published during an outage) once the API is healthy
+    epsilon_ai_remoderation_scheduler:
+      interval: 15 minutes
+      class: Epsilon::AiRemoderationScheduler
+      queue: scheduler
+    # EPSILON : AI MODERATION RETENTION — hard-deletes rejected statuses past their appeal window
+    epsilon_rejected_content_purge_scheduler:
+      interval: 1 day
+      class: Epsilon::RejectedContentPurgeScheduler
+      queue: scheduler
     scheduled_statuses_scheduler:
       every: '5m'
       class: Scheduler::ScheduledStatusesScheduler

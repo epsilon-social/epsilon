@@ -32,6 +32,90 @@ fr:
       ai_moderation:
         title: Paramètres de Modération IA
         updated: Paramètres de modération IA mis à jour avec succès
+        history:
+          title: Historique de modération
+          counters: Totaux
+          total: Total
+          decision:
+            all: Toutes
+            approved: Approuvé
+            manual_review: Revue manuelle
+            rejected: Rejeté
+            reaper_released: Rattrapé (job perdu)
+            fail_open: Publié pendant une panne
+          sensitive: Avec avertissement
+          breakdown: Découpage
+          range_label: Plage
+          range:
+            day: 1 jour
+            week: 7 jours
+            month: 1 mois
+            year: 1 an
+            all: Toujours
+          search_placeholder: Rechercher par compte…
+          search: Rechercher
+          period: Période
+          avg_severity: Sévérité moy.
+          severity: Sévérité
+          top_accounts: Comptes les plus modérés
+          detail: Journal des événements
+          date: Date
+          decision_label: Décision
+          category: Catégorie
+          cw_tag: (CW)
+          post: Post
+          report: Signalement
+          view: Voir
+          empty: Aucun événement pour l'instant.
+        reports:
+          restore_hint: Ce post a été retiré par la modération IA et conservé. Restaurez-le s'il s'agit d'un faux positif — il sera republié et son strike automatique annulé.
+          remove_cw_hint: Ce post est publié avec un avertissement de contenu ajouté par l'IA. Retirez-le s'il s'agit d'un faux positif — le post reste visible, seul l'avertissement est enlevé.
+          restore_note: "Restauré — ce post avait été rejeté par la modération IA mais rétabli comme faux positif. Il a été republié et son strike automatique annulé."
+        health:
+          title: Santé du pipeline
+          ok: Opérationnel
+          attention: Intervention requise
+          ai_enabled: Modération IA
+          enabled: Activée
+          disabled: Désactivée
+          api_key: Clé API Mistral
+          configured: Configurée
+          missing: Manquante
+          pending_now: En attente de verdict
+          oldest_pending: Plus ancien en attente
+          ago: "il y a %{time}"
+          stuck: Bloqués (au-delà du délai)
+          reaped_24h: Rattrapés par le filet de sécurité (24 h)
+          failed_open: Publiés pendant une panne (à re-modérer)
+          needs_attention: Intervention manuelle requise
+          queue: File de modération
+          queue_value: "%{size} job(s), latence %{latency}s"
+        remoderation:
+          button: Re-modérer maintenant
+          enqueued: Re-modération lancée — le backlog sera revérifié dès que l'API répond.
+        moderations:
+          title: File de modération IA
+          filter: Filtre
+          filters:
+            pending: "En attente (%{count})"
+            stuck: "Bloqués (%{count})"
+            needs_attention: "Intervention requise (%{count})"
+            rejected: "Rejetés — préservés (%{count})"
+            sensitive: "Avertissement (%{count})"
+          account: Compte
+          content: Contenu
+          age: En attente depuis
+          attempts: Essais du reaper
+          manage: Gérer
+          empty: Rien ici — le pipeline est dégagé.
+          rejected_hint: Ces posts ont été rejetés par l'IA et sont conservés (masqués, restaurables) jusqu'à la fin de la fenêtre de rétention. Restaurez un faux positif pour le republier.
+          restore: Restaurer
+          restore_confirm: Restaurer ce post ? Il sera republié et son strike automatique annulé.
+          restored: Post restauré et republié.
+          sensitive_hint: Ces posts publiés ont reçu un avertissement de contenu par l'IA. Retirez l'avertissement sur un faux positif — le post reste publié, seul l'avertissement est enlevé.
+          remove_cw: Retirer l'avertissement
+          remove_cw_confirm: Retirer l'avertissement de contenu IA de ce post ?
+          cw_removed: Avertissement de contenu retiré.
       categorization:
         add_category: Ajouter une catégorie
         add_hashtags_button: Ajouter les hashtags
@@ -2499,11 +2583,23 @@ fr:
 
             Détail des risques :
             %{details}
+          reaper_report: |
+            [MODÉRATION IA — FILET DE SÉCURITÉ]
+            Ce statut n'a jamais été analysé par l'IA (son job de modération a été perdu). Il a été publié par le filet de sécurité (reaper) et nécessite une vérification manuelle.
+          reject_report: |
+            [MODÉRATION IA — RETRAIT AUTOMATIQUE]
+            Ce statut a été retiré par le système automatisé (motif : %{reason}, score : %{score}) et conservé pour vérification. Restaurez-le s'il s'agit d'un faux positif.
+          edit_reject_report: |
+            [MODÉRATION IA — ÉDITION REJETÉE]
+            L'auteur a tenté de modifier un post en contenu interdit (motif : %{reason}, score : %{score}) ; la modification a été automatiquement annulée vers la dernière version approuvée, le post visible est donc la version sûre. Contenu incriminé : "%{content}"
         message:
           deleted:
             reason: "Votre message a été supprimé par notre système automatisé (Motif : %{reason}, Score : %{score}).\n\nContenu original bloqué : \"%{content}\""
             dm: "@%{username} Désolé, votre message a été bloqué par notre système de sécurité automatique. Motif détecté : %{reason}. Nous veillons à garder cet espace sûr pour tous."
           review: "@%{username} Bonjour, votre post est en attente de validation manuelle par nos modérateurs car notre IA a détecté un risque potentiel (%{reason}). Il sera publié dès qu'un humain aura validé."
+          edit_reverted:
+            dm: "@%{username} Désolé, votre modification a été bloquée par notre système de sécurité automatique (Motif détecté : %{reason}). Nous avons restauré la version précédente de votre post."
+            reason: "La modification de l'auteur a été bloquée par notre système automatisé (Motif : %{reason}, Score : %{score}).\n\nContenu de modification bloqué : \"%{content}\""
   simple_form:
     labels:
       epsilon_ai_moderation_setting:

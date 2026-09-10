@@ -1,0 +1,45 @@
+- content_for :page_title do
+  = t('admin.epsilon.ai_moderation.moderations.title')
+
+.filter-subset
+  %strong= t('admin.epsilon.ai_moderation.moderations.filter')
+  %ul
+    %li= link_to t('admin.epsilon.ai_moderation.moderations.filters.pending', count: @health.pending_count), admin_epsilon_ai_moderations_path, class: ('selected' if @filter == 'pending')
+    %li= link_to t('admin.epsilon.ai_moderation.moderations.filters.stuck', count: @health.stuck_count), admin_epsilon_ai_moderations_path(filter: 'stuck'), class: ('selected' if @filter == 'stuck')
+    %li= link_to t('admin.epsilon.ai_moderation.moderations.filters.needs_attention', count: @health.needs_attention_count), admin_epsilon_ai_moderations_path(filter: 'needs_attention'), class: ('selected' if @filter == 'needs_attention')
+    %li= link_to t('admin.epsilon.ai_moderation.moderations.filters.rejected', count: @health.preserved_rejected_count), admin_epsilon_ai_moderations_path(filter: 'rejected'), class: ('selected' if @filter == 'rejected')
+    %li= link_to t('admin.epsilon.ai_moderation.moderations.filters.sensitive', count: @health.ai_content_warning_count), admin_epsilon_ai_moderations_path(filter: 'sensitive'), class: ('selected' if @filter == 'sensitive')
+
+- if @filter == 'rejected'
+  %p.hint= t('admin.epsilon.ai_moderation.moderations.rejected_hint')
+- if @filter == 'sensitive'
+  %p.hint= t('admin.epsilon.ai_moderation.moderations.sensitive_hint')
+
+- if @moderations.any?
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.ai_moderation.moderations.account')
+          %th= t('admin.epsilon.ai_moderation.moderations.content')
+          %th= t('admin.epsilon.ai_moderation.moderations.age')
+          %th
+      %tbody
+        - @moderations.each do |moderation|
+          - status = @statuses[moderation.status_id]
+          - next if status.nil?
+
+          %tr
+            %td= link_to status.account.acct, admin_account_path(status.account_id)
+            %td= truncate(strip_tags(status.text.to_s), length: 80)
+            %td= t('admin.epsilon.ai_moderation.health.ago', time: time_ago_in_words(moderation.updated_at))
+            %td.epsilon-moderation-actions
+              = link_to t('admin.epsilon.ai_moderation.moderations.manage'), admin_account_status_path(status.account_id, status.id)
+              - if @filter == 'rejected'
+                = button_to t('admin.epsilon.ai_moderation.moderations.restore'), restore_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: t('admin.epsilon.ai_moderation.moderations.restore_confirm') }
+              - if @filter == 'sensitive'
+                - cw_confirm = t('admin.epsilon.ai_moderation.moderations.remove_cw_confirm')
+                = button_to t('admin.epsilon.ai_moderation.moderations.remove_cw'), remove_content_warning_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: cw_confirm }
+  = paginate @moderations
+- else
+  %p.muted-hint= t('admin.epsilon.ai_moderation.moderations.empty')

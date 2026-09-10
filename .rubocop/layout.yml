@@ -4,6 +4,11 @@ Layout/FirstHashElementIndentation:
 
 Layout/LineLength:
   Max: 300 # Default of 120 causes a duplicate entry in generated todo file
+  Exclude:
+    # EPSILON: auto-generated annotaterb schema comment for the long custom_prompt
+    # default exceeds 300 chars and is regenerated on every migrate (an inline
+    # disable would be stripped). See EPSILON_CHANGELOG / ai_moderation_setting.rb.
+    - 'app/models/epsilon/ai_moderation_setting.rb'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented

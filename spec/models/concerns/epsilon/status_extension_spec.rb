@@ -56,4 +56,28 @@ RSpec.describe 'Epsilon::StatusExtension' do
       end
     end
   end
+
+  describe 'private messages (direct visibility)' do
+    let(:account) { Fabricate(:account, domain: nil) }
+
+    before do
+      ENV['TEST_EPSILON_AI'] = 'true'
+      Epsilon::AiModerationSetting.current.update!(ai_enabled: true)
+    end
+
+    after { ENV.delete('TEST_EPSILON_AI') }
+
+    it 'never sends a direct message to AI moderation' do
+      status = Fabricate(:status, account: account, visibility: :direct)
+
+      expect(status.epsilon_ai_status_moderation_or_default.state).to eq('unmoderated')
+      expect(Epsilon::MistralModerationWorker.jobs.size).to eq(0)
+    end
+
+    it 'still moderates a public post from the same account' do
+      status = Fabricate(:status, account: account, visibility: :public)
+
+      expect(status.epsilon_ai_status_moderation_or_default.state).to eq('pending_ai')
+    end
+  end
 end
