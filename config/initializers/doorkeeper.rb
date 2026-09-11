@@ -173,7 +173,14 @@ Doorkeeper.configure do
   # so that the user skips the authorization step.
   # For example if dealing with a trusted application.
   skip_authorization do |_resource_owner, client|
-    client.application.superapp?
+    # ==========================================
+    # EPSILON : SKIP OAUTH CONSENT (first-party iOS app)
+    # L'app iOS est une application OAuth first-party (pas superapp) : on saute
+    # l'écran de consentement comme pour la web app. Fail-closed via ENV
+    # (EPSILON_FIRST_PARTY_CLIENT_ID) : sans config, aucun client n'est bypassé.
+    # ==========================================
+    client.application.superapp? ||
+      Epsilon::SessionBridge.first_party_application?(client.application)
   end
 
   # WWW-Authenticate Realm (default "Doorkeeper").

@@ -60,6 +60,36 @@ RSpec.describe 'OAuth Authorizations' do
           end
         end
       end
+
+      # ==========================================
+      # EPSILON : SKIP OAUTH CONSENT (first-party iOS app)
+      # ==========================================
+      context 'when app is the first-party client' do
+        around do |example|
+          ClimateControl.modify(EPSILON_FIRST_PARTY_CLIENT_ID: application.uid) { example.run }
+        end
+
+        it 'skips the consent screen and redirects to callback' do
+          subject
+
+          expect(response)
+            .to redirect_to(/\A#{application.redirect_uri}/)
+        end
+      end
+
+      context 'when EPSILON_FIRST_PARTY_CLIENT_ID is unset' do
+        around do |example|
+          ClimateControl.modify(EPSILON_FIRST_PARTY_CLIENT_ID: nil) { example.run }
+        end
+
+        it 'shows the consent screen' do
+          subject
+
+          expect(response)
+            .to have_http_status(:success)
+        end
+      end
+      # ==========================================
     end
 
     context 'when not signed in' do
