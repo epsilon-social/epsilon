@@ -1,9 +1,14 @@
+import PropTypes from 'prop-types';
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
+
+import { Link } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
 import CategoryIcon from '@/material-icons/400-24px/category.svg?react';
+import FlagIcon from '@/material-icons/400-24px/flag.svg?react';
 import LockIcon from '@/material-icons/400-24px/lock.svg?react';
+import MailIcon from '@/material-icons/400-24px/mail.svg?react';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
 import ShareIcon from '@/material-icons/400-24px/share.svg?react';
 import ShieldIcon from '@/material-icons/400-24px/shield.svg?react';
@@ -14,6 +19,9 @@ import { WordmarkLogo } from '@/mastodon/components/logo';
 import { LinkFooter } from '@/mastodon/features/ui/components/link_footer';
 
 import { getColumnSkipLinkId } from '../../ui/components/skip_links';
+
+const SUPPORT_EMAIL = 'support@epsilon.social';
+const MODERATION_EMAIL = 'moderation@epsilon.social';
 
 const messages = defineMessages({
   columnTitle: { id: 'epsilon.about.title', defaultMessage: 'About' },
@@ -50,6 +58,17 @@ const messages = defineMessages({
   pillarTopicsBody: {
     id: 'epsilon.about.pillar.topics.body',
     defaultMessage: 'Discover through the content categories you care about, not through a machine engineered to keep you scrolling.',
+  },
+  contactTitle: { id: 'epsilon.about.contact.title', defaultMessage: 'Contact & administration' },
+  supportTitle: { id: 'epsilon.about.contact.support.title', defaultMessage: 'General support' },
+  supportBody: {
+    id: 'epsilon.about.contact.support.body',
+    defaultMessage: 'A question, a technical issue, or feedback about Epsilon? Write to our support team and we will help.',
+  },
+  reportTitle: { id: 'epsilon.about.contact.report.title', defaultMessage: 'Report content' },
+  reportBody: {
+    id: 'epsilon.about.contact.report.body',
+    defaultMessage: 'To report a post, an account, or any content that breaks our rules, contact our moderation team. We are committed to reviewing every report within 24 hours.',
   },
 });
 
@@ -109,6 +128,63 @@ const EpsilonAbout = ({ multiColumn }) => {
           </p>
         </section>
 
+        <section className='epsilon-about__contact'>
+          <h2 className='epsilon-about__contact-title'>
+            {intl.formatMessage(messages.contactTitle)}
+          </h2>
+
+          <div className='epsilon-about__contact-grid'>
+            <article className='epsilon-about__contact-card'>
+              <span className='epsilon-about__contact-icon'>
+                <Icon id='mail' icon={MailIcon} />
+              </span>
+              <h3 className='epsilon-about__contact-card-title'>
+                {intl.formatMessage(messages.supportTitle)}
+              </h3>
+              <p className='epsilon-about__contact-card-body'>
+                {intl.formatMessage(messages.supportBody)}
+              </p>
+              <a className='epsilon-about__contact-mail' href={`mailto:${SUPPORT_EMAIL}`}>
+                {SUPPORT_EMAIL}
+              </a>
+            </article>
+
+            <article className='epsilon-about__contact-card'>
+              <span className='epsilon-about__contact-icon'>
+                <Icon id='flag' icon={FlagIcon} />
+              </span>
+              <h3 className='epsilon-about__contact-card-title'>
+                {intl.formatMessage(messages.reportTitle)}
+              </h3>
+              <p className='epsilon-about__contact-card-body'>
+                {intl.formatMessage(messages.reportBody)}
+              </p>
+              <a className='epsilon-about__contact-mail' href={`mailto:${MODERATION_EMAIL}`}>
+                {MODERATION_EMAIL}
+              </a>
+            </article>
+          </div>
+
+          <p className='epsilon-about__contact-legal'>
+            <FormattedMessage
+              id='epsilon.about.contact.legal'
+              defaultMessage='Read our {terms} and our {privacy}.'
+              values={{
+                terms: (
+                  <Link to='/terms-of-service'>
+                    <FormattedMessage id='epsilon.about.contact.terms' defaultMessage='Terms of Service' />
+                  </Link>
+                ),
+                privacy: (
+                  <Link to='/privacy-policy'>
+                    <FormattedMessage id='epsilon.about.contact.privacy' defaultMessage='Privacy Policy' />
+                  </Link>
+                ),
+              }}
+            />
+          </p>
+        </section>
+
         <LinkFooter context='about' />
       </div>
 
@@ -118,6 +194,10 @@ const EpsilonAbout = ({ multiColumn }) => {
       </Helmet>
     </Column>
   );
+};
+
+EpsilonAbout.propTypes = {
+  multiColumn: PropTypes.bool,
 };
 
 export default EpsilonAbout;
