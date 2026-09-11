@@ -308,6 +308,22 @@ export const Search: React.FC<{
     [dispatch, history, unfocus],
   );
 
+  // ==========================================
+  // EPSILON : SEARCH SUBMIT (iOS soft keyboard)
+  // ==========================================
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (selectedOption === -1) {
+        submit(value);
+      } else if (navigableOptions.length > 0) {
+        navigableOptions[selectedOption]?.action(e as React.KeyboardEvent);
+      }
+    },
+    [navigableOptions, selectedOption, submit, value],
+  );
+  // ==========================================
+
   const handleChange = useCallback(
     ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
       setValue(value);
@@ -556,6 +572,7 @@ export const Search: React.FC<{
       role='search'
       ref={formRef}
       className={classNames('search', { active: expanded })}
+      onSubmit={handleSubmit} // EPSILON : IOS KEYBOARD SUBMIT
     >
       <input
         ref={searchInputRef}

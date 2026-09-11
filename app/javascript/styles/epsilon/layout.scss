@@ -2590,6 +2590,12 @@ body.theme-system {
   justify-content: space-around !important;
   align-items: center !important;
   width: 100% !important;
+
+  // border-box impératif : la règle mobile ajoute padding-inline: 8px et, en
+  // content-box, `width: 100%` + 16px de padding faisait déborder la barre de
+  // 8px hors de l'écran → scroll-X au niveau de la page (flux en direct,
+  // notifs, profils…). La home n'a pas de section-headline, d'où « OK sur home ».
+  box-sizing: border-box !important;
   gap: 12px !important;
   background: transparent !important;
   border: none !important;
@@ -3127,6 +3133,19 @@ html.epsilon-in-app {
   }
 }
 
+// EPSILON : respiration sous la barre de recherche — flux en direct (/public).
+// Sur /home, c'est le compose inline (.epsilon-compose, margin-top: 20px) qui
+// crée l'écart sous la barre ; /public n'a ni compose ni filtre home en dessous,
+// donc on reproduit le même 20px. Scopé via :has(.search) (barre non vide) et
+// :not(:has(.epsilon-home-filter)) → n'affecte ni /home ni /search|/explore
+// (où .epsilon-mobile-search est vide).
+@media (width <= 768px) {
+  .epsilon-home-top-bar:not(:has(.epsilon-home-filter))
+    .epsilon-mobile-search:has(.search) {
+    margin-bottom: 20px;
+  }
+}
+
 /* ========================================== */
 
 /* EPSILON : MOBILE BACKDROP (FOND GRISÉ)     */
@@ -3482,8 +3501,10 @@ html.epsilon-in-app {
     }
   }
 
+  // EPSILON : padding-bottom porté à 20px (mobile) pour aligner la respiration
+  // sous le champ de recherche (page search / explore) sur celle de la home.
   @media (width <= 768px) {
-    padding: 0 0 8px;
+    padding: 0 0 20px;
   }
 }
 
