@@ -8,6 +8,7 @@ class PublicFeed
   # @option [Boolean] :local
   # @option [Boolean] :remote
   # @option [Boolean] :only_media
+  # @option [Symbol] :sensitive_scope (:media, :cw, :all)
   def initialize(account, options = {})
     @account = account
     @options = options
@@ -29,6 +30,8 @@ class PublicFeed
     scope.merge!(remote_only_scope) if remote_only?
     scope.merge!(account_filters_scope) if account?
     scope.merge!(media_only_scope) if media_only?
+    # EPSILON : MODERATION LIVE FEED FILTER
+    scope.merge!(sensitive_scope_filter) if sensitive_scope?
     scope.merge!(language_scope) if account&.chosen_languages.present?
 
     scope.to_a_paginated_by_id(limit, max_id: max_id, since_id: since_id, min_id: min_id)
@@ -85,6 +88,14 @@ class PublicFeed
     options[:only_media]
   end
 
+  # ==========================================
+  # EPSILON : MODERATION LIVE FEED FILTER
+  # ==========================================
+  def sensitive_scope?
+    options[:sensitive_scope].present?
+  end
+  # ==========================================
+
   def public_scope
     Status.public_visibility.joins(:account).merge(Account.without_suspended.without_silenced)
   end
@@ -108,6 +119,24 @@ class PublicFeed
   def media_only_scope
     Status.joins(:media_attachments).group(:id)
   end
+
+  # ==========================================
+  # EPSILON : MODERATION LIVE FEED FILTER
+  # All three predicates are covered by the partial index
+  # `index_statuses_epsilon_sensitive_id` (WHERE sensitive OR spoiler_text <> ''):
+  # the :media and :cw subsets are implied by it, so it stays usable → O(limit).
+  # ==========================================
+  def sensitive_scope_filter
+    case options[:sensitive_scope]
+    when :media
+      Status.where('statuses.sensitive')
+    when :cw
+      Status.where("statuses.spoiler_text <> ''")
+    else
+      Status.where("statuses.sensitive OR statuses.spoiler_text <> ''")
+    end
+  end
+  # ==========================================
 
   def language_scope
     Status.where(language: account.chosen_languages)

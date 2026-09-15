@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_15_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -559,6 +559,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
     t.index ["confirmation_token"], name: "index_email_subscriptions_on_confirmation_token", unique: true, where: "(confirmation_token IS NOT NULL)"
   end
 
+  create_table "epsilon_account_badges", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "epsilon_badge_id", null: false
+    t.datetime "granted_at"
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "epsilon_badge_id"], name: "idx_unique_epsilon_account_badges", unique: true
+    t.index ["account_id"], name: "index_epsilon_account_badges_on_account_id"
+    t.index ["epsilon_badge_id"], name: "index_epsilon_account_badges_on_epsilon_badge_id"
+  end
+
   create_table "epsilon_ai_metadata", force: :cascade do |t|
     t.jsonb "categories_raw", default: {}, null: false
     t.datetime "created_at", null: false
@@ -596,6 +607,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
     t.index ["ai_failed_open"], name: "index_epsilon_ai_status_moderations_on_failed_open", where: "(ai_failed_open = true)"
     t.index ["status_id"], name: "index_epsilon_ai_status_moderations_on_status_id", unique: true
     t.index ["updated_at"], name: "index_epsilon_ai_status_moderations_pending", where: "(state = 1)"
+  end
+
+  create_table "epsilon_badge_pending_grants", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.bigint "epsilon_badge_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email", "epsilon_badge_id"], name: "idx_unique_epsilon_badge_pending_grants", unique: true
+    t.index ["email"], name: "index_epsilon_badge_pending_grants_on_email"
+    t.index ["epsilon_badge_id"], name: "index_epsilon_badge_pending_grants_on_epsilon_badge_id"
+  end
+
+  create_table "epsilon_badges", force: :cascade do |t|
+    t.integer "account_badges_count", default: 0, null: false
+    t.string "color", default: "#800082", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "description_translations", default: {}, null: false
+    t.string "icon", default: "license-fill", null: false
+    t.boolean "is_active", default: true, null: false
+    t.string "name", limit: 100, null: false
+    t.jsonb "name_translations", default: {}, null: false
+    t.integer "position", default: 0, null: false
+    t.string "slug", limit: 50, null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_epsilon_badges_on_slug", unique: true
   end
 
   create_table "epsilon_live_invitations", force: :cascade do |t|
@@ -1437,6 +1473,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
     t.index ["deleted_at"], name: "index_statuses_on_deleted_at", where: "(deleted_at IS NOT NULL)"
     t.index ["id", "account_id"], name: "index_statuses_local_20190824", order: { id: :desc }, where: "((local OR (uri IS NULL)) AND (deleted_at IS NULL) AND (visibility = 0) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id)))"
     t.index ["id", "language", "account_id"], name: "index_statuses_public_20250129", order: { id: :desc }, where: "((deleted_at IS NULL) AND (visibility = 0) AND (reblog_of_id IS NULL) AND ((NOT reply) OR (in_reply_to_account_id = account_id)))"
+    t.index ["id"], name: "index_statuses_epsilon_sensitive_id", order: :desc, where: "(sensitive OR (spoiler_text <> ''::text))"
     t.index ["in_reply_to_account_id"], name: "index_statuses_on_in_reply_to_account_id", where: "(in_reply_to_account_id IS NOT NULL)"
     t.index ["in_reply_to_id"], name: "index_statuses_on_in_reply_to_id", where: "(in_reply_to_id IS NOT NULL)"
     t.index ["reblog_of_id", "account_id"], name: "index_statuses_on_reblog_of_id_and_account_id"
@@ -1705,8 +1742,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_120000) do
   add_foreign_key "custom_filters", "accounts", on_delete: :cascade
   add_foreign_key "email_domain_blocks", "email_domain_blocks", column: "parent_id", on_delete: :cascade
   add_foreign_key "email_subscriptions", "accounts", on_delete: :cascade
+  add_foreign_key "epsilon_account_badges", "epsilon_badges"
   add_foreign_key "epsilon_ai_metadata", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_ai_status_moderations", "statuses", on_delete: :cascade
+  add_foreign_key "epsilon_badge_pending_grants", "epsilon_badges"
   add_foreign_key "epsilon_live_questions", "accounts"
   add_foreign_key "epsilon_live_questions", "live_sessions"
   add_foreign_key "fasp_backfill_requests", "fasp_providers"

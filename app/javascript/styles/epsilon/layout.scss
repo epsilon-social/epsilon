@@ -2657,6 +2657,91 @@ body.theme-system {
   }
 }
 
+// ==========================================
+// EPSILON : MODERATION LIVE FEED FILTER
+// Visible in-body toggle for moderators (the column-header settings panel is
+// hidden in the Epsilon center layout, so we surface it here). Amber "active"
+// state to read as a moderation filter, distinct from the blue nav pills.
+// ==========================================
+.firehose__mod-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.firehose__mod-filter__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 38px;
+  padding: 10px 18px;
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius-pill);
+  background: var(--eps-surface);
+  color: var(--eps-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 18px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: var(--eps-border-hover);
+    background: var(--eps-surface-hover);
+    color: var(--eps-text-primary);
+  }
+
+  &.active {
+    border-color: transparent;
+    background: linear-gradient(90deg, #ffe1b3 0%, #ffc879 100%);
+    color: #4a2c00;
+    font-weight: 500;
+  }
+}
+
+.firehose__mod-filter__icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+// Segmented scope selector, shown only when the filter is active.
+.firehose__mod-filter__scopes {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--eps-radius-pill);
+  background: var(--eps-surface);
+}
+
+.firehose__mod-filter__scope {
+  padding: 6px 14px;
+  border: none;
+  border-radius: var(--eps-radius-pill);
+  background: transparent;
+  color: var(--eps-text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  &:hover {
+    color: var(--eps-text-primary);
+    background: var(--eps-surface-hover);
+  }
+
+  &.active {
+    background: linear-gradient(90deg, #ccdbff 0%, #a6c4ff 100%);
+    color: #16171a;
+    font-weight: 500;
+  }
+}
+
 @keyframes epsilon-skeleton-pulse {
   0% {
     opacity: 0.4;

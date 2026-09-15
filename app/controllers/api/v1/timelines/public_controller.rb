@@ -4,7 +4,14 @@ class Api::V1::Timelines::PublicController < Api::V1::Timelines::BaseController
   before_action -> { authorize_if_got_token! :read, :'read:statuses' }
   before_action :require_user!, if: :require_auth?
 
-  PERMITTED_PARAMS = %i(local remote limit only_media).freeze
+  # ==========================================
+  # EPSILON : MODERATION LIVE FEED FILTER
+  # `sensitive_scope` (media | cw | all): returns only posts with sensitive
+  # media, and/or a content warning (moderation tool, moderators only).
+  # ==========================================
+  PERMITTED_PARAMS = %i(local remote limit only_media sensitive_scope).freeze
+  # EPSILON : MODERATION LIVE FEED FILTER — accepted values for `sensitive_scope`
+  SENSITIVE_SCOPES = { 'media' => :media, 'cw' => :cw, 'all' => :all }.freeze
 
   def show
     cache_if_unauthenticated!
@@ -46,9 +53,26 @@ class Api::V1::Timelines::PublicController < Api::V1::Timelines::BaseController
       current_account,
       local: truthy_param?(:local),
       remote: truthy_param?(:remote),
-      only_media: truthy_param?(:only_media)
+      only_media: truthy_param?(:only_media),
+      # EPSILON : MODERATION LIVE FEED FILTER
+      sensitive_scope: sensitive_moderation_scope
     )
   end
+
+  # ==========================================
+  # EPSILON : MODERATION LIVE FEED FILTER
+  # Server-side guard (defense in depth): the moderation filter is honored for
+  # moderators only (manage_reports = Moderator/Admin/Owner). For anyone else it
+  # returns nil (no filter) — the returned posts are public anyway, so this gates
+  # the capability, not data. Mirrors the UI gate in the Firehose.
+  # Returns :media, :cw, :all, or nil.
+  # ==========================================
+  def sensitive_moderation_scope
+    return unless current_user&.can?(:manage_reports)
+
+    SENSITIVE_SCOPES[params[:sensitive_scope]]
+  end
+  # ==========================================
 
   def next_path
     api_v1_timelines_public_url next_path_params

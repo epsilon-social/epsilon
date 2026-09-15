@@ -4,17 +4,22 @@ import { useRef, useCallback, useEffect } from 'react';
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
+import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 
 import { useIdentity } from '@/mastodon/identity_context';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
+// EPSILON : MODERATION LIVE FEED FILTER
+import ShieldIcon from '@/material-icons/400-24px/shield.svg?react';
 import { addColumn } from 'mastodon/actions/columns';
 import { changeSetting } from 'mastodon/actions/settings';
 import { connectPublicStream, connectCommunityStream } from 'mastodon/actions/streaming';
 import { expandPublicTimeline, expandCommunityTimeline } from 'mastodon/actions/timelines';
 import { DismissableBanner } from 'mastodon/components/dismissable_banner';
+// EPSILON : MODERATION LIVE FEED FILTER — sidecar actions (native action files untouched)
+import { expandModerationFeed, connectModerationFeedStream } from 'mastodon/epsilon/actions/moderation_feed';
 import { localLiveFeedAccess, remoteLiveFeedAccess, domain } from 'mastodon/initial_state';
-import { canViewFeed } from 'mastodon/permissions';
+import { canViewFeed, canManageReports } from 'mastodon/permissions';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
 import Column from '../../components/column';
@@ -32,7 +37,19 @@ const messages = defineMessages({
     id: 'column.firehose_singular',
     defaultMessage: 'Live feed',
   },
+  // EPSILON : MODERATION LIVE FEED FILTER
+  filterToggle: { id: 'firehose.moderation_filter.toggle', defaultMessage: 'Content to moderate' },
+  filterMedia: { id: 'firehose.moderation_filter.media', defaultMessage: 'Sensitive media' },
+  filterCw: { id: 'firehose.moderation_filter.cw', defaultMessage: 'Content warnings' },
+  filterAll: { id: 'firehose.moderation_filter.all', defaultMessage: 'Both' },
 });
+
+// EPSILON : MODERATION LIVE FEED FILTER — segmented scope choices (default 'all')
+const SENSITIVE_SCOPES = [
+  { value: 'media', message: messages.filterMedia },
+  { value: 'cw', message: messages.filterCw },
+  { value: 'all', message: messages.filterAll },
+];
 
 const ColumnSettings = () => {
   const dispatch = useAppDispatch();
@@ -65,7 +82,14 @@ const Firehose = ({ feedType, multiColumn }) => {
   const columnRef = useRef(null);
 
   const onlyMedia = useAppSelector((state) => state.getIn(['settings', 'firehose', 'onlyMedia'], false));
-  const hasUnread = useAppSelector((state) => state.getIn(['timelines', `${feedType}${onlyMedia ? ':media' : ''}`, 'unread'], 0) > 0);
+  // EPSILON : MODERATION LIVE FEED FILTER — settings only honored for moderators
+  const onlySensitiveSetting = useAppSelector((state) => state.getIn(['settings', 'firehose', 'onlySensitive'], false));
+  const sensitiveScope = useAppSelector((state) => state.getIn(['settings', 'firehose', 'sensitiveScope'], 'all'));
+  const onlySensitive = canManageReports(permissions) && onlySensitiveSetting;
+  const timelineId = onlySensitive
+    ? `${feedType}${onlyMedia ? ':media' : ''}:sensitive:${sensitiveScope}`
+    : `${feedType}${onlyMedia ? ':media' : ''}`;
+  const hasUnread = useAppSelector((state) => state.getIn(['timelines', timelineId, 'unread'], 0) > 0);
 
   const handlePin = useCallback(
     () => {
@@ -86,6 +110,12 @@ const Firehose = ({ feedType, multiColumn }) => {
 
   const handleLoadMore = useCallback(
     (maxId) => {
+      // EPSILON : MODERATION LIVE FEED FILTER — route to the sidecar feed when active
+      if (onlySensitive) {
+        dispatch(expandModerationFeed({ feedType, maxId, onlyMedia, scope: sensitiveScope }));
+        return;
+      }
+
       switch(feedType) {
       case 'community':
         dispatch(expandCommunityTimeline({ maxId, onlyMedia }));
@@ -98,13 +128,35 @@ const Firehose = ({ feedType, multiColumn }) => {
         break;
       }
     },
-    [dispatch, onlyMedia, feedType],
+    [dispatch, onlyMedia, onlySensitive, sensitiveScope, feedType],
   );
 
   const handleHeaderClick = useCallback(() => columnRef.current?.scrollTop(), []);
 
+  // EPSILON : MODERATION LIVE FEED FILTER — toggle the moderator filter on/off
+  const handleToggleSensitive = useCallback(
+    () => dispatch(changeSetting(['firehose', 'onlySensitive'], !onlySensitive)),
+    [dispatch, onlySensitive],
+  );
+
+  // EPSILON : MODERATION LIVE FEED FILTER — pick which content to surface (data-scope avoids inline binds)
+  const handleScopeChange = useCallback(
+    (e) => dispatch(changeSetting(['firehose', 'sensitiveScope'], e.currentTarget.dataset.scope)),
+    [dispatch],
+  );
+
   useEffect(() => {
     let disconnect;
+
+    // EPSILON : MODERATION LIVE FEED FILTER — route to the sidecar feed when active
+    if (onlySensitive) {
+      dispatch(expandModerationFeed({ feedType, onlyMedia, scope: sensitiveScope }));
+      if (signedIn) {
+        disconnect = dispatch(connectModerationFeedStream({ feedType, onlyMedia, scope: sensitiveScope }));
+      }
+
+      return () => disconnect?.();
+    }
 
     switch(feedType) {
     case 'community':
@@ -128,7 +180,7 @@ const Firehose = ({ feedType, multiColumn }) => {
     }
 
     return () => disconnect?.();
-  }, [dispatch, signedIn, feedType, onlyMedia]);
+  }, [dispatch, signedIn, feedType, onlyMedia, onlySensitive, sensitiveScope]);
 
   const prependBanner = feedType === 'community' ? (
     <DismissableBanner id='community_timeline'>
@@ -209,9 +261,46 @@ const Firehose = ({ feedType, multiColumn }) => {
         </div>
       )}
 
+      {/* ========================================== */}
+      {/* EPSILON : MODERATION LIVE FEED FILTER */}
+      {/* Visible in-body toggle (the column-header settings panel is hidden */}
+      {/* in the Epsilon center layout). Moderators only. */}
+      {/* ========================================== */}
+      {canManageReports(permissions) && (
+        <div className='firehose__mod-filter'>
+          <button
+            type='button'
+            className={classNames('firehose__mod-filter__button', { active: onlySensitive })}
+            aria-pressed={onlySensitive}
+            onClick={handleToggleSensitive}
+          >
+            <ShieldIcon className='firehose__mod-filter__icon' />
+            {intl.formatMessage(messages.filterToggle)}
+          </button>
+
+          {onlySensitive && (
+            <div className='firehose__mod-filter__scopes' role='group'>
+              {SENSITIVE_SCOPES.map((option) => (
+                <button
+                  key={option.value}
+                  type='button'
+                  data-scope={option.value}
+                  className={classNames('firehose__mod-filter__scope', { active: sensitiveScope === option.value })}
+                  aria-pressed={sensitiveScope === option.value}
+                  onClick={handleScopeChange}
+                >
+                  {intl.formatMessage(option.message)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {/* ========================================== */}
+
       <StatusListContainer
         prepend={prependBanner}
-        timelineId={`${feedType}${onlyMedia ? ':media' : ''}`}
+        timelineId={timelineId}
         onLoadMore={handleLoadMore}
         trackScroll
         scrollKey='firehose'
