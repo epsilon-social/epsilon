@@ -671,6 +671,7 @@
   "empty_column.notifications": "Vous n’avez pas encore de notification. Interagissez avec d’autres personnes pour commencer la conversation.",
   "empty_column.public": "Il n’y a rien ici ! Écrivez quelque chose publiquement, ou bien suivez manuellement des personnes d’autres serveurs pour remplir le fil public",
   "epsilon.about.title": "À propos",
+  "epsilon.badges.granted_on": "Obtenu le {date}",
   "epsilon.about.tagline": "Le réseau social européen, souverain et conçu pour vous respecter.",
   "epsilon.about.intro": "Epsilon est un réseau social conçu en Europe. Pas d'algorithme manipulateur, pas de pièges à attention, pas de revente de données. Juste des gens, des conversations et les sujets que vous choisissez.",
   "epsilon.about.pillar.european.title": "Européen & souverain",

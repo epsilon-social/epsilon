@@ -116,6 +116,70 @@ en:
           remove_cw: Remove warning
           remove_cw_confirm: Remove the AI content warning from this post?
           cw_removed: Content warning removed.
+      badges:
+        account: Account
+        account_add_button: Add badge
+        account_add_prompt: Choose a badge…
+        account_added: 'Badge %{name} added.'
+        account_none: This account has no badge yet.
+        account_not_found: 'No local account found for %{acct}.'
+        account_remove_confirm: 'Remove the %{name} badge from this account?'
+        account_removed: Badge removed.
+        account_section_title: Certification badges
+        active: Active
+        all: All badges
+        assign_button: Assign badge
+        assign_hint: Enter a local username (with or without @) or an email. An email with no account yet is queued and granted automatically on sign-up.
+        assign_placeholder: username or email
+        assign_title: Assign to an account
+        assigned: 'Badge assigned to %{acct}.'
+        assigned_at: Assigned
+        assigned_pending: 'No account for %{email} yet — the badge is queued and will be granted automatically when they sign up.'
+        badge: Badge
+        color: Color
+        created: 'Badge %{name} created.'
+        csv:
+          button: Import CSV
+          hint: One identifier per line (local username or email). Matching local accounts get the badge now; unknown emails are queued and granted automatically on sign-up. Unknown usernames are skipped.
+          missing_file: Please choose a CSV file.
+          summary: 'Import done: %{assigned} assigned, %{skipped} already had it, %{pending} queued for sign-up, %{not_found} not found.'
+          title: Batch import
+        delete: Delete
+        delete_confirm: 'Delete the badge %{name}? It will be removed from every account that carries it.'
+        deleted: 'Badge %{name} deleted.'
+        description: Description
+        description_hint: Shown in the badge tooltip. Keep it short.
+        edit: Edit
+        empty: No badges yet.
+        hint: Certification badges are shown on local profiles and posts. They never federate to other instances.
+        holders: Holders
+        holders_title: Accounts with this badge
+        icon: Icon
+        icon_hint: Pick the icon shown on the badge. It is tinted with the color above.
+        icon_more: Show more icons
+        inactive: Inactive
+        is_active: Active
+        is_active_hint: Inactive badges stay assigned but are hidden everywhere.
+        manage_holders: Manage holders
+        name: Name
+        name_hint: Displayed as the badge label and accessibility text.
+        new: New badge
+        no_holders: No account carries this badge yet.
+        no_pending: No pending grants.
+        pending_email: Email
+        pending_hint: Emails waiting for an account. The badge is granted automatically once someone confirms an account with that email.
+        pending_removed: Pending grant removed.
+        pending_title: Pending grants (not registered yet)
+        position: Priority
+        position_hint: Lower numbers show first. The top badge is the one pinned on posts.
+        remove_button: Remove
+        remove_confirm: 'Remove this badge from @%{acct}?'
+        remove_pending_confirm: 'Remove the pending grant for %{email}?'
+        removed: Badge removed.
+        save: Save
+        status: Status
+        title: Badges
+        updated: 'Badge %{name} updated.'
       categorization:
         add_category: Add a category
         add_hashtags_button: Add hashtags

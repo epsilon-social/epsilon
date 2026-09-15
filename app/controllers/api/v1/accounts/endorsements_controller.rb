@@ -37,7 +37,8 @@ class Api::V1::Accounts::EndorsementsController < Api::BaseController
   end
 
   def paginated_endorsed_accounts
-    @account.endorsed_accounts.without_suspended.includes(:account_stat, :user).paginate_by_max_id(
+    # EPSILON : badges preload (avoid N+1)
+    @account.endorsed_accounts.without_suspended.includes(:account_stat, :user, account_badges: :badge).paginate_by_max_id(
       limit_param(DEFAULT_ACCOUNTS_LIMIT),
       params[:max_id],
       params[:since_id]

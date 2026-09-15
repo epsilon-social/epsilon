@@ -6,6 +6,7 @@ import escapeTextContentForBrowser from 'escape-html';
 import type {
   ApiAccountFieldJSON,
   ApiAccountRoleJSON,
+  ApiEpsilonBadgeJSON,
   ApiAccountJSON,
 } from 'mastodon/api_types/accounts';
 import { unescapeHTML } from 'mastodon/utils/html';
@@ -41,13 +42,31 @@ const AccountRoleFactory = ImmutableRecord<AccountRoleShape>({
   name: '',
 });
 
+// EPSILON : CERTIFIED ACCOUNTS / BADGES
+export type EpsilonBadgeShape = ApiEpsilonBadgeJSON;
+export type EpsilonBadge = RecordOf<EpsilonBadgeShape>;
+
+const EpsilonBadgeFactory = ImmutableRecord<EpsilonBadgeShape>({
+  id: '',
+  slug: '',
+  name: '',
+  description: null,
+  color: '',
+  icon: '',
+  granted_at: null,
+});
+
 // Account
 export interface AccountShape extends Required<
-  Omit<ApiAccountJSON, 'emojis' | 'fields' | 'roles' | 'moved' | 'url'>
+  Omit<
+    ApiAccountJSON,
+    'emojis' | 'fields' | 'roles' | 'epsilon_badges' | 'moved' | 'url'
+  >
 > {
   emojis: ImmutableList<CustomEmoji>;
   fields: ImmutableList<AccountField>;
   roles: ImmutableList<AccountRole>;
+  epsilon_badges: ImmutableList<EpsilonBadge>; // EPSILON : CERTIFIED ACCOUNTS / BADGES
   display_name_html: string;
   note_emojified: string;
   note_plain: string | null;
@@ -91,6 +110,7 @@ export const accountDefaultValues: AccountShape = {
   note_emojified: '',
   note_plain: 'string',
   roles: ImmutableList<AccountRole>(),
+  epsilon_badges: ImmutableList<EpsilonBadge>(), // EPSILON : CERTIFIED ACCOUNTS / BADGES
   uri: '',
   url: '',
   username: '',
@@ -142,6 +162,10 @@ export function createAccountFromServerJSON(serverJSON: ApiAccountJSON) {
     ),
     roles: ImmutableList(
       serverJSON.roles?.map((role) => AccountRoleFactory(role)),
+    ),
+    // EPSILON : CERTIFIED ACCOUNTS / BADGES
+    epsilon_badges: ImmutableList(
+      serverJSON.epsilon_badges?.map((badge) => EpsilonBadgeFactory(badge)),
     ),
     display_name_html: escapeTextContentForBrowser(displayName),
     note_emojified: accountNote,

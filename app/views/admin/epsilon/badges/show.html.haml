@@ -1,0 +1,91 @@
+- content_for :page_title do
+  = @badge.display_name
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.badges.all'), admin_epsilon_badges_path, class: 'button button-tertiary'
+  = link_to t('admin.epsilon.badges.edit'), edit_admin_epsilon_badge_path(@badge), class: 'button'
+
+.epsilon-admin-badge__preview
+  -# haml-lint:disable InlineStyles
+  %span.epsilon-admin-badge__swatch{ style: "background-color: #{@badge.color}" }
+  -# haml-lint:enable InlineStyles
+  %strong= @badge.display_name
+- if @badge.display_description.present?
+  %p.hint= @badge.display_description
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.badges.assign_title')
+
+%p.muted-hint= t('admin.epsilon.badges.assign_hint')
+
+= form_with url: assign_account_admin_epsilon_badge_path(@badge), method: :post, local: true, class: 'simple_form' do
+  .fields-group
+    = text_field_tag :acct, nil, placeholder: t('admin.epsilon.badges.assign_placeholder'), required: true
+
+  .actions
+    = button_tag t('admin.epsilon.badges.assign_button'), type: :submit, class: 'button'
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.badges.csv.title')
+
+%p.muted-hint= t('admin.epsilon.badges.csv.hint')
+
+= form_with url: import_csv_admin_epsilon_badge_path(@badge), method: :post, local: true, multipart: true, class: 'simple_form' do
+  .fields-group
+    = file_field_tag :file, accept: '.csv,text/csv', required: true
+
+  .actions
+    = button_tag t('admin.epsilon.badges.csv.button'), type: :submit, class: 'button'
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.badges.holders_title')
+
+- if @holders.any?
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.badges.account')
+          %th= t('admin.epsilon.badges.assigned_at')
+          %th
+      %tbody
+        - @holders.each do |holder|
+          - account = holder.account
+          %tr
+            %td= link_to "@#{account.username}", admin_account_path(account.id)
+            %td= l(holder.granted_at)
+            %td
+              - remove_confirm = t('admin.epsilon.badges.remove_confirm', acct: account.username)
+              = link_to t('admin.epsilon.badges.remove_button'), remove_account_admin_epsilon_badge_path(@badge, account_id: account.id), data: { method: :delete, confirm: remove_confirm }, class: 'table-action-link'
+  = paginate @holders
+- else
+  %p.muted-hint= t('admin.epsilon.badges.no_holders')
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.badges.pending_title')
+
+%p.muted-hint= t('admin.epsilon.badges.pending_hint')
+
+- if @pending_grants.any?
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.badges.pending_email')
+          %th= t('admin.epsilon.badges.assigned_at')
+          %th
+      %tbody
+        - @pending_grants.each do |grant|
+          %tr
+            %td= grant.email
+            %td= l(grant.created_at)
+            %td
+              - pending_remove_confirm = t('admin.epsilon.badges.remove_pending_confirm', email: grant.email)
+              = link_to t('admin.epsilon.badges.remove_button'), remove_pending_grant_admin_epsilon_badge_path(@badge, grant_id: grant.id), data: { method: :delete, confirm: pending_remove_confirm }, class: 'table-action-link'
+  = paginate @pending_grants, param_name: :pending_page
+- else
+  %p.muted-hint= t('admin.epsilon.badges.no_pending')

@@ -65,7 +65,8 @@ class Api::V2::NotificationsController < Api::BaseController
 
   def load_notifications
     MastodonOTELTracer.in_span('Api::V2::NotificationsController#load_notifications') do
-      notifications = browserable_account_notifications.includes(from_account: [:account_stat, :user]).to_a_grouped_paginated_by_id(
+      # EPSILON : badges preload (avoid N+1)
+      notifications = browserable_account_notifications.includes(from_account: [:account_stat, :user, account_badges: :badge]).to_a_grouped_paginated_by_id(
         limit_param(DEFAULT_NOTIFICATIONS_LIMIT),
         params.slice(:max_id, :since_id, :min_id, :grouped_types).permit(:max_id, :since_id, :min_id, grouped_types: [])
       )

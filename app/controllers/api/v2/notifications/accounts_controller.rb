@@ -23,7 +23,8 @@ class Api::V2::Notifications::AccountsController < Api::BaseController
         .notifications
         .without_suspended
         .where(group_key: params[:notification_group_key])
-        .includes(from_account: [:account_stat, :user])
+        # EPSILON : badges preload (avoid N+1)
+        .includes(from_account: [:account_stat, :user, account_badges: :badge])
         .paginate_by_max_id(
           limit_param(DEFAULT_ACCOUNTS_LIMIT),
           params[:max_id],

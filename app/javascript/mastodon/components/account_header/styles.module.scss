@@ -83,6 +83,11 @@
 }
 
 .name {
+  // EPSILON : CERTIFIED ACCOUNTS / BADGES
+  // Inline flow (not flex) + roomy line-height so the certification badges can
+  // wrap into per-line rounded "cards" (box-decoration-break) after the name.
+  line-height: 2.1;
+
   > h1 {
     display: inline;
     font-size: 22px;

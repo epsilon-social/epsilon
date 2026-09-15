@@ -116,6 +116,70 @@ fr:
           remove_cw: Retirer l'avertissement
           remove_cw_confirm: Retirer l'avertissement de contenu IA de ce post ?
           cw_removed: Avertissement de contenu retiré.
+      badges:
+        account: Compte
+        account_add_button: Ajouter le badge
+        account_add_prompt: Choisir un badge…
+        account_added: 'Badge %{name} ajouté.'
+        account_none: Ce compte n’a pas encore de badge.
+        account_not_found: 'Aucun compte local trouvé pour %{acct}.'
+        account_remove_confirm: 'Retirer le badge %{name} de ce compte ?'
+        account_removed: Badge retiré.
+        account_section_title: Badges de certification
+        active: Actif
+        all: Tous les badges
+        assign_button: Attribuer le badge
+        assign_hint: Saisis un nom d’utilisateur local (avec ou sans @) ou un e-mail. Un e-mail sans compte encore créé est mis en attente et attribué automatiquement à l’inscription.
+        assign_placeholder: nom d’utilisateur ou e-mail
+        assign_title: Attribuer à un compte
+        assigned: 'Badge attribué à %{acct}.'
+        assigned_at: Attribué le
+        assigned_pending: 'Aucun compte pour %{email} pour l’instant — le badge est mis en attente et sera attribué automatiquement dès l’inscription.'
+        badge: Badge
+        color: Couleur
+        created: 'Badge %{name} créé.'
+        csv:
+          button: Importer le CSV
+          hint: Un identifiant par ligne (nom d’utilisateur local ou e-mail). Les comptes locaux correspondants reçoivent le badge tout de suite ; les e-mails sans compte sont mis en attente et attribués automatiquement à l’inscription. Les noms d’utilisateur inconnus sont ignorés.
+          missing_file: Merci de choisir un fichier CSV.
+          summary: 'Import terminé : %{assigned} attribué(s), %{skipped} déjà présent(s), %{pending} en attente d’inscription, %{not_found} introuvable(s).'
+          title: Import en masse
+        delete: Supprimer
+        delete_confirm: 'Supprimer le badge %{name} ? Il sera retiré de tous les comptes qui le portent.'
+        deleted: 'Badge %{name} supprimé.'
+        description: Description
+        description_hint: Affichée dans l’infobulle du badge. À garder courte.
+        edit: Modifier
+        empty: Aucun badge pour le moment.
+        hint: Les badges de certification s’affichent sur les profils et les posts locaux. Ils ne sont jamais fédérés vers les autres instances.
+        holders: Porteurs
+        holders_title: Comptes avec ce badge
+        icon: Icône
+        icon_hint: Choisis l’icône affichée sur le badge. Elle est teintée avec la couleur ci-dessus.
+        icon_more: Voir plus d’icônes
+        inactive: Inactif
+        is_active: Actif
+        is_active_hint: Un badge inactif reste attribué mais est masqué partout.
+        manage_holders: Gérer les porteurs
+        name: Nom
+        name_hint: Affiché comme libellé du badge et texte d’accessibilité.
+        new: Nouveau badge
+        no_holders: Aucun compte ne porte ce badge pour l’instant.
+        no_pending: Aucun grant en attente.
+        pending_email: E-mail
+        pending_hint: E-mails en attente d’un compte. Le badge est attribué automatiquement dès qu’un compte est confirmé avec cet e-mail.
+        pending_removed: Grant en attente retiré.
+        pending_title: Grants en attente (pas encore inscrits)
+        position: Priorité
+        position_hint: Les plus petits nombres s’affichent en premier. Le badge du haut est celui épinglé sur les posts.
+        remove_button: Retirer
+        remove_confirm: 'Retirer ce badge de @%{acct} ?'
+        remove_pending_confirm: 'Retirer le grant en attente pour %{email} ?'
+        removed: Badge retiré.
+        save: Enregistrer
+        status: Statut
+        title: Badges
+        updated: 'Badge %{name} mis à jour.'
       categorization:
         add_category: Ajouter une catégorie
         add_hashtags_button: Ajouter les hashtags

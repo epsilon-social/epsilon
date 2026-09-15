@@ -2,6 +2,8 @@ import type { ComponentPropsWithoutRef, FC } from 'react';
 
 import classNames from 'classnames';
 
+import { EpsilonBadges } from '@/mastodon/epsilon/components/epsilon_badges';
+
 import { AnimateEmojiProvider } from '../emoji/context';
 import { EmojiHTML } from '../emoji/html';
 import { Skeleton } from '../skeleton';
@@ -31,6 +33,8 @@ export const DisplayNameWithoutDomain: FC<
           </strong>
         )}
       </bdi>
+      {/* EPSILON : CERTIFIED ACCOUNTS / BADGES — right after the name text */}
+      <EpsilonBadges account={account} variant='compact' />
       {children}
     </AnimateEmojiProvider>
   );

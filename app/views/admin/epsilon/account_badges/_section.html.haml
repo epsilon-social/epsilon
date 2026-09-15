@@ -1,0 +1,29 @@
+:ruby
+  account_badges = account.account_badges.includes(:badge).order(:granted_at)
+  held_ids = account_badges.map(&:epsilon_badge_id)
+  assignable = Epsilon::Badge.active.in_display_order.reject { |badge| held_ids.include?(badge.id) }
+
+%h3= t('admin.epsilon.badges.account_section_title')
+
+- if account_badges.any?
+  .epsilon-account-badges
+    - account_badges.each do |account_badge|
+      - badge = account_badge.badge
+      - remove_confirm = t('admin.epsilon.badges.account_remove_confirm', name: badge.display_name)
+      %span.epsilon-account-badges__item
+        -# haml-lint:disable InlineStyles
+        %span.epsilon-admin-badge__swatch{ style: "background-color: #{badge.color}" }
+        -# haml-lint:enable InlineStyles
+        %span.epsilon-account-badges__name= badge.display_name
+        %span.epsilon-account-badges__date= l(account_badge.granted_at.to_date)
+        = link_to t('admin.epsilon.badges.remove_button'), admin_epsilon_account_badge_path(account_badge), data: { method: :delete, confirm: remove_confirm }, class: 'table-action-link'
+- else
+  %p.muted-hint= t('admin.epsilon.badges.account_none')
+
+- if assignable.any?
+  = form_with url: admin_epsilon_account_badges_path, method: :post, local: true, class: 'simple_form' do
+    = hidden_field_tag :account_id, account.id
+    .fields-group
+      = select_tag :epsilon_badge_id, options_from_collection_for_select(assignable, :id, :display_name), prompt: t('admin.epsilon.badges.account_add_prompt')
+    .actions
+      = button_tag t('admin.epsilon.badges.account_add_button'), type: :submit, class: 'button'

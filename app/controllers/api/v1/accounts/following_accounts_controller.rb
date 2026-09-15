@@ -30,7 +30,8 @@ class Api::V1::Accounts::FollowingAccountsController < Api::BaseController
   end
 
   def default_accounts
-    Account.includes(:passive_relationships, :account_stat, :user).references(:passive_relationships)
+    # EPSILON : badges preload (avoid N+1)
+    Account.includes(:passive_relationships, :account_stat, :user, account_badges: :badge).references(:passive_relationships)
   end
 
   def paginated_follows

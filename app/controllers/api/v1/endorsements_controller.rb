@@ -25,7 +25,8 @@ class Api::V1::EndorsementsController < Api::BaseController
   end
 
   def endorsed_accounts
-    current_account.endorsed_accounts.includes(:account_stat, :user).without_suspended
+    # EPSILON : badges preload (avoid N+1)
+    current_account.endorsed_accounts.includes(:account_stat, :user, account_badges: :badge).without_suspended
   end
 
   def next_path

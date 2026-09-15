@@ -18,6 +18,8 @@ class Api::V1::MutesController < Api::BaseController
 
   def paginated_mutes
     @paginated_mutes ||= Mute.eager_load(target_account: [:account_stat, :user])
+      # EPSILON : badges preload (avoid N+1)
+      .preload(target_account: { account_badges: :badge })
       .joins(:target_account)
       .merge(Account.without_suspended)
       .where(account: current_account)

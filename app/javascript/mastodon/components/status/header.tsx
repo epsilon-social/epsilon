@@ -140,6 +140,8 @@ export const StatusDisplayName: FC<{
   avatarSize: number;
 }> = ({ statusAccount, friendAccount, avatarSize }) => {
   const AccountComponent = friendAccount ? AvatarOverlay : Avatar;
+  // EPSILON : the certification badge is injected into DisplayName (next to the
+  // name), so nothing extra to render here.
   return (
     <LinkedDisplayName
       displayProps={{ account: statusAccount }}

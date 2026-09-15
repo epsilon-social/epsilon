@@ -1,0 +1,288 @@
+// EPSILON : CERTIFIED ACCOUNTS / BADGES
+// Account certification badges: inline (profile header, every badge) + compact
+// (posts + left sidebar, next to the name — up to two then a "+N" popover).
+
+.epsilon-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  margin-inline-start: 4px;
+  vertical-align: middle;
+}
+
+// Profile header: badges flow inline after the name and wrap; each visual line
+// becomes its own rounded "card" via box-decoration-break. Unchanged.
+.account__header__epsilon-badges {
+  display: inline;
+  padding: 4px 10px;
+  border-radius: 999px;
+
+  // !important: the theme sets many surfaces with !important, so match it here.
+  background: var(--eps-surface, rgba(127, 127, 127, 12%)) !important;
+  border: 1px solid var(--eps-border, transparent) !important;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+
+  .epsilon-badge {
+    display: inline-block;
+    margin: 0 4px;
+    vertical-align: middle;
+    transform: translateY(-2px);
+  }
+}
+
+:root[data-theme='default'] .account__header__epsilon-badges,
+:root[data-theme='dark'] .account__header__epsilon-badges,
+:root[data-theme='contrast'] .account__header__epsilon-badges,
+body.theme-default .account__header__epsilon-badges,
+body.theme-contrast .account__header__epsilon-badges {
+  background: #4a4640 !important;
+  border-color: #5c574e !important;
+}
+
+// "+N" overflow chip (compact variant on posts / sidebar).
+.epsilon-badge-more {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--eps-surface, rgba(127, 127, 127, 12%));
+  border: 1px solid var(--eps-border, transparent);
+  color: var(--eps-text-primary, inherit);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: middle;
+  cursor: help;
+}
+
+.epsilon-badge {
+  display: inline-flex;
+  align-items: center;
+  cursor: help;
+  line-height: 0;
+}
+
+.epsilon-badge__icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+
+  // The icon is a CSS mask tinted by the badge color (currentColor), so any
+  // Material Symbol works. -webkit- first so the build keeps the prefixed one.
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+// Custom hover tooltip (replaces the native, unstyleable `title`). Glassmorphic
+// like the rest of the theme: the semi-transparent surface stays readable thanks
+// to the backdrop blur (-webkit- first so the build keeps it in prod).
+.epsilon-badge__tooltip {
+  z-index: 10;
+  max-width: 260px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--eps-surface, var(--color-bg-media));
+  color: var(--eps-text-primary, var(--color-text-on-media));
+  border: 1px solid var(--eps-border, transparent);
+  box-shadow: var(--dropdown-shadow);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+
+  strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  p {
+    margin-block-start: 2px;
+    font-size: 13px;
+    line-height: 1.35;
+    opacity: 0.8;
+  }
+
+  .epsilon-badge__tooltip-date {
+    margin-block-start: 6px;
+    font-size: 12px;
+    opacity: 0.65;
+  }
+}
+
+// "+N" popover: a vertical list of every badge (icon + details).
+.epsilon-badge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 300px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+
+  .epsilon-badge-list__item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .epsilon-badge__icon {
+    flex: 0 0 auto;
+    margin-block-start: 1px;
+  }
+
+  .epsilon-badge-list__body {
+    min-width: 0;
+  }
+}
+
+// Touch: full-screen backdrop under a popover. It captures the dismiss tap (so
+// the element underneath isn't clicked) and closes on a scroll gesture.
+.epsilon-badge-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+// Keep the badge popover above that backdrop.
+.hover-card-controller:has(.epsilon-badge__tooltip) {
+  z-index: 1001;
+}
+
+// Compact variant (posts + sidebar): 2 badges + "+N" on one line.
+.epsilon-badges--compact {
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+// Left sidebar: badges next to the display name.
+.epsilon-sidebar__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+// The badge is injected into DisplayName, right after the name text (before the
+// @handle) — so it sits next to the name regardless of the @handle's length.
+.display-name .epsilon-badges {
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+// Suggestion cards center a column (name over @handle). Lay the name row out so
+// the badge stays on the name's line and the @handle wraps to its own line.
+.inline-follow-suggestions__body__scrollable__card__text-stack .display-name {
+  flex-flow: row wrap;
+  justify-content: center;
+
+  .display-name__account {
+    flex-basis: 100%;
+  }
+}
+
+// Admin dashboard: color swatch in the badge list + detail preview.
+.epsilon-admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.epsilon-admin-badge__swatch {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 20%);
+}
+
+.epsilon-admin-badge__preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+}
+
+// Admin account page: the account's badges (name + obtention date + remove).
+.epsilon-account-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-block: 8px;
+}
+
+.epsilon-account-badges__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.epsilon-account-badges__name {
+  font-weight: 500;
+}
+
+.epsilon-account-badges__date {
+  font-size: 13px;
+  color: var(--color-text-secondary, #9099a8);
+}
+
+// Admin icon picker: a visual grid of radio options (curated + "show more").
+.epsilon-icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-block: 8px;
+}
+
+.epsilon-icon-picker__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.epsilon-icon-picker__option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-primary, rgba(0, 0, 0, 15%));
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  .icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    border-color: var(--color-primary, #6364ff);
+  }
+
+  &:has(.epsilon-icon-picker__radio:checked) {
+    border-color: var(--color-primary, #6364ff);
+    box-shadow: inset 0 0 0 1px var(--color-primary, #6364ff);
+  }
+}
+
+.epsilon-icon-picker__more {
+  margin-block-start: 8px;
+
+  summary {
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-primary, #6364ff);
+  }
+}

@@ -32,9 +32,11 @@ class Api::V1::Lists::AccountsController < Api::BaseController
 
   def load_accounts
     if unlimited?
-      @list.accounts.without_suspended.includes(:account_stat, :user).all
+      # EPSILON : badges preload (avoid N+1)
+      @list.accounts.without_suspended.includes(:account_stat, :user, account_badges: :badge).all
     else
-      @list.accounts.without_suspended.includes(:account_stat, :user).paginate_by_max_id(limit_param(DEFAULT_ACCOUNTS_LIMIT), params[:max_id], params[:since_id])
+      # EPSILON : badges preload (avoid N+1)
+      @list.accounts.without_suspended.includes(:account_stat, :user, account_badges: :badge).paginate_by_max_id(limit_param(DEFAULT_ACCOUNTS_LIMIT), params[:max_id], params[:since_id])
     end
   end
 

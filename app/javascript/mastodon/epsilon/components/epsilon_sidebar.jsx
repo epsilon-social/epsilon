@@ -41,6 +41,7 @@ import { me } from 'mastodon/initial_state';
 import { LinkFooter} from 'mastodon/features/ui/components/link_footer';
 import { useAppSelector } from 'mastodon/store';
 import { Avatar } from 'mastodon/components/avatar';
+import { EpsilonBadges } from './epsilon_badges';
 import { DisabledAccountBanner } from '../../features/navigation_panel/components/disabled_account_banner'
 
 import { IconWithBadge } from 'mastodon/components/icon_with_badge';
@@ -134,7 +135,11 @@ const EpsilonProfileBlock = () => {
     <a href={`/@${account.username}`} className='epsilon-sidebar__profile-link'>
       <Avatar account={account} size={44} />
       <div className='epsilon-sidebar__meta'>
-        <strong>{account.display_name || account.username}</strong>
+        {/* EPSILON : CERTIFIED ACCOUNTS / BADGES */}
+        <strong className='epsilon-sidebar__name'>
+          {account.display_name || account.username}
+          <EpsilonBadges account={account} variant='compact' />
+        </strong>
         <span>@{account.acct}</span>
       </div>
     </a>

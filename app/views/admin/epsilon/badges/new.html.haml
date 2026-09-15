@@ -1,0 +1,10 @@
+- content_for :page_title do
+  = t('admin.epsilon.badges.new')
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.badges.all'), admin_epsilon_badges_path, class: 'button button-tertiary'
+
+= simple_form_for @badge, url: admin_epsilon_badges_path do |form|
+  = render partial: 'form', object: form
+  .actions
+    = form.button :button, t('admin.epsilon.badges.save'), type: :submit

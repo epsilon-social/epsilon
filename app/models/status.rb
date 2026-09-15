@@ -62,11 +62,16 @@ class Status < ApplicationRecord
     :preloadable_poll,
     :status_stat,
     :tags,
-    account: [:account_stat, user: :role],
+    # ==========================================
+    # EPSILON : CERTIFIED ACCOUNTS / BADGES
+    # `account_badges: :badge` preloaded alongside roles so account badges don't cause
+    # an N+1 when serializing timelines.
+    account: [:account_stat, account_badges: :badge, user: :role],
+    # ==========================================
     active_mentions: :account,
     tagged_objects: :object,
-    preview_cards_status: { preview_card: { author_account: [:account_stat, user: :role] } },
-    quote: { status: { account: [:account_stat, user: :role] } },
+    preview_cards_status: { preview_card: { author_account: [:account_stat, account_badges: :badge, user: :role] } }, # EPSILON : badges preload
+    quote: { status: { account: [:account_stat, account_badges: :badge, user: :role] } }, # EPSILON : badges preload
   ].freeze
 
   rate_limit by: :account, family: :statuses

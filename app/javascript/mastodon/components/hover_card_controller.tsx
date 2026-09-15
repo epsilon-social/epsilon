@@ -97,6 +97,18 @@ export const HoverCardController: React.FC = () => {
           return;
         }
 
+        // ==========================================
+        // EPSILON : CERTIFIED ACCOUNTS / BADGES
+        // A certification badge (inside the avatar/name link) shows its own
+        // tooltip, so suppress the profile hover card while pointing at it to
+        // avoid two overlapping cards.
+        if (target.closest('.epsilon-badges')) {
+          cancelEnterTimeout();
+          close();
+          return;
+        }
+        // ==========================================
+
         // We've entered an anchor
         if (isHoverCardAnchor(target)) {
           cancelLeaveTimeout();

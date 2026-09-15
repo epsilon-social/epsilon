@@ -1,0 +1,13 @@
+- content_for :page_title do
+  = @badge.display_name
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.badges.all'), admin_epsilon_badges_path, class: 'button button-tertiary'
+  = link_to t('admin.epsilon.badges.manage_holders'), admin_epsilon_badge_path(@badge), class: 'button button-tertiary'
+  - delete_confirm = t('admin.epsilon.badges.delete_confirm', name: @badge.name)
+  = link_to t('admin.epsilon.badges.delete'), admin_epsilon_badge_path(@badge), data: { method: :delete, confirm: delete_confirm }, class: 'button button--dangerous'
+
+= simple_form_for @badge, url: admin_epsilon_badge_path(@badge) do |form|
+  = render partial: 'form', object: form
+  .actions
+    = form.button :button, t('admin.epsilon.badges.save'), type: :submit

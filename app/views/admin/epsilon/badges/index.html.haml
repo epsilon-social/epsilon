@@ -1,0 +1,36 @@
+- content_for :page_title do
+  = t('admin.epsilon.badges.title')
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.badges.new'), new_admin_epsilon_badge_path, class: 'button'
+
+%p.hint= t('admin.epsilon.badges.hint')
+
+- if @badges.any?
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.badges.badge')
+          %th= t('admin.epsilon.badges.holders')
+          %th= t('admin.epsilon.badges.status')
+          %th
+      %tbody
+        - @badges.each do |badge|
+          %tr
+            %td
+              .epsilon-admin-badge
+                -# haml-lint:disable InlineStyles
+                %span.epsilon-admin-badge__swatch{ style: "background-color: #{badge.color}" }
+                -# haml-lint:enable InlineStyles
+                = link_to badge.display_name, admin_epsilon_badge_path(badge)
+            %td= number_with_delimiter(badge.account_badges_count)
+            %td
+              - if badge.is_active?
+                %span.positive-hint= t('admin.epsilon.badges.active')
+              - else
+                %span.muted-hint= t('admin.epsilon.badges.inactive')
+            %td= table_link_to 'edit', t('admin.epsilon.badges.edit'), edit_admin_epsilon_badge_path(badge)
+  = paginate @badges
+- else
+  %p.muted-hint= t('admin.epsilon.badges.empty')

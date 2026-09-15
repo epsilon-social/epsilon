@@ -37,7 +37,8 @@ class Api::V1::FollowRequestsController < Api::BaseController
   end
 
   def default_accounts
-    Account.without_suspended.includes(:follow_requests, :account_stat, :user).references(:follow_requests)
+    # EPSILON : badges preload (avoid N+1)
+    Account.without_suspended.includes(:follow_requests, :account_stat, :user, account_badges: :badge).references(:follow_requests)
   end
 
   def paginated_follow_requests

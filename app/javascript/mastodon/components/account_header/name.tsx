@@ -7,6 +7,7 @@ import classNames from 'classnames';
 
 import Overlay from 'react-overlays/esm/Overlay';
 
+import { EpsilonBadges } from '@/mastodon/epsilon/components/epsilon_badges';
 import { useAccount } from '@/mastodon/hooks/useAccount';
 import { useRelationship } from '@/mastodon/hooks/useRelationship';
 import { useAppSelector } from '@/mastodon/store';
@@ -60,6 +61,11 @@ export const AccountName: FC<{ accountId: string }> = ({ accountId }) => {
         <NavigationFocusTarget as='h1'>
           <DisplayName account={account} variant='simple' />
         </NavigationFocusTarget>
+        {/* EPSILON : CERTIFIED ACCOUNTS / BADGES */}
+        <EpsilonBadges
+          account={account}
+          className='account__header__epsilon-badges'
+        />
         {relationship?.followed_by && <FollowsYouBadge />}
       </div>
 

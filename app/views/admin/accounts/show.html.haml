@@ -36,6 +36,12 @@
 
   %hr.spacer/
 
+  -# EPSILON : CERTIFIED ACCOUNTS / BADGES
+  - if @account.local? && current_user.can?(:manage_users)
+    = render 'admin/epsilon/account_badges/section', account: @account
+
+    %hr.spacer/
+
   - unless @warnings.empty?
 
     %h3= t 'admin.accounts.previous_strikes'

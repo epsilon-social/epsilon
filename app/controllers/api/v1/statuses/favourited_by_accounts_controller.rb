@@ -21,7 +21,8 @@ class Api::V1::Statuses::FavouritedByAccountsController < Api::V1::Statuses::Bas
   def default_accounts
     Account
       .without_suspended
-      .includes(:favourites, :account_stat, :user)
+      # EPSILON : badges preload (avoid N+1)
+      .includes(:favourites, :account_stat, :user, account_badges: :badge)
       .references(:favourites)
       .where(favourites: { status_id: @status.id })
   end

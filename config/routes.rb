@@ -274,6 +274,19 @@ Rails.application.routes.draw do
         end
       end
       # ==========================================
+
+      # ==========================================
+      # EPSILON : CERTIFIED ACCOUNTS / BADGES
+      resources :badges do
+        member do
+          post :assign_account
+          delete :remove_account
+          post :import_csv
+          delete :remove_pending_grant
+        end
+      end
+      resources :account_badges, only: [:create, :destroy]
+      # ==========================================
     end
   end
   # ==========================================

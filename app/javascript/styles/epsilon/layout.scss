@@ -3280,6 +3280,13 @@ html.epsilon-in-app {
       }
     }
 
+    // EPSILON : CERTIFIED ACCOUNTS / BADGES
+    // The mobile drawer has room: re-show the name + username + badge that the
+    // ≤1264px collapse hides (icon-only sidebar).
+    &__meta {
+      display: flex !important;
+    }
+
     &__nav {
       width: stretch !important;
       align-items: stretch !important;

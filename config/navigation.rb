@@ -67,6 +67,10 @@ SimpleNavigation::Configuration.run do |navigation|
       # EPSILON : CATEGORIZATION SYSTEM
       s.item :epsilon_categories, safe_join([material_symbol('tile'), t('admin.epsilon.categorization.dashboard_title')]), admin_epsilon_categories_path, highlights_on: %r{/admin/epsilon/categories}, if: -> { current_user.can?(:manage_taxonomies) }
       # ==========================================
+      # ==========================================
+      # EPSILON : CERTIFIED ACCOUNTS / BADGES
+      s.item :epsilon_badges, safe_join([material_symbol('license-fill'), t('admin.epsilon.badges.title')]), admin_epsilon_badges_path, highlights_on: %r{/admin/epsilon/badges}, if: -> { current_user.can?(:manage_users) }
+      # ==========================================
       s.item :invites, safe_join([material_symbol('person_add'), t('admin.invites.title')]), admin_invites_path, if: -> { current_user.can?(:manage_invites) }
       s.item :instances, safe_join([material_symbol('cloud'), t('admin.instances.title')]), admin_instances_path(limited: limited_federation_mode? ? nil : '1'), highlights_on: %r{/admin/instances|/admin/domain_blocks|/admin/domain_allows|/admin/export_domain_blocks}, if: lambda {
         current_user.can?(:manage_federation)

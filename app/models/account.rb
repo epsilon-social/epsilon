@@ -69,6 +69,12 @@ class Account < ApplicationRecord
 
   # ==========================================
 
+  # ==========================================
+  # EPSILON : CERTIFIED ACCOUNTS / BADGES
+  include Epsilon::AccountBadgeExtension
+
+  # ==========================================
+
   self.ignored_columns += %w(
     devices_url
     hub_url

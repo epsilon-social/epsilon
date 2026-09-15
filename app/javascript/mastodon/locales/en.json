@@ -696,6 +696,7 @@
   "epsilon.about.pillar.topics.title": "Topics, not addiction",
   "epsilon.about.tagline": "The European social network, sovereign and built to respect you.",
   "epsilon.about.title": "About",
+  "epsilon.badges.granted_on": "Obtained on {date}",
   "epsilon.category_suggestions.confirm": "Confirm",
   "epsilon.category_suggestions.description": "Choose the topics to prioritize in your feed.",
   "epsilon.category_suggestions.description_note": "You can change these settings at any time.",

@@ -1,0 +1,34 @@
+= render 'shared/error_messages', object: form.object
+
+- Epsilon::Badge::TRANSLATED_LOCALES.each do |locale|
+  .fields-group
+    = label_tag "epsilon_badge_name_translations_#{locale}", "#{t('admin.epsilon.badges.name')} (#{locale.upcase})"
+    = text_field_tag "epsilon_badge[name_translations][#{locale}]", form.object.name_translations[locale], id: "epsilon_badge_name_translations_#{locale}", required: locale == 'en'
+
+- Epsilon::Badge::TRANSLATED_LOCALES.each do |locale|
+  .fields-group
+    = label_tag "epsilon_badge_description_translations_#{locale}", "#{t('admin.epsilon.badges.description')} (#{locale.upcase})"
+    = text_area_tag "epsilon_badge[description_translations][#{locale}]", form.object.description_translations[locale], id: "epsilon_badge_description_translations_#{locale}", rows: 2
+
+.fields-group
+  %label= t('admin.epsilon.badges.icon')
+  %p.hint= t('admin.epsilon.badges.icon_hint')
+  .epsilon-icon-picker
+    - Epsilon::Badge::CURATED_ICONS.each do |slug|
+      = render 'icon_option', slug: slug, checked: form.object.icon == slug
+  %details.epsilon-icon-picker__more{ open: Epsilon::Badge::EXTRA_ICONS.include?(form.object.icon) }
+    %summary= t('admin.epsilon.badges.icon_more')
+    .epsilon-icon-picker
+      - Epsilon::Badge::EXTRA_ICONS.each do |slug|
+        = render 'icon_option', slug: slug, checked: form.object.icon == slug
+
+.fields-row
+  .fields-row__column.fields-group
+    = form.label :color, t('admin.epsilon.badges.color')
+    = form.color_field :color
+
+  .fields-row__column.fields-group
+    = form.input :position, label: t('admin.epsilon.badges.position'), hint: t('admin.epsilon.badges.position_hint')
+
+.fields-group
+  = form.input :is_active, as: :boolean, label: t('admin.epsilon.badges.is_active'), hint: t('admin.epsilon.badges.is_active_hint')

@@ -6,6 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 
 import { FollowsYouBadge, VerifiedBadge } from 'mastodon/components/badge';
+import { EpsilonBadges } from 'mastodon/epsilon/components/epsilon_badges';
 import { useAccount } from 'mastodon/hooks/useAccount';
 import { useRelationship } from 'mastodon/hooks/useRelationship';
 import { domain } from 'mastodon/initial_state';
@@ -96,6 +97,8 @@ export const AccountListItem: React.FC<Props> = ({
             account={account}
             className={classes.displayName}
           />
+          {/* EPSILON : CERTIFIED ACCOUNTS / BADGES */}
+          <EpsilonBadges account={account} variant='compact' />
           {badge && <span className={classes.badge}>{badge}</span>}
         </ListItemLink>
       </ListItemWrapper>

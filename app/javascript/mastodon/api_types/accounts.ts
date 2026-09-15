@@ -12,6 +12,18 @@ export interface ApiAccountRoleJSON {
   name: string;
 }
 
+// EPSILON : CERTIFIED ACCOUNTS / BADGES
+// See app/serializers/epsilon/account_serializer_extension.rb
+export interface ApiEpsilonBadgeJSON {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  color: string;
+  icon: string;
+  granted_at: string | null;
+}
+
 type ApiFeaturePolicy =
   | 'public'
   | 'followers'
@@ -61,6 +73,7 @@ export interface BaseApiAccountJSON {
   noindex?: boolean;
   note: string;
   roles?: ApiAccountJSON[];
+  epsilon_badges?: ApiEpsilonBadgeJSON[]; // EPSILON : CERTIFIED ACCOUNTS / BADGES
   statuses_count: number;
   uri: string;
   url?: string;
