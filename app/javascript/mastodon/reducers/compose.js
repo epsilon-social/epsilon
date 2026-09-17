@@ -73,6 +73,9 @@ const initialState = ImmutableMap({
   caretPosition: null,
   preselectDate: null,
   in_reply_to: null,
+  // EPSILON: true while the inline reply box holds a pristine auto-mention draft;
+  // lets reply buttons treat it as "no draft" (skip the discard-draft confirm).
+  epsilon_inline_owned: false,
   is_composing: false,
   is_submitting: false,
   is_changing_upload: false,
@@ -126,6 +129,8 @@ function clearAll(state) {
     map.set('is_submitting', false);
     map.set('is_changing_upload', false);
     map.set('in_reply_to', null);
+    map.set('epsilon_inline_owned', false); // EPSILON
+
     map.set('privacy', state.get('default_privacy'));
     map.set('sensitive', state.get('default_sensitive'));
     map.set('language', state.get('default_language'));
@@ -147,6 +152,7 @@ function appendMedia(state, media, file) {
       media = media.set('file', file);
     }
     map.update('media_attachments', list => list.push(media.set('unattached', true)));
+    map.set('epsilon_inline_owned', false); // EPSILON
     map.set('is_uploading', false);
     map.set('is_processing', false);
     map.set('progress', 0);
@@ -417,6 +423,7 @@ export const composeReducer = (state = initialState, action) => {
   case COMPOSE_CHANGE:
     return state
       .set('text', action.text)
+      .set('epsilon_inline_owned', false) // EPSILON: user typed → real draft
       .set('idempotencyKey', uuid());
   case COMPOSE_COMPOSING_CHANGE:
     return state.set('is_composing', action.value);
@@ -424,6 +431,7 @@ export const composeReducer = (state = initialState, action) => {
     return state.withMutations(map => {
       map.set('id', null);
       map.set('in_reply_to', action.status.get('id'));
+      map.set('epsilon_inline_owned', false); // EPSILON: a real reply now owns the draft
       map.set('text', statusToTextMentions(state, action.status));
       map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
       map.set('focusDate', new Date());
@@ -452,14 +460,17 @@ export const composeReducer = (state = initialState, action) => {
         map.set('spoiler_text', '');
       }
     });
-  // EPSILON: like COMPOSE_REPLY but intentionally omits focusDate/preselectDate
-  // so the inline reply box becomes a reply on mount without stealing focus.
+  // EPSILON: like COMPOSE_REPLY but flagged as the inline-owned draft. It is now
+  // revealed on demand (click reply on the detailed post), so it DOES focus —
+  // the compose modal is kept shut for this reply by the provider's inline guard.
   case EPSILON_COMPOSE_SET_INLINE_REPLY:
     return state.withMutations(map => {
       map.set('id', null);
       map.set('in_reply_to', action.status.get('id'));
+      map.set('epsilon_inline_owned', true);
       map.set('text', statusToTextMentions(state, action.status));
       map.set('privacy', privacyPreference(action.status.get('visibility'), state.get('default_privacy')));
+      map.set('focusDate', new Date());
       map.set('caretPosition', null);
       map.set('idempotencyKey', uuid());
       map.set('quoted_status_id', null);

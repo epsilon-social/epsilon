@@ -69,10 +69,14 @@ export const EpsilonComposeProvider = ({ children }) => {
   const prevFocus = useRef(focusDate);
 
   // When an inline reply box (e.g. under a detailed status) is active, it owns
-  // the reply itself; the overlay must NOT pop open on in_reply_to changes.
+  // replies to its OWN status; the overlay must NOT pop open for those. Replies
+  // to any OTHER status (thread descendants) still open the modal. The box
+  // registers its status id so we can tell the two apart.
   const inlineReplyActiveRef = useRef(false);
-  const setInlineReplyActive = useCallback((active) => {
-    inlineReplyActiveRef.current = active;
+  const inlineOwnedIdRef = useRef(null);
+  const setInlineReplyActive = useCallback((idOrFalse) => {
+    inlineOwnedIdRef.current = idOrFalse || null;
+    inlineReplyActiveRef.current = !!idOrFalse;
   }, []);
 
   useEffect(() => {
@@ -94,7 +98,12 @@ export const EpsilonComposeProvider = ({ children }) => {
     prevQuote.current = quotedStatusId;
     prevFocus.current = focusDate;
 
-    if ((startedReply || startedQuote) && !inlineReplyActiveRef.current) {
+    // A reply targeting the inline box's own status stays inline; any other
+    // reply (thread descendant) opens the modal. Quotes keep prior behavior.
+    const inlineOwnsReply = inReplyTo && inReplyTo === inlineOwnedIdRef.current;
+    if (startedReply && !inlineOwnsReply) {
+      setOpen(true);
+    } else if (startedQuote && !inlineReplyActiveRef.current) {
       setOpen(true);
     }
   }, [inReplyTo, quotedStatusId, focusDate]);

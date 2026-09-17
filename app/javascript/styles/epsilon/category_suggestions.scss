@@ -88,6 +88,25 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
     gap: 12px;
   }
 
+  // Right-hand action slot: "Show more" and "Confirm" are both mounted and
+  // cross-fade into each other when the first category is (de)selected. Both
+  // are stacked in the SAME grid cell, so the slot sizes to the larger of the
+  // two and stays put — no reflow, no re-anchoring, just an opacity swap.
+  &__action {
+    display: grid;
+    align-items: center;
+    justify-items: end;
+
+    > * {
+      grid-area: 1 / 1;
+    }
+  }
+
+  &__slot--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   &__dismiss {
     padding: 0;
     border: none;
@@ -104,6 +123,10 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
   }
 
   &__confirm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     padding: 8px 22px;
     border: none;
     border-radius: 999px;
@@ -112,15 +135,67 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.15s ease;
+    transition: opacity 0.18s ease;
 
     &:hover {
       opacity: 0.9;
     }
 
     &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      cursor: default;
+    }
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+
+    // Native `a:focus { border-radius: 4px }` (basics.scss) outranks a single
+    // class and would square the pill on click → force it.
+    border-radius: 999px !important;
+    color: $eps-card-text;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      opacity 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      background: $eps-card-hover-overlay;
+
+      .icon {
+        transform: translateX(3px);
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $eps-card-text;
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .icon {
+        transition: none;
+      }
+
+      &:hover .icon {
+        transform: none;
+      }
     }
   }
 }

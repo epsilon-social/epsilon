@@ -303,6 +303,84 @@ body.theme-system {
   border-radius: var(--eps-radius) !important;
 }
 
+// A single image sizes itself to its aspect-ratio (width: initial), so when it's
+// narrower than the post it pins to the left. Center it instead — margin-inline
+// for normal flow, align-self for a flex-column parent.
+.media-gallery--layout-1 {
+  margin-inline: auto !important;
+  align-self: center !important;
+}
+
+// Floating video player (picture-in-picture) that follows the scroll. Natively
+// it has no z-index (slips under the sidebars/navbar, which go up to 1500) and
+// sits on --color-bg-primary (transparent in our light theme → see-through
+// behind the video). Lift it above the chrome (below modals at 9000) and turn
+// it into a rounded glass card matching the rest of the site. No overflow clip
+// (header/video/footer are stacked, so the container's radius rounds the
+// corners) — keeps backdrop-filter safe in iOS WKWebView.
+.picture-in-picture {
+  z-index: 2000 !important;
+  border: 1px solid var(--eps-border) !important;
+  border-radius: var(--eps-radius-md) !important;
+  background: var(--eps-surface) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 20%) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(16px) !important;
+
+  &__header,
+  &__footer {
+    background: transparent !important;
+    border: 0 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  &__header {
+    align-items: center;
+  }
+
+  // The global `.video-player` rounding (24px) looks off for the player nested
+  // in this card — square it off here ONLY (scoped to the PiP, not every video
+  // on the site) so it sits flush between the header and footer.
+  .video-player,
+  .audio-player {
+    border-radius: var(--eps-radius-sm) !important;
+  }
+
+  // Same native quirk as the detailed status header: `.display-name span/strong
+  // { display: block }` stacks our badge spans (and stretches the "+N" chip) and
+  // drops the name onto its own line. Keep the name + badges inline on one line;
+  // the @handle still wraps below.
+  &__header .display-name {
+    .display-name__html {
+      display: inline !important;
+    }
+
+    .epsilon-badges {
+      display: inline-flex !important;
+      overflow: visible !important;
+      vertical-align: middle;
+    }
+
+    .epsilon-badge,
+    .epsilon-badge-more {
+      display: inline-flex !important;
+    }
+  }
+}
+
+// Full-column loading spinner: eps columns are auto-height, so during load the
+// container is tiny and the absolutely-centered spinner ends up stuck to the top
+// of the screen (e.g. opening a detailed status). Put it in flow and drop it
+// down into view. Scoped to direct children of .column/.scrollable so the small
+// inline spinners (buttons, load-more) are untouched.
+.column > .loading-indicator,
+.scrollable > .loading-indicator {
+  position: static !important;
+  margin: 30vh auto !important;
+  transform: none !important;
+}
+
 // Barre bleue « non lu » (border-inline-start 4px sur .status__wrapper.unread /
 // .conversation.unread) : coupée dans les notifs mention depuis le retrait du
 // padding → on la masque en mobile.
@@ -514,7 +592,14 @@ body.theme-system {
       background: transparent !important;
     }
 
-    #tabs-bar__portal .column-header:not(:has(.column-header__title-wrapper)) {
+    // Hide only TRULY empty headers (no title AND no back button). A title-less
+    // header that still has a back button (post view, favourites, boosts,
+    // quotes…) now shows its back button instead of vanishing.
+    #tabs-bar__portal
+      .column-header:not(
+        :has(.column-header__title-wrapper),
+        :has(.column-header__back-button)
+      ) {
       display: none !important;
     }
 
@@ -574,10 +659,13 @@ body.theme-system {
       padding: 0 8px 0 0;
       border: none !important;
       background: transparent !important;
-      color: var(--eps-text-secondary);
+
+      // Brand blue, matching the profile pages' back button (native
+      // .column-back-button uses --color-text-brand).
+      color: var(--eps-brand-primary);
 
       &:hover {
-        color: var(--eps-text-primary);
+        filter: brightness(1.1);
       }
     }
 
@@ -772,7 +860,49 @@ body.theme-system {
 
     .epsilon-inline-reply {
       position: relative;
-      margin-bottom: 16px;
+      display: grid;
+      grid-template-rows: 0fr;
+      margin-bottom: 0;
+      opacity: 0;
+
+      // Unfold downward on reveal (pushes the replies below down), then fade in.
+      // The bottom gap animates too, so nothing snaps when it unmounts.
+      transition:
+        grid-template-rows 0.3s ease,
+        margin-bottom 0.3s ease,
+        opacity 0.3s ease;
+
+      // Non-interactive while folding in/out so a tap can't hit a control on
+      // a composer that is mid-animation (iOS WKWebView mis-tap guard).
+      pointer-events: none;
+
+      &--entered {
+        grid-template-rows: 1fr;
+        margin-bottom: 16px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      &__inner {
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      // No glass inside the animated subtree: backdrop-filter re-rasterizes its
+      // blur every frame while the height animates → jank in iOS WKWebView
+      // (the very reason the compose modal isn't animated). The composer sits on
+      // a solid card here, so the blur is invisible anyway — drop it.
+      &__inner,
+      &__inner * {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+
+      // Once the unfold has settled, stop clipping so autosuggest popups
+      // (mentions / emoji) can overflow the composer.
+      &--settled &__inner {
+        overflow: visible;
+      }
 
       .reply-indicator {
         display: none !important;
@@ -791,6 +921,12 @@ body.theme-system {
           background: var(--eps-border);
           transform: translateX(-50%);
         }
+      }
+
+      // Reduced motion: no height unfold, just a short fade.
+      @media (prefers-reduced-motion: reduce) {
+        grid-template-rows: 1fr;
+        transition: opacity 0.2s ease;
       }
     }
 
@@ -2548,6 +2684,29 @@ body.theme-system {
   display: none !important;
 }
 
+// …but keep the "New list" (+) action visible — the blanket hides above swallow
+// both the button AND its wrapper (.column-header__buttons), which removed the
+// only way to create a list from this page. Un-hide both, scoped to the wrapper
+// that actually holds the create-list link.
+#tabs-bar__portal
+  .column-header__buttons:has(a.column-header__button[href$='/lists/new']) {
+  display: flex !important;
+  align-items: center;
+}
+
+#tabs-bar__portal a.column-header__button[href$='/lists/new'] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+
+  // Brand blue, matching the profile back button.
+  color: var(--eps-brand-primary) !important;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
 #tabs-bar__portal .column-back-button {
   border: none !important;
   border-radius: 0 !important;
@@ -3786,6 +3945,35 @@ html.epsilon-in-app {
 
   .dropdown-menu__separator {
     border-bottom: 1px solid var(--eps-border) !important;
+  }
+}
+
+// A quoted post is itself a post → keep ONE card border (the nested status
+// card), and drop this wrapper's native border so they don't double up.
+// The negative inline margin pulls the quote out of the parent's 16px padding
+// so it uses more width, WITHOUT moving the avatar/header/actions.
+.status__quote {
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  margin-inline: -8px !important;
+
+  .status--is-quote {
+    margin: 0 !important;
+    border-radius: var(--eps-radius-md) !important;
+  }
+
+  // Media/link cards inside a quote: de-nest them (drop their own border, radius
+  // and big top margin) so it isn't a box-in-a-box, and tighten the text padding
+  // (keep some so the text isn't cramped against the edge).
+  .status-card {
+    margin-top: 8px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  .status-card__content {
+    padding: 12px !important;
   }
 }
 

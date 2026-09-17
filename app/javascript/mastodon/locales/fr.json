@@ -717,6 +717,8 @@
   "epsilon.category_suggestions.confirm": "Valider",
   "epsilon.category_suggestions.description": "Choisissez les sujets à mettre davantage en avant dans le fil.",
   "epsilon.category_suggestions.description_note": "Les réglages restent modifiables à tout moment.",
+  "epsilon.category_suggestions.preparing": "Préparation de votre fil…",
+  "epsilon.category_suggestions.show_more": "Afficher plus",
   "epsilon.category_suggestions.title": "Améliorer la pertinence des contenus proposés",
   "epsilon.home.empty_message": "Votre fil d'actualité est vide. Voici quelques suggestions de comptes pour le remplir :",
   "epsilon.home.filter": "Filtres",

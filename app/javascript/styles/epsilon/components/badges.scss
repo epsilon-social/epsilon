@@ -160,6 +160,23 @@ body.theme-contrast .account__header__epsilon-badges {
   gap: 4px;
 }
 
+// Detailed status header: the native rule
+// `.detailed-status__display-name span:not(.emojione) { display: block }`
+// (higher specificity) forces every span — including our badge spans — to block,
+// so the badges stack vertically and the "+N" chip stretches full width. Restore
+// the inline layout for the badge elements.
+.detailed-status__display-name {
+  .epsilon-badges {
+    display: inline-flex !important;
+    overflow: visible !important;
+  }
+
+  .epsilon-badge,
+  .epsilon-badge-more {
+    display: inline-flex !important;
+  }
+}
+
 // Left sidebar: badges next to the display name.
 .epsilon-sidebar__name {
   display: inline-flex;

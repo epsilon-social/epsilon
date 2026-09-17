@@ -28,7 +28,6 @@ import {
 } from '../../actions/accounts';
 import { initBlockModal } from '../../actions/blocks';
 import {
-  replyCompose,
   mentionCompose,
   directCompose,
 } from '../../actions/compose';
@@ -103,7 +102,9 @@ const makeMapStateToProps = () => {
       status,
       ancestorsIds,
       descendantsIds,
-      askReplyConfirmation: state.getIn(['compose', 'text']).trim().length !== 0,
+      // EPSILON: the inline reply box's pristine auto-mention is not a real draft
+      // → don't trigger the discard-draft confirm when replying elsewhere.
+      askReplyConfirmation: state.getIn(['compose', 'text']).trim().length !== 0 && !state.getIn(['compose', 'epsilon_inline_owned']),
       domain: state.getIn(['meta', 'domain']),
       pictureInPicture: getPictureInPicture(state, { id: props.params.statusId }),
     };
@@ -160,6 +161,8 @@ class Status extends ImmutablePureComponent {
      * Used to highlight newly added replies in the UI
      */
     newRepliesIds: [],
+    // EPSILON: the on-demand inline reply composer under the detailed post.
+    inlineReplyVisible: false,
   };
 
   componentDidMount() {
@@ -197,17 +200,17 @@ class Status extends ImmutablePureComponent {
     }
   };
 
+  // ==========================================
+  // EPSILON : INLINE REPLY ON THE DETAILED POST
+  // Replying to the post itself reveals (toggles) an inline composer right
+  // under it, instead of opening the modal. Replies to other statuses in the
+  // thread still use the modal (handled by status_container's onReply).
+  // ==========================================
   handleReplyClick = (status) => {
-    const { askReplyConfirmation, dispatch } = this.props;
+    const { dispatch } = this.props;
     const { signedIn } = this.props.identity;
 
-    if (signedIn) {
-      if (askReplyConfirmation) {
-        dispatch(openModal({ modalType: 'CONFIRM_REPLY', modalProps: { status } }));
-      } else {
-        dispatch(replyCompose(status));
-      }
-    } else {
+    if (!signedIn) {
       dispatch(openModal({
         modalType: 'INTERACTION',
         modalProps: {
@@ -216,8 +219,16 @@ class Status extends ImmutablePureComponent {
           url: status.get('uri'),
         },
       }));
+      return;
     }
+
+    this.setState((state) => ({ inlineReplyVisible: !state.inlineReplyVisible }));
   };
+
+  handleInlineReplyClose = () => {
+    this.setState({ inlineReplyVisible: false });
+  };
+  // ==========================================
 
   handleReblogClick = (status, e) => {
     const { dispatch } = this.props;
@@ -500,6 +511,8 @@ class Status extends ImmutablePureComponent {
 
     if (params.statusId && prevProps.params.statusId !== params.statusId) {
       this.props.dispatch(fetchStatus(params.statusId, { forceFetch: true }));
+      // EPSILON: collapse the inline composer when switching to another post.
+      this.setState({ inlineReplyVisible: false });
     }
 
     if (status && status.get('id') !== this.state.loadedStatusId) {
@@ -638,8 +651,12 @@ class Status extends ImmutablePureComponent {
               </NavigationFocusTarget>
             </Hotkeys>
 
-            {/* EPSILON: inline reply — a live compose pre-set as a reply to this post */}
-            <EpsilonInlineReply statusId={status.get('id')} />
+            {/* EPSILON: on-demand inline reply revealed by the post's reply button */}
+            <EpsilonInlineReply
+              statusId={status.get('id')}
+              visible={this.state.inlineReplyVisible}
+              onClose={this.handleInlineReplyClose}
+            />
 
             {descendants}
 

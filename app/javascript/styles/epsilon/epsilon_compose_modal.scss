@@ -9,8 +9,12 @@
   inset: 0;
   z-index: 9000;
   display: flex;
-  align-items: center;
-  justify-content: center;
+
+  // Scroll lives on the overlay + the content is centered with `margin: auto`
+  // (NOT align-items: center). With align-items: center, content taller than the
+  // viewport overflows above the scroll area and gets truncated/unreachable.
+  // margin auto centers when it fits, and top-aligns + scrolls when it doesn't.
+  overflow-y: auto;
   padding: max(16px, env(safe-area-inset-top)) 16px
     max(16px, env(safe-area-inset-bottom));
   background: rgb(0 0 0 / 40%);
@@ -20,13 +24,33 @@
   &__content {
     box-sizing: border-box;
     width: min(600px, 100%);
-    max-height: calc(100dvh - 32px);
-    overflow-y: auto;
+    margin: auto;
   }
 
   &--concealed .epsilon-compose-overlay__content {
     display: none;
   }
+}
+
+// Native compose clips the quoted post to a compact preview (`.status__quote`
+// has `max-height: 220px` + `overflow: hidden`). We'd rather show the whole
+// quote: drop the height cap so it displays fully, and keep it contained
+// (overflow: hidden — our timeline border fix set `overflow: visible` globally,
+// which otherwise lets the media spill over the footer). The card grows and the
+// overlay scrolls if the compose exceeds the viewport.
+.epsilon-compose .status__quote {
+  max-height: none !important;
+  overflow: hidden !important;
+
+  // Native sets margin: 0 here, gluing the quote to the text/upload above it.
+  // Add breathing room so the bordered preview isn't stuck to the composer.
+  margin-block-start: 16px !important;
+
+  // A border so the quoted post reads as distinct from the composer around it
+  // (our timeline fix strips .status__quote's border; add it back here). With
+  // overflow: hidden the media clips cleanly to the rounded corners.
+  border: 1px solid var(--eps-border) !important;
+  border-radius: var(--eps-radius-md) !important;
 }
 
 body.epsilon-compose-open .modal-root__overlay {
@@ -77,4 +101,121 @@ body.epsilon-compose-open .modal-root__overlay {
 
 .dialog-modal__header {
   border-bottom: 0 !important;
+}
+
+// Signaler / Filtrer : partagent .report-dialog-modal (report_modal + filter_modal)
+.report-dialog-modal {
+  background: var(--eps-surface) !important;
+  border: 1px solid var(--eps-compose-border) !important;
+  border-radius: var(--eps-radius) !important;
+  box-shadow: var(--eps-shadow-card) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+
+  &__container {
+    border-top: 1px solid var(--eps-border) !important;
+  }
+
+  .report-modal__target {
+    border-bottom: 0 !important;
+  }
+
+  // Filtrer : barre de recherche + scroll + items (mêmes classes que le dropdown langue)
+  .emoji-mart-search {
+    padding: 0 !important;
+    margin-bottom: 12px !important;
+
+    input {
+      background: var(--eps-nav-hover) !important;
+      border: none !important;
+      border-radius: var(--eps-radius-pill) !important;
+      color: var(--eps-text-primary) !important;
+      padding: 12px 40px 12px 16px !important;
+      font-size: 0.9375rem !important;
+      font-weight: 500 !important;
+      transition:
+        box-shadow var(--eps-dur-base) ease,
+        background-color var(--eps-dur-base) ease !important;
+
+      &::placeholder {
+        color: var(--eps-text-secondary) !important;
+        opacity: 0.8;
+      }
+
+      &:focus {
+        background: var(--eps-surface) !important;
+        outline: none !important;
+        box-shadow: 0 0 0 2px var(--eps-brand-primary) !important;
+      }
+    }
+  }
+
+  .emoji-mart-search-icon {
+    top: 50% !important;
+    inset-inline-end: 12px !important;
+    transform: translateY(-50%) !important;
+    color: var(--eps-text-secondary) !important;
+  }
+
+  .emoji-mart-scroll {
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .language-dropdown__dropdown__results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    &__item {
+      border-radius: var(--eps-radius-md) !important;
+      color: var(--eps-text-primary) !important;
+      padding: 10px 12px !important;
+
+      &__common-name {
+        color: var(--eps-text-secondary) !important;
+      }
+
+      @media (hover: hover) {
+        &:hover {
+          background: var(--eps-nav-hover) !important;
+        }
+      }
+
+      &:focus,
+      &.active {
+        background: var(--eps-brand-primary) !important;
+        color: var(--eps-text-white) !important;
+
+        .language-dropdown__dropdown__results__item__common-name {
+          color: var(--eps-text-white) !important;
+        }
+      }
+    }
+  }
+
+  &__actions {
+    .button {
+      background: var(--eps-brand-primary) !important;
+      border-color: var(--eps-brand-primary) !important;
+      color: var(--eps-text-white) !important;
+
+      &:hover {
+        background: var(--eps-brand-primary) !important;
+        filter: brightness(1.05);
+      }
+    }
+
+    .button.button-secondary {
+      background: transparent !important;
+      border-color: var(--eps-border) !important;
+      color: var(--eps-text-primary) !important;
+
+      &:hover {
+        border-color: var(--eps-border-hover) !important;
+        background: var(--eps-nav-hover) !important;
+        filter: none;
+      }
+    }
+  }
 }

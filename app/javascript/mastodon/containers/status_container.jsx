@@ -65,7 +65,14 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     dispatch((_, getState) => {
       let state = getState();
 
-      if (state.getIn(['compose', 'text']).trim().length !== 0) {
+      // ==========================================
+      // EPSILON : INLINE REPLY VS MODAL
+      // The inline reply box under a detailed status pre-fills a pristine
+      // auto-mention (epsilon_inline_owned). That is not a real draft, so
+      // replying to another status must NOT raise the discard-draft confirm —
+      // it should just retarget the reply and let the compose modal open.
+      // ==========================================
+      if (state.getIn(['compose', 'text']).trim().length !== 0 && !state.getIn(['compose', 'epsilon_inline_owned'])) {
         dispatch(openModal({ modalType: 'CONFIRM_REPLY', modalProps: { status } }));
       } else {
         dispatch(replyCompose(status));
