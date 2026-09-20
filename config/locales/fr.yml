@@ -1670,6 +1670,11 @@ fr:
       x_seconds: "%{count} s"
   deletes:
     challenge_not_passed: Les renseignements que vous avez entrés n'étaient pas exacts
+    confirm_modal:
+      cancel: Retour
+      confirm: Supprimer le compte
+      message: Cela supprime définitivement votre compte et toutes vos données. Cette action est irréversible.
+      title: Supprimer votre compte ?
     confirm_password: Entrez votre mot de passe actuel pour vérifier votre identité
     confirm_username: Entrez votre identifiant pour confirmer la procédure
     proceed: Supprimer le compte

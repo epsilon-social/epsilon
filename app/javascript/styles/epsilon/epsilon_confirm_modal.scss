@@ -1,0 +1,104 @@
+// Confirmation dialog for server-rendered pages (account deletion, etc.).
+// Built in plain JS by entrypoints/epsilon/confirm_modal.ts; styled here to
+// match the Epsilon modal language (frosted backdrop, glass surface, generous
+// radius). No backdrop-filter on the surface itself — the blur lives on the
+// overlay only (a filtered animated surface janks on iOS).
+
+.epsilon-confirm-lock {
+  overflow: hidden;
+}
+
+.epsilon-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  padding: max(16px, env(safe-area-inset-top)) 16px
+    max(16px, env(safe-area-inset-bottom));
+  background: rgb(0 0 0 / 40%);
+
+  // -webkit- must come first: the build strips the unprefixed rule otherwise.
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  overflow-y: auto;
+}
+
+.epsilon-confirm-modal {
+  box-sizing: border-box;
+  width: min(400px, 100%);
+  margin: auto;
+  padding: 28px 24px 20px;
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius-md);
+  background: var(--eps-surface);
+  box-shadow: var(--eps-shadow-card);
+  text-align: center;
+
+  &__body {
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    margin: 0 0 10px;
+    color: var(--eps-text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  &__message {
+    margin: 0;
+    color: var(--eps-text-secondary);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__button {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 18px;
+    border: 1px solid transparent;
+    border-radius: var(--eps-radius-pill);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+      filter 0.15s ease,
+      background 0.15s ease;
+
+    &--confirm {
+      // Same red as Mastodon's native "Delete account" button (.negative).
+      background: var(--color-bg-error-base);
+      color: var(--eps-text-white);
+
+      &:hover,
+      &:active,
+      &:focus {
+        background: var(--color-bg-error-base-hover);
+      }
+    }
+
+    &--cancel {
+      border-color: var(--eps-border);
+      background: transparent;
+      color: var(--eps-text-primary);
+
+      &:hover {
+        background: var(--eps-surface-hover);
+        border-color: var(--eps-border-hover);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--eps-brand-primary);
+      outline-offset: 2px;
+    }
+  }
+}

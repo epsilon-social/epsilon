@@ -1,7 +1,15 @@
 - content_for :page_title do
   = t('settings.delete')
 
-= simple_form_for @confirmation, url: settings_delete_path, method: :delete do |f|
+-# EPSILON : account-deletion confirmation modal (App Store 5.1.1(v)).
+   data-confirm-modal is intercepted in entrypoints/public.tsx to show a
+   styled confirmation dialog before the account is actually deleted.
+- confirm_modal_data = { confirm_modal: 'true',
+                         confirm_title: t('deletes.confirm_modal.title'),
+                         confirm_message: t('deletes.confirm_modal.message'),
+                         confirm_confirm: t('deletes.confirm_modal.confirm'),
+                         confirm_cancel: t('deletes.confirm_modal.cancel') }
+= simple_form_for @confirmation, url: settings_delete_path, method: :delete, html: { data: confirm_modal_data } do |f|
   %p.hint= t('deletes.warning.before')
 
   %ul.hint
@@ -20,10 +28,12 @@
 
   %hr.spacer/
 
+  -# EPSILON : required so the browser blocks an empty submit (App Store 5.1.1(v))
+     before the confirmation modal can open.
   - if current_user.encrypted_password.present?
-    = f.input :password, wrapper: :with_block_label, input_html: { autocomplete: 'current-password' }, hint: t('deletes.confirm_password')
+    = f.input :password, required: true, wrapper: :with_block_label, input_html: { autocomplete: 'current-password', required: true }, hint: t('deletes.confirm_password')
   - else
-    = f.input :username, wrapper: :with_block_label, input_html: { autocomplete: 'off' }, hint: t('deletes.confirm_username')
+    = f.input :username, required: true, wrapper: :with_block_label, input_html: { autocomplete: 'off', required: true }, hint: t('deletes.confirm_username')
 
   .actions
     = f.button :button, t('deletes.proceed'), type: :submit, class: 'negative'

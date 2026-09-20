@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.12] - 2026-09-20
+
+### Added
+
+- **Modale de confirmation avant suppression de compte (App Store 5.1.1(v))** : La page `/settings/delete` demandait le mot de passe puis supprimait directement au submit ; Apple exige une **confirmation explicite** de l'utilisateur avant une action destructive. Un **dialog de confirmation** stylé (langage des modales Epsilon : backdrop flouté, surface glass, tokens `--eps-*`, bouton de suppression au **rouge natif** `.negative` — `--color-bg-error-base`/`-hover`, thème clair/sombre suivi) s'interpose désormais entre le clic « Supprimer le compte » et la suppression réelle : boutons **Supprimer le compte / Retour**, fermeture au clic sur le fond, à `Escape` ou sur « Retour » (= annulation, aucune suppression). La page de suppression étant **server-rendered (Haml, hors SPA React/Redux)**, la modale est un composant **JS vanilla autonome** (`app/javascript/entrypoints/epsilon/confirm_modal.ts`, chargé par `public.tsx`) qui **intercepte le submit** du formulaire natif via `delegated-events`, l'affiche, et ne resoumet qu'à la confirmation (piège à focus, verrou de scroll, retour du focus à la fermeture). **Champs requis** : `Form::DeleteConfirmation` n'ayant aucune validation de présence, le champ mot de passe (ou username) passait à vide ; il est désormais `required` (HTML5) — le navigateur bloque le submit à vide **avant** l'ouverture de la modale, doublé d'un garde JS `checkValidity()`/`reportValidity()`. Générique : tout formulaire opte in via `data-confirm-modal` + les libellés localisés `data-confirm-*`. **Traductions FR/EN** dans les locales Ruby (`config/locales/{en,fr}.yml`, bloc `deletes.confirm_modal`), donc éditables à la main (pas de passage par `en.json`). **Fichiers core balisés `EPSILON`** : `app/views/settings/deletes/show.html.haml` (data-attributes + champs `required` sur le formulaire), `app/javascript/entrypoints/public.tsx` (import), `app/javascript/styles/application.scss` (`@use`). Nouveau partial `styles/epsilon/epsilon_confirm_modal.scss`.
+
 ## [0.3.11] - 2026-09-17
 
 ### Added

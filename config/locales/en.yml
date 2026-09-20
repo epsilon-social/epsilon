@@ -1670,6 +1670,11 @@ en:
       x_seconds: "%{count}s"
   deletes:
     challenge_not_passed: The information you entered was not correct
+    confirm_modal:
+      cancel: Back
+      confirm: Delete account
+      message: This permanently deletes your account and all of your data. This action cannot be undone.
+      title: Delete your account?
     confirm_password: Enter your current password to verify your identity
     confirm_username: Enter your username to confirm the procedure
     proceed: Delete account

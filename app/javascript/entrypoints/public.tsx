@@ -25,6 +25,10 @@ import { isDarkMode } from '@/mastodon/utils/theme';
 import { formatTime } from '@/mastodon/utils/time';
 
 import 'cocoon-js-vanilla';
+/* ========================================== */
+/* EPSILON : confirmation modal for delete-account (and other opt-in forms) */
+import './epsilon/confirm_modal';
+/* ========================================== */
 
 const messages = defineMessages({
   usernameTaken: {
