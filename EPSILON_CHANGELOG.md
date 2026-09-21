@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.16] - 2026-09-21
+
+### Changed
+
+- **Nouvel avatar par défaut (v3)** : Itération du visuel de repli des comptes sans photo (silhouette dans un cercle, 400×400 PNG). Mécanisme de versioning inchangé (cf. 0.3.15) : `EPSILON_DEFAULT_MEDIA_VERSION` bumpé `2` → `3`, nouveaux PNG déposés sous `public/avatars/original/v3/missing.png` + `public/headers/original/v3/missing.png`. Les fichiers `v2/` sont **conservés** (des clients au cache API un peu ancien peuvent encore les demander → éviter les 404). Aucun changement JS → déploiement léger (pas de precompile, simple restart web).
+
 ## [0.3.15] - 2026-09-21
 
 ### Changed

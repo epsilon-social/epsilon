@@ -22,7 +22,7 @@
 #   1. bump this version,
 #   2. drop the new PNG at public/avatars/original/v<N>/missing.png
 #      (and public/headers/original/v<N>/missing.png for the header).
-EPSILON_DEFAULT_MEDIA_VERSION = 2
+EPSILON_DEFAULT_MEDIA_VERSION = 3
 
 Paperclip::Attachment.default_options[:default_url] =
   "/:attachment/:style/v#{EPSILON_DEFAULT_MEDIA_VERSION}/missing.png"
