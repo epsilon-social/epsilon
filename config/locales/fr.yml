@@ -1824,7 +1824,7 @@ fr:
       content: Nous sommes désolé·e·s, mais quelque chose s’est mal passé de notre côté.
       title: Cette page n’est pas correcte
     '503': La page n'a pas pu être servie en raison d'une défaillance temporaire du serveur.
-    noscript_html: Pour utiliser Epsilon, veuillez activer JavaScript. Sinon, essayez l’une des <a href="%{apps_path}">applications natives</a> pour Epsilon pour votre plate-forme.
+    noscript_html: Pour utiliser Epsilon, veuillez activer JavaScript.
   existing_username_validator:
     not_found: impossible de trouver un·e utilisateur·rice local·e de ce nom
     not_found_multiple: n’a pas trouvé %{usernames}

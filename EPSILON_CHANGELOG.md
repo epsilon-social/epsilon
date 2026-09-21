@@ -5,6 +5,13 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.14] - 2026-09-21
+
+### Changed
+
+- **Nouveau logo Epsilon (petit symbole / marque)** : Remplacement de la marque « petit logo » par le nouveau logo (carré arrondi `#4571FF` + glyphe). Plusieurs assets étaient **encore ceux de Mastodon** : `images/logo-symbol-icon.svg` était le **glyphe « m »** de Mastodon et `images/app-icon.svg` l'**icône Mastodon** (gradient violet). Trois fichiers mis à jour : **`images/logo.svg`** (marque de la sidebar gauche + `SymbolLogo`), **`images/app-icon.svg`** (source des **favicons / apple-touch-icons**, rasterisés au build), et **`images/logo-symbol-icon.svg`** (composant `IconLogo` in-app + **mask-icon Safari**) — ce dernier ré-enveloppé en `<symbol id="logo-symbol-icon" viewBox="0 0 1024 1024">` avec un id de `clipPath` renommé (`epsilon-logo-icon-clip`) pour éviter toute collision une fois inliné dans le DOM à côté du wordmark. Couleur du **mask-icon** (onglet épinglé Safari) `#6364FF` → **`#4571FF`**. Le **wordmark n'est pas modifié**. ⚠️ **Favicon en prod** : le helper `favicon_path`/`app_icon_path` renvoie l'image **uploadée en admin** (`SiteUpload`, vars `favicon`/`app_icon`) si elle existe — `app-icon.svg` n'est que le **fallback**, donc la mise à jour du favicon prod se fait **dans l'admin → Branding**. Note connue : le **mask-icon** (silhouette mono-couleur) rendra un carré arrondi bleu uni (le glyphe ne ressort pas), une variante monochrome dédiée serait nécessaire pour l'onglet épinglé.
+- **Fallback `<noscript>` dé-Mastodonisé** : Le repli sans JavaScript (`shared/_web_app.html.haml`, visible uniquement JS désactivé) contenait encore `alt: 'Mastodon'` et un lien `joinmastodon.org/apps`. Passé à `alt: 'Epsilon'` et message simplifié à « Pour utiliser Epsilon, veuillez activer JavaScript. » (clé `errors.noscript_html` en/fr, lien « applications natives » retiré ; argument `apps_path` supprimé du template).
+
 ## [0.3.13] - 2026-09-21
 
 ### Added
