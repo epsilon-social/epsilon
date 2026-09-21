@@ -1,11 +1,11 @@
 ---
 en:
   about:
-    about_mastodon_html: 'The social network of the future: No ads, no corporate surveillance, ethical design, and decentralization! Own your data with Mastodon!'
+    about_mastodon_html: 'The social network of the future: No ads, no corporate surveillance, ethical design, and decentralization! Own your data with Epsilon!'
     contact_missing: Not set
     contact_unavailable: N/A
     default_thumbnail_description: Two smiling cartoon mastodons (who look like elephants) toss a paper plane between them. They're surrounded by a bright blue sky and floating planets with trees and more mastodons on them.
-    hosted_on: Mastodon hosted on %{domain}
+    hosted_on: Epsilon hosted on %{domain}
     title: About
   accounts:
     errors:
@@ -1563,9 +1563,9 @@ en:
     delete_account: Delete account
     delete_account_html: If you wish to delete your account, you can <a href="%{path}">proceed here</a>. You will be asked for confirmation.
     description:
-      prefix_invited_by_user: "@%{name} invites you to join this server of Mastodon!"
-      prefix_sign_up: Sign up on Mastodon today!
-      suffix: With an account, you will be able to follow people, post updates and exchange messages with users from any Mastodon server and more!
+      prefix_invited_by_user: "@%{name} invites you to join this server!"
+      prefix_sign_up: Sign up on Epsilon today!
+      suffix: With an account, you will be able to follow people, post updates and exchange messages with users from any server and more!
     didnt_get_confirmation: Didn't receive a confirmation link?
     dont_have_your_security_key: Don't have your security key?
     forgot_password: Forgot your password?
@@ -1604,7 +1604,7 @@ en:
     set_new_password: Set new password
     setup:
       email_below_hint_html: Check your spam folder, or request another one. You can correct your email address if it's wrong.
-      email_settings_hint_html: Click the link we sent to %{email} to begin using Mastodon. We'll wait right here.
+      email_settings_hint_html: Click the link we sent to %{email} to begin using Epsilon. We'll wait right here.
       link_not_received: Didn't get a link?
       new_confirmation_instructions_sent: You will receive a new email with the confirmation link in a few minutes!
       title: Check your inbox
@@ -1613,7 +1613,7 @@ en:
       title: Login to %{domain}
     sign_up:
       manual_review: Sign-ups on %{domain} go through manual review by our moderators. To help us process your registration, write a bit about yourself and why you want an account on %{domain}.
-      preamble: With an account on this Mastodon server, you'll be able to follow any other person on the fediverse, regardless of where their account is hosted.
+      preamble: With an account on this Epsilon server, you'll be able to follow any other person on the fediverse, regardless of where their account is hosted.
       title: Let's get you set up on %{domain}.
     status:
       account_status: Account status
@@ -1629,7 +1629,7 @@ en:
     user_privacy_agreement_html: I have read and agree to the <a href="%{privacy_policy_path}" target="_blank">privacy policy</a>
   author_attribution:
     example_title: Sample text
-    hint_html: Are you writing news or blog articles outside of Mastodon? Control how you get credited when they are shared on Mastodon.
+    hint_html: Are you writing news or blog articles outside of Epsilon? Control how you get credited when they are shared on Epsilon.
     instructions: 'Make sure this code is in your article''s HTML:'
     more_from_html: More from %{name}
     s_blog: "%{name}'s Blog"
@@ -1734,7 +1734,7 @@ en:
       subject: Confirm your email address
       title: Get email updates from %{name}?
     notification:
-      create_account: Create a Mastodon account
+      create_account: Create an Epsilon account
       footer:
         privacy_html: Emails are sent from %{domain}, a server powered by Mastodon. To understand how this server processes your personal data, refer to the <a href="%{privacy_policy_path}">Privacy Policy</a>.
         reason_for_email_html: You're receiving this email because you opted into email updates from %{name}. Don't want to receive these emails? <a href="%{unsubscribe_path}">Unsubscribe</a>
@@ -1824,7 +1824,7 @@ en:
       content: We're sorry, but something went wrong on our end.
       title: This page is not correct
     '503': The page could not be served due to a temporary server failure.
-    noscript_html: To use the Mastodon web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Mastodon for your platform.
+    noscript_html: To use the Epsilon web application, please enable JavaScript. Alternatively, try one of the <a href="%{apps_path}">native apps</a> for Epsilon for your platform.
   existing_username_validator:
     not_found: could not find a local user with that username
     not_found_multiple: could not find %{usernames}
@@ -2108,10 +2108,10 @@ en:
     collection_update:
       title_html: "%{name} updated a collection you are in"
     generic:
-      sign_in: Sign in to the Mastodon web app
-      summary_html: You're on an app that does not support the most recent version of Mastodon. %{link} for full functionality.
+      sign_in: Sign in to the Epsilon web app
+      summary_html: You're on an app that does not support the most recent version of Epsilon. %{link} for full functionality.
     moderation_warning:
-      summary_html: You're on an app that does not support the most recent version of Mastodon. %{link}.
+      summary_html: You're on an app that does not support the most recent version of Epsilon. %{link}.
       title: You have received a moderation warning.
     severed_relationships:
       summary_html: An admin from %{from} has suspended %{target}, which means you can no longer receive updates from them or interact with them. %{link} to retrieve a list of the lost relationships.
@@ -2210,14 +2210,14 @@ en:
     public_timelines: Public timelines
   privacy:
     email_subscriptions: Send posts via email
-    email_subscriptions_hint_html: Add an email sign-up form to your profile that appears for logged-out users. When visitors enter their email address and opt in, Mastodon will send email updates for your public posts.
-    hint_html: "<strong>Customize how you want your profile and your posts to be found.</strong> A variety of features in Mastodon can help you reach a wider audience when enabled. Take a moment to review these settings to make sure they fit your use case."
+    email_subscriptions_hint_html: Add an email sign-up form to your profile that appears for logged-out users. When visitors enter their email address and opt in, Epsilon will send email updates for your public posts.
+    hint_html: "<strong>Customize how you want your profile and your posts to be found.</strong> A variety of features in Epsilon can help you reach a wider audience when enabled. Take a moment to review these settings to make sure they fit your use case."
     privacy: Privacy
     privacy_hint_html: Control how much you want to disclose for the benefit of others. People discover interesting profiles and cool apps by browsing other people's follows and seeing which apps they post from, but you may prefer to keep it hidden.
     reach: Reach
     reach_hint_html: Control whether you want to be discovered and followed by new people. Do you want your posts to appear on the Explore screen? Do you want other people to see you in their follow recommendations? Do you want to accept all new followers automatically, or have granular control over each one?
     search: Search
-    search_hint_html: Control how you want to be found. Do you want people to find you by what you've publicly posted about? Do you want people outside Mastodon to find your profile when searching the web? Please mind that total exclusion from all search engines cannot be guaranteed for public information.
+    search_hint_html: Control how you want to be found. Do you want people to find you by what you've publicly posted about? Do you want people outside Epsilon to find your profile when searching the web? Please mind that total exclusion from all search engines cannot be guaranteed for public information.
     title: Privacy and reach
   privacy_policy:
     title: Privacy Policy
@@ -2292,7 +2292,7 @@ en:
     current_session: Current session
     date: Date
     description: "%{browser} on %{platform}"
-    explanation: These are the web browsers currently logged in to your Mastodon account.
+    explanation: These are the web browsers currently logged in to your Epsilon account.
     ip: IP
     platforms:
       adobe_air: Adobe Air
@@ -2318,7 +2318,7 @@ en:
     aliases: Account aliases
     appearance: Appearance
     authorized_apps: Authorized apps
-    back: Back to Mastodon
+    back: Back to Epsilon
     delete: Account deletion
     development: Development
     edit_profile: Edit profile
@@ -2393,9 +2393,9 @@ en:
       direct: Private mention
       private: Followers only
       public: Public
-      public_long: Anyone on and off Mastodon
+      public_long: Anyone on and off the fediverse
       unlisted: Quiet public
-      unlisted_long: Hidden from Mastodon search results, trending, and public timelines
+      unlisted_long: Hidden from Epsilon search results, trending, and public timelines
   statuses_cleanup:
     enabled: Automatically delete old posts
     enabled_hint: Automatically deletes your posts once they reach a specified age threshold, unless they match one of the exceptions below
@@ -2472,7 +2472,7 @@ en:
     recovery_codes_regenerated: Recovery codes successfully regenerated
     recovery_instructions_html: If you ever lose access to your phone, you can use one of the recovery codes below to regain access to your account. <strong>Keep the recovery codes safe</strong>. For example, you may print them and store them with other important documents.
     resume_app_authorization: Resume application authorization
-    role_requirement: "%{domain} requires you to set up Two-Factor Authentication before you can use Mastodon."
+    role_requirement: "%{domain} requires you to set up Two-Factor Authentication before you can use Epsilon."
     webauthn: Security keys
   unsubscriptions:
     create:
@@ -2481,7 +2481,7 @@ en:
         confirmation_html: You'll no longer receive emails from %{name}.
       title: You are unsubscribed
       user:
-        confirmation_html: You'll no longer receive %{type} from Mastodon on %{domain}.
+        confirmation_html: You'll no longer receive %{type} from Epsilon on %{domain}.
     notification_emails:
       favourite: favorite notification emails
       follow: follow notification emails
@@ -2494,7 +2494,7 @@ en:
         confirmation_html: You'll stop receiving emails when this account publishes new posts.
         title: Unsubscribe from %{name}?
       user:
-        confirmation_html: You'll stop receiving %{type} from Mastodon on %{domain}.
+        confirmation_html: You'll stop receiving %{type} from Epsilon on %{domain}.
         title: Unsubscribe from %{type}?
   user_mailer:
     announcement_published:
@@ -2513,7 +2513,7 @@ en:
       subtitle: Your appeal has been rejected.
       title: Appeal rejected
     backup_ready:
-      explanation: You requested a full backup of your Mastodon account.
+      explanation: You requested a full backup of your Epsilon account.
       extra: It's now ready for download!
       subject: Your archive is ready for download
       title: Archive takeout
@@ -2621,7 +2621,7 @@ en:
   verification:
     extra_instructions_html: <strong>Tip:</strong> The link on your website can be invisible. The important part is <code>rel="me"</code> which prevents impersonation on websites with user-generated content. You can even use a <code>link</code> tag in the header of the page instead of <code>a</code>, but the HTML must be accessible without executing JavaScript.
     here_is_how: Here's how
-    hint_html: "<strong>Verifying your identity on Mastodon is for everyone.</strong> Based on open web standards, now and forever free. All you need is a personal website that people recognize you by. When you link to this website from your profile, we will check that the website links back to your profile and show a visual indicator on it."
+    hint_html: "<strong>Verifying your identity on Epsilon is for everyone.</strong> Based on open web standards, now and forever free. All you need is a personal website that people recognize you by. When you link to this website from your profile, we will check that the website links back to your profile and show a visual indicator on it."
     instructions_html: Copy and paste the code below into the HTML of your website. Then add the address of your website into one of the extra fields on your profile from the "Edit profile" tab and save changes.
     verification: Verification
     verified_links: Your verified links

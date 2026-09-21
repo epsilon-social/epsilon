@@ -1,0 +1,27 @@
+/* ========================================== */
+
+/* EPSILON : IMAGE PEEK (pinch-to-peek in-app) */
+
+/* ========================================== */
+
+// Full-screen dim behind the lifted image; its opacity is driven live by the
+// controller as the pinch grows.
+.epsilon-image-peek__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+// The clone that stands over the source image and follows the fingers. Sized
+// and positioned in JS to match the source exactly, so scale 1 is seamless.
+.epsilon-image-peek__clone {
+  position: fixed;
+  z-index: 9001;
+  margin: 0;
+  pointer-events: none;
+  will-change: transform;
+  transform: translate(0, 0) scale(1);
+}

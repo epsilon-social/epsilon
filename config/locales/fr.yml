@@ -1,11 +1,11 @@
 ---
 fr:
   about:
-    about_mastodon_html: 'Le réseau social de l''avenir : pas de publicité, pas de surveillance institutionnelle, conception éthique et décentralisation ! Gardez le contrôle de vos données avec Mastodon !'
+    about_mastodon_html: 'Le réseau social de l''avenir : pas de publicité, pas de surveillance institutionnelle, conception éthique et décentralisation ! Gardez le contrôle de vos données avec Epsilon !'
     contact_missing: Non défini
     contact_unavailable: Non disponible
     default_thumbnail_description: Un dessin représentant deux mastodontes (qui ressemblent à des éléphants) souriants qui se lancent un avion en papier. Derrière eux flottent des planètes avec des arbres et d'autres mastodontes, et en fond un ciel bleu vif.
-    hosted_on: Serveur Mastodon hébergé sur %{domain}
+    hosted_on: Serveur Epsilon hébergé sur %{domain}
     title: À propos
   accounts:
     errors:
@@ -1563,9 +1563,9 @@ fr:
     delete_account: Supprimer le compte
     delete_account_html: Si vous désirez supprimer votre compte, vous pouvez <a href="%{path}">cliquer ici</a>. Il vous sera demandé de confirmer cette action.
     description:
-      prefix_invited_by_user: "@%{name} vous invite à rejoindre ce serveur Mastodon !"
-      prefix_sign_up: Inscrivez-vous aujourd’hui sur Mastodon !
-      suffix: Avec un compte, vous pourrez suivre des gens, publier des statuts et échanger des messages avec les utilisateur·rice·s de n'importe quel serveur Mastodon et bien plus !
+      prefix_invited_by_user: "@%{name} vous invite à rejoindre ce serveur !"
+      prefix_sign_up: Inscrivez-vous aujourd’hui sur Epsilon !
+      suffix: Avec un compte, vous pourrez suivre des gens, publier des statuts et échanger des messages avec les utilisateur·rice·s de n'importe quel serveur et bien plus !
     didnt_get_confirmation: Vous n'avez pas reçu de lien de confirmation ?
     dont_have_your_security_key: Vous n'avez pas votre clé de sécurité?
     forgot_password: Mot de passe oublié ?
@@ -1604,7 +1604,7 @@ fr:
     set_new_password: Définir le nouveau mot de passe
     setup:
       email_below_hint_html: Consultez votre dossier de courriels indésirables ou demandez-en un autre. Vous pouvez corriger votre adresse de courriel si elle est incorrecte.
-      email_settings_hint_html: Cliquer sur le lien envoyé à %{email} pour commencer à utiliser Mastodon. Nous vous attendons ici.
+      email_settings_hint_html: Cliquer sur le lien envoyé à %{email} pour commencer à utiliser Epsilon. Nous vous attendons ici.
       link_not_received: Vous n'avez pas reçu de lien ?
       new_confirmation_instructions_sent: Vous allez recevoir un nouveau courriel avec le lien de confirmation dans quelques minutes !
       title: Vérifiez votre boîte de réception
@@ -1613,7 +1613,7 @@ fr:
       title: Se connecter à %{domain}
     sign_up:
       manual_review: Les inscriptions sur %{domain} passent par une revue manuelle de nos modérateurs. Pour les aider, écrivez un peu plus sur vous et pourquoi vous souhaitez créer un compte sur %{domain}.
-      preamble: Avec un compte sur ce serveur Mastodon, vous pourrez suivre n'importe quelle autre personne du fediverse, quel que soit l'endroit où son compte est hébergé.
+      preamble: Avec un compte sur ce serveur Epsilon, vous pourrez suivre n'importe quelle autre personne du fediverse, quel que soit l'endroit où son compte est hébergé.
       title: Mettons les choses en place pour %{domain}.
     status:
       account_status: État du compte
@@ -1629,7 +1629,7 @@ fr:
     user_privacy_agreement_html: J’ai lu et j’accepte la <a href="%{privacy_policy_path}" target="_blank">politique de confidentialité</a>
   author_attribution:
     example_title: Exemple de texte
-    hint_html: Vous écrivez des nouvelles ou des articles de blog en dehors de Mastodon ? Contrôlez la façon dont vous êtes crédité lorsqu'ils sont partagés sur Mastodon.
+    hint_html: Vous écrivez des nouvelles ou des articles de blog en dehors d'Epsilon ? Contrôlez la façon dont vous êtes crédité lorsqu'ils sont partagés sur Epsilon.
     instructions: 'Assurez-vous que ce code se trouve dans le code HTML de votre article :'
     more_from_html: Voir plus de %{name}
     s_blog: Blog de %{name}
@@ -1734,7 +1734,7 @@ fr:
       subject: Confirmer votre adresse de courriel
       title: Recevoir les notifications par courriel de %{name} ?
     notification:
-      create_account: Créer un compte Mastodon
+      create_account: Créer un compte Epsilon
       footer:
         privacy_html: Les courriels sont envoyés par %{domain}, un serveur propulsé par Mastodon. Pour comprendre comment ce serveur utilise vos données personnelles, se référer à la <a href="%{privacy_policy_path}">politique de confidentialité</a>.
         reason_for_email_html: Vous recevez ce courriel car vous avez choisi de recevoir les notifications de %{name}. Vous ne souhaitez pas recevoir ces courriels ? <a href="%{unsubscribe_path}">Désabonnez-vous</a>
@@ -1824,7 +1824,7 @@ fr:
       content: Nous sommes désolé·e·s, mais quelque chose s’est mal passé de notre côté.
       title: Cette page n’est pas correcte
     '503': La page n'a pas pu être servie en raison d'une défaillance temporaire du serveur.
-    noscript_html: Pour utiliser Mastodon, veuillez activer JavaScript. Sinon, essayez l’une des <a href="%{apps_path}">applications natives</a> pour Mastodon pour votre plate-forme.
+    noscript_html: Pour utiliser Epsilon, veuillez activer JavaScript. Sinon, essayez l’une des <a href="%{apps_path}">applications natives</a> pour Epsilon pour votre plate-forme.
   existing_username_validator:
     not_found: impossible de trouver un·e utilisateur·rice local·e de ce nom
     not_found_multiple: n’a pas trouvé %{usernames}
@@ -2108,10 +2108,10 @@ fr:
     collection_update:
       title_html: "%{name} a mis à jour une collection dans laquelle vous figurez"
     generic:
-      sign_in: Connectez-vous à l'application Web Mastodon
-      summary_html: Vous utilisez une application qui ne prend pas en charge la version la plus récente de Mastodon. %{link} pour accéder à toutes les fonctionnalités.
+      sign_in: Connectez-vous à l'application Web Epsilon
+      summary_html: Vous utilisez une application qui ne prend pas en charge la version la plus récente d'Epsilon. %{link} pour accéder à toutes les fonctionnalités.
     moderation_warning:
-      summary_html: Vous utilisez une application qui ne supporte pas la version la plus récente de Mastodon. %{link}.
+      summary_html: Vous utilisez une application qui ne supporte pas la version la plus récente d'Epsilon. %{link}.
       title: Vous avez reçu un avertissement de la modération.
     severed_relationships:
       summary_html: L'équipe d'administration de %{from} a suspendu %{target}, ce qui signifie que vous ne pouvez plus recevoir de notifications de leur part ou interagir avec. %{link} pour récupérer la liste des relations perdues.
@@ -2209,14 +2209,14 @@ fr:
     public_timelines: Fils publics
   privacy:
     email_subscriptions: Envoyer des messages par courriel
-    email_subscriptions_hint_html: Ajoute un formulaire d'abonnement par courriel à votre profil pour les personnes non connectées. Après avoir validé leur adresse courriel, Mastodon leur enverra des notifications pour vos messages publics.
-    hint_html: "<strong>Personnalisez la façon dont votre profil et vos messages peuvent être découverts.</strong> Mastodon peut vous aider à atteindre un public plus large lorsque certains paramètres sont activés. Prenez le temps de les examiner pour vous assurer qu’ils sont configurés comme vous le souhaitez."
+    email_subscriptions_hint_html: Ajoute un formulaire d'abonnement par courriel à votre profil pour les personnes non connectées. Après avoir validé leur adresse courriel, Epsilon leur enverra des notifications pour vos messages publics.
+    hint_html: "<strong>Personnalisez la façon dont votre profil et vos messages peuvent être découverts.</strong> Epsilon peut vous aider à atteindre un public plus large lorsque certains paramètres sont activés. Prenez le temps de les examiner pour vous assurer qu’ils sont configurés comme vous le souhaitez."
     privacy: Confidentialité
     privacy_hint_html: Contrôler ce que vous souhaitez divulguer. Les utilisateur·rice·s découvrent des profils intéressants en parcourant ceux suivis par d’autres personnes et des applications sympas en voyant celles utilisées pour publier des messages, mais vous préférez peut-être ne pas dévoiler ces informations.
     reach: Portée
     reach_hint_html: Contrôler si vous souhaitez être découvert et suivi par de nouvelles personnes. Voulez-vous que vos messages puissent apparaître dans les tendances ? Voulez-vous que d’autres personnes vous voient dans leurs recommandations de suivi ? Souhaitez-vous approuver automatiquement tous les nouveaux abonnés ou avoir un contrôle granulaire sur chacun d’entre eux ?
     search: Recherche
-    search_hint_html: Contrôlez la façon dont vous voulez être retrouvé. Voulez-vous que les gens vous trouvent selon ce que vous avez publié publiquement ? Voulez-vous que des personnes extérieures à Mastodon trouvent votre profil en faisant des recherches sur le web ? N’oubliez pas que l’exclusion totale de tous les moteurs de recherche ne peut être garantie pour les informations publiques.
+    search_hint_html: Contrôlez la façon dont vous voulez être retrouvé. Voulez-vous que les gens vous trouvent selon ce que vous avez publié publiquement ? Voulez-vous que des personnes extérieures à Epsilon trouvent votre profil en faisant des recherches sur le web ? N’oubliez pas que l’exclusion totale de tous les moteurs de recherche ne peut être garantie pour les informations publiques.
     title: Vie privée et visibilité
   privacy_policy:
     title: Politique de confidentialité
@@ -2291,7 +2291,7 @@ fr:
     current_session: Session courante
     date: Date
     description: "%{browser} sur %{platform}"
-    explanation: Ceci est la liste des navigateurs actuellement connectés à votre compte Mastodon.
+    explanation: Ceci est la liste des navigateurs actuellement connectés à votre compte Epsilon.
     ip: Adresse IP
     platforms:
       adobe_air: Adobe Air
@@ -2317,7 +2317,7 @@ fr:
     aliases: Alias du compte
     appearance: Apparence
     authorized_apps: Applications autorisées
-    back: Retour vers Mastodon
+    back: Retour vers Epsilon
     delete: Suppression du compte
     development: Développement
     edit_profile: Modifier le profil
@@ -2392,7 +2392,7 @@ fr:
       direct: Mention privée
       private: Abonné·e·s seulement
       public: Publique
-      public_long: Tout le monde sur et en dehors de Mastodon
+      public_long: Tout le monde sur et en dehors du fédivers
       unlisted: Public discret
       unlisted_long: Caché des résultats de recherche, des tendances et des fils d'actualité publics
   statuses_cleanup:
@@ -2471,7 +2471,7 @@ fr:
     recovery_codes_regenerated: Codes de récupération régénérés avec succès
     recovery_instructions_html: Si vous perdez l’accès à votre téléphone, vous pouvez utiliser un des codes de récupération ci-dessous pour retrouver l’accès à votre compte. <strong>Conservez les codes de récupération en sécurité</strong>. Par exemple, en les imprimant et en les stockant avec vos autres documents importants.
     resume_app_authorization: Reprendre l'autorisation de l'application
-    role_requirement: "%{domain} nécessite de configurer une authentification à deux facteurs avant de pouvoir utiliser Mastodon."
+    role_requirement: "%{domain} nécessite de configurer une authentification à deux facteurs avant de pouvoir utiliser Epsilon."
     webauthn: Clés de sécurité
   unsubscriptions:
     create:
@@ -2480,7 +2480,7 @@ fr:
         confirmation_html: Vous ne recevrez plus de courriels de %{name}.
       title: Vous êtes désabonné·e
       user:
-        confirmation_html: Vous ne recevrez plus de %{type} de Mastodon depuis %{domain}.
+        confirmation_html: Vous ne recevrez plus de %{type} d'Epsilon depuis %{domain}.
     notification_emails:
       favourite: courriels de notification de mise en favori
       follow: courriels de notification d'abonnement
@@ -2493,7 +2493,7 @@ fr:
         confirmation_html: Vous ne recevrez plus de courriels quand ce compte publiera de nouveaux messages.
         title: Se désabonner de %{name} ?
       user:
-        confirmation_html: Vous ne recevrez plus de %{type} de Mastodon depuis %{domain}.
+        confirmation_html: Vous ne recevrez plus de %{type} d'Epsilon depuis %{domain}.
         title: Se désabonner des %{type} ?
   user_mailer:
     announcement_published:
@@ -2512,7 +2512,7 @@ fr:
       subtitle: Votre appel a été rejeté.
       title: Appel rejeté
     backup_ready:
-      explanation: Vous avez demandé une sauvegarde complète de votre compte Mastodon.
+      explanation: Vous avez demandé une sauvegarde complète de votre compte Epsilon.
       extra: Elle est maintenant prête à être téléchargée !
       subject: Votre archive est prête à être téléchargée
       title: Récupération de l’archive
@@ -2620,7 +2620,7 @@ fr:
   verification:
     extra_instructions_html: <strong>Astuce :</strong> Le lien sur votre site Web peut être invisible. La partie importante est <code>rel="me"</code> qui évite que soient pris en compte d’autres liens provenant de contenu générés par des utilisateurs tiers. Vous pouvez même utiliser une balise <code>link</code> dans l’en-tête de la page au lieu de <code>a</code>, mais le HTML doit être accessible sans avoir besoin d’exécuter du JavaScript.
     here_is_how: Comment faire ?
-    hint_html: "<strong>La vérification de son profil sur Mastodon est accessible à tous.</strong> Elle s’appuie sur des standards ouverts du Web, gratuits aujourd’hui et pour toujours. Tout ce dont vous avez besoin, c’est d’un site Web personnel qui vous est associé. Lorsque vous ajoutez un lien depuis votre profil, nous vérifierons que le site Web renvoie à son tour à votre profil Mastodon et montrerons un indicateur visuel à côté du lien si c’est le cas."
+    hint_html: "<strong>La vérification de son profil sur Epsilon est accessible à tous.</strong> Elle s’appuie sur des standards ouverts du Web, gratuits aujourd’hui et pour toujours. Tout ce dont vous avez besoin, c’est d’un site Web personnel qui vous est associé. Lorsque vous ajoutez un lien depuis votre profil, nous vérifierons que le site Web renvoie à son tour à votre profil Epsilon et montrerons un indicateur visuel à côté du lien si c’est le cas."
     instructions_html: Copiez et collez le code ci-dessous dans le code HTML de votre site Web. Ajoutez ensuite l’adresse de votre site dans l’un des champs supplémentaires de votre profil à partir de l‘onglet « Modifier le profil » et enregistrez les modifications.
     verification: Vérification
     verified_links: Vos liens vérifiés

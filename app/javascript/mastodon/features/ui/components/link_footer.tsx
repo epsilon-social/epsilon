@@ -75,37 +75,6 @@ export const LinkFooter: React.FC<{
               </Link>
             </li>
           )}
-        </ul>
-      </section>
-      <section>
-        <h2 className={classes.heading}>Mastodon:</h2>
-        <ul className={classes.list}>
-          <li>
-            <a href='https://joinmastodon.org' target='_blank' rel='noopener'>
-              <FormattedMessage id='footer.about' defaultMessage='About' />
-              <span className='sr-only'> Mastodon</span>
-            </a>
-          </li>
-          <li>
-            <a
-              href='https://joinmastodon.org/apps'
-              target='_blank'
-              rel='noopener'
-            >
-              <FormattedMessage
-                id='footer.get_app'
-                defaultMessage='Get the app'
-              />
-            </a>
-          </li>
-          <li>
-            <Link to='/keyboard-shortcuts'>
-              <FormattedMessage
-                id='footer.keyboard_shortcuts'
-                defaultMessage='Keyboard shortcuts'
-              />
-            </Link>
-          </li>
           <li>
             <a href={source_url} rel='noopener' target='_blank'>
               <FormattedMessage

@@ -131,7 +131,9 @@ body.epsilon-compose-open .modal-root__overlay {
       border-radius: var(--eps-radius-pill) !important;
       color: var(--eps-text-primary) !important;
       padding: 12px 40px 12px 16px !important;
-      font-size: 0.9375rem !important;
+
+      // 16px min: below it iOS auto-zooms the page when this field is focused.
+      font-size: 1rem !important;
       font-weight: 500 !important;
       transition:
         box-shadow var(--eps-dur-base) ease,

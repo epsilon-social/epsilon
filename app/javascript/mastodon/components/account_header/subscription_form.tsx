@@ -181,7 +181,7 @@ export const AccountSubscriptionForm: React.FC<{ accountId: string }> = ({
       <div className={classes.bannerDisclaimer}>
         <FormattedMessage
           id='email_subscriptions.form.bottom'
-          defaultMessage='Get posts in your inbox without creating a Mastodon account. Unsubscribe at any time. For more information, refer to the <a>Privacy Policy</a>.'
+          defaultMessage='Get posts in your inbox without creating an Epsilon account. Unsubscribe at any time. For more information, refer to the <a>Privacy Policy</a>.'
           values={{ a: (str) => <Link to='/privacy-policy'>{str}</Link> }}
         />
       </div>

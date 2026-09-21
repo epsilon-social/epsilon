@@ -96,7 +96,7 @@ export const AlertsController: React.FC = () => {
 const reloadMessage = defineMessage({
   id: 'alert.need_reload.message',
   defaultMessage:
-    'Mastodon has been updated. Some things may not work correctly until you reload the page.',
+    'Epsilon has been updated. Some things may not work correctly until you reload the page.',
 });
 
 const ReloadAlert: React.FC = () => {

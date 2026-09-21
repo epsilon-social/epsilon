@@ -4,11 +4,13 @@ import { defineMessages, useIntl } from 'react-intl';
 
 import classNames from 'classnames';
 
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import CancelIcon from '@/material-icons/400-24px/cancel-fill.svg?react';
 import TileIcon from '@/material-icons/400-24px/tile.svg?react';
 
+import { showAlert } from '../../../actions/alerts';
 import api from '../../../api';
 import Column from '../../../components/column';
 import { ColumnHeader } from '../../../components/column_header';
@@ -28,6 +30,7 @@ const messages = defineMessages({
 const EpsilonCategorySettings = () => {
   const intl = useIntl();
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const [categories, setCategories] = useState([]);
   const [subscribedIds, setSubscribedIds] = useState([]);
@@ -83,11 +86,11 @@ const EpsilonCategorySettings = () => {
       setSubscribedIds(prev => (
         wasSubscribed ? [...prev, categoryId] : prev.filter(id => id !== categoryId)
       ));
-      alert(intl.formatMessage(messages.error));
+      dispatch(showAlert({ message: messages.error }));
     }).finally(() => {
       setPendingIds(prev => prev.filter(id => id !== categoryId));
     });
-  }, [subscribedIds, pendingIds, intl]);
+  }, [subscribedIds, pendingIds, dispatch]);
 
   const handleClickBack = useCallback(() => {
     if (hasChanged) {

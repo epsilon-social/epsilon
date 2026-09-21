@@ -36,7 +36,7 @@ export const VerifiedModal: FC<DialogModalProps> = ({ onClose }) => {
     >
       <FormattedMessage
         id='account_edit.verified_modal.details'
-        defaultMessage='Add credibility to your Mastodon profile by verifying links to personal websites. Here’s how it works:'
+        defaultMessage='Add credibility to your Epsilon profile by verifying links to personal websites. Here’s how it works:'
         tagName='p'
       />
 
@@ -50,7 +50,7 @@ export const VerifiedModal: FC<DialogModalProps> = ({ onClose }) => {
                 tagName='h2'
               />
             }
-            value={`<a rel="me" href="${accountUrl}">Mastodon</a>`}
+            value={`<a rel="me" href="${accountUrl}">Epsilon</a>`}
           />
           <Details
             summary={

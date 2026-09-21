@@ -92,9 +92,9 @@ export default class ErrorBoundary extends PureComponent {
 
           <p>
             { likelyBrowserAddonIssue ? (
-              <FormattedMessage id='error.unexpected_crash.next_steps_addons' defaultMessage='Try disabling them and refreshing the page. If that does not help, you may still be able to use Mastodon through a different browser or native app.' />
+              <FormattedMessage id='error.unexpected_crash.next_steps_addons' defaultMessage='Try disabling them and refreshing the page. If that does not help, you may still be able to use Epsilon through a different browser or native app.' />
             ) : (
-              <FormattedMessage id='error.unexpected_crash.next_steps' defaultMessage='Try refreshing the page. If that does not help, you may still be able to use Mastodon through a different browser or native app.' />
+              <FormattedMessage id='error.unexpected_crash.next_steps' defaultMessage='Try refreshing the page. If that does not help, you may still be able to use Epsilon through a different browser or native app.' />
             )}
           </p>
 

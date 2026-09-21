@@ -108,7 +108,7 @@ import EpsilonLayout from '../../epsilon/components/epsilon_layout';
 /* ========================================== */
 
 const messages = defineMessages({
-  beforeUnload: { id: 'ui.beforeunload', defaultMessage: 'Your draft will be lost if you leave Mastodon.' },
+  beforeUnload: { id: 'ui.beforeunload', defaultMessage: 'Your draft will be lost if you leave Epsilon.' },
 });
 
 const mapStateToProps = state => ({

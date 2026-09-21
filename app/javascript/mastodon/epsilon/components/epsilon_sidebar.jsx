@@ -17,6 +17,8 @@ import LogoutIcon from '@/material-icons/400-24px/logout.svg?react';
 import NotificationsActiveIcon from '@/material-icons/400-24px/notifications-fill.svg?react';
 import NotificationsIcon from '@/material-icons/400-24px/notifications.svg?react';
 import HomeActiveIcon from '@/material-icons/400-24px/home-fill.svg?react';
+import ProfileIcon from '@/material-icons/400-24px/account_circle.svg?react';
+import ProfileActiveIcon from '@/material-icons/400-24px/account_circle-fill.svg?react';
 import PublicIcon from '@/material-icons/400-24px/public.svg?react';
 import SearchIcon from '@/material-icons/400-24px/search.svg?react';
 import SettingsIcon from '@/material-icons/400-24px/settings.svg?react';
@@ -63,6 +65,7 @@ import {
 
 const messages = defineMessages({
   home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
+  profile: { id: 'navigation_bar.profile', defaultMessage: 'Profile' },
   search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
   notifications: { id: 'tabs_bar.notifications', defaultMessage: 'Notifications' },
   explore: { id: 'explore.title', defaultMessage: 'Trending' },
@@ -263,7 +266,7 @@ const EpsilonSidebar = () => {
         )}
 
         {signedIn && (
-          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--in-app-hidden`} />
+          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--in-app-hidden epsilon-sidebar__item--wide-hidden`} />
         )}
 
         {signedIn && showTrending && (
@@ -285,8 +288,10 @@ const EpsilonSidebar = () => {
 
             <div className='epsilon-sidebar__divider' />
 
-            <ColumnLink to='/favourites' icon='star' iconComponent={StarIcon} activeIconComponent={StarActiveIcon} text={intl.formatMessage(messages.favourites)} className={getNavClass('/favourites')} />
             <ColumnLink to='/categories' icon='tune' iconComponent={TuneIcon} activeIconComponent={TuneActiveIcon} text={intl.formatMessage(messages.categories)} className={getNavClass('/categories')} />
+            {account && (
+              <ColumnLink to={`/@${account.acct}`} icon='user' iconComponent={ProfileIcon} activeIconComponent={ProfileActiveIcon} text={intl.formatMessage(messages.profile)} className={getNavClass(`/@${account.acct}`)} />
+            )}
             {/* <ColumnLink to='/bookmarks' icon='bookmarks' iconComponent={BookmarksIcon} activeIconComponent={BookmarksActiveIcon} text={intl.formatMessage(messages.bookmarks)} className={getNavClass('/bookmarks')} />*/}
             {/* <ColumnLink to='/followed_tags' icon='tags' iconComponent={TagIcon} text={intl.formatMessage(messages.tags)} className={getNavClass('/followed_tags')} />*/}
             <ColumnLink transparent href='/settings/preferences' icon='cog' iconComponent={SettingsIcon} text={intl.formatMessage(messages.preferences)} className={getNavClass('/settings')} />
@@ -303,7 +308,7 @@ const EpsilonSidebar = () => {
 
             <div className={`epsilon-sidebar__secondary ${isMoreOpen ? 'epsilon-sidebar__secondary--open' : ''}`}>
               <div className={`epsilon-sidebar__secondary-inner ${isMoreOpen && 'epsilon-sidebar__secondary-inner--open'}`}>
-                {/* <ColumnLink to='/favourites' icon='star' iconComponent={StarIcon} activeIconComponent={StarActiveIcon} text={intl.formatMessage(messages.favourites)} className={getNavClass('/favourites')} />*/}
+                <ColumnLink to='/favourites' icon='star' iconComponent={StarIcon} activeIconComponent={StarActiveIcon} text={intl.formatMessage(messages.favourites)} className={getNavClass('/favourites')} />
                 <ColumnLink to='/bookmarks' icon='bookmarks' iconComponent={BookmarksIcon} activeIconComponent={BookmarksActiveIcon} text={intl.formatMessage(messages.bookmarks)} className={getNavClass('/bookmarks')} />
                 <ColumnLink to='/followed_tags' icon='tags' iconComponent={TagIcon} text={intl.formatMessage(messages.tags)} className={getNavClass('/followed_tags')} />
                 <ColumnLink to='/lists' icon='list-ul' iconComponent={ListAltIcon} activeIconComponent={ListAltActiveIcon} text={intl.formatMessage(messages.lists)} className={getNavClass('/lists')} />

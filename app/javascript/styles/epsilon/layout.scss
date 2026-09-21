@@ -43,6 +43,7 @@ $eps-navbar-height: 56px;
     #f4f7fa;
   --eps-surface: rgba(255, 255, 255, 72%);
   --eps-surface-hover: rgba(255, 255, 255, 88%);
+  --eps-surface-solid: #fff; // opaque surface for dropdowns/menus (no blur, no gradient)
   --eps-card-bg: #2f2f30; // dark card (category cards): warm taupe/stone in light mode
   --eps-card-border: transparent; // no visible border on the dark card in light theme
   --eps-scrim-tint: rgba(255, 255, 255, 12%);
@@ -97,6 +98,7 @@ $eps-navbar-height: 56px;
     #1f1e1e;
   --eps-surface: rgba(26, 28, 33, 55%);
   --eps-surface-hover: rgba(32, 35, 41, 66%);
+  --eps-surface-solid: #1a1c21; // opaque surface for dropdowns/menus (no blur, no gradient)
   --eps-card-bg: #141d1c; // dark card (category cards)
   --eps-card-border: #262626; // full border around the dark card in dark theme
   --eps-scrim-tint: rgba(255, 255, 255, 6%);
@@ -413,6 +415,28 @@ body.theme-system {
   -webkit-backdrop-filter: blur(12px) !important;
   backdrop-filter: blur(12px) !important;
   opacity: 1 !important;
+}
+
+// Full-screen media viewer (ZoomableImage): the generic modal chrome above adds
+// two per-frame GPU killers that make pinch/pan feel slow and look wrong here —
+// a blurred, 40%-transparent overlay (you see the feed frosted behind the photo
+// = ugly) and a rounded-corner clip on the container (a mask iOS re-rasterises
+// every frame while the image transforms = jank). A media stage wants a solid
+// dark, unrounded, unblurred backdrop. Scoped to media modals via :has().
+.modal-root:has(.media-modal) {
+  .modal-root__overlay {
+    background: rgba(0, 0, 0, 92%) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .modal-root__container {
+    border-radius: 0 !important;
+  }
+}
+
+.zoomable-image img {
+  will-change: transform;
 }
 
 // NB : les modales natives (report, block, mute, logout, media viewer…) ne sont
@@ -1093,6 +1117,22 @@ body.theme-system {
     @media (width <= 1024px) {
       display: none !important;
     }
+  }
+}
+
+@media (width > 1024px) {
+  .epsilon-sidebar__item--wide-hidden {
+    display: none !important;
+  }
+}
+
+.layout-single-column .explore__search-header {
+  @media (width <= 1024px) {
+    display: flex !important;
+  }
+
+  @media (width > 1024px) {
+    display: none !important;
   }
 }
 
@@ -2082,7 +2122,9 @@ body.theme-system {
       border-radius: var(--eps-radius-pill) !important;
       color: var(--eps-text-primary) !important;
       padding: 12px 16px 12px 44px !important;
-      font-size: 0.9375rem !important;
+
+      // 16px min: below it iOS auto-zooms the page when this field is focused.
+      font-size: 1rem !important;
       font-weight: 500 !important;
       transition: all var(--eps-dur-base) ease !important;
       box-shadow: none !important;
@@ -3236,6 +3278,45 @@ html.epsilon-in-app {
   // overflow-x). Supporté iOS 16+.
   overflow-x: clip;
 
+  // iOS double-tap-to-zoom slips past the gesturestart guard in
+  // epsilon-in-app-context.js (that cancels pinch only). A stray double-tap on
+  // an action control (reply, quote…) then leaves the whole page zoomed until
+  // the app is relaunched. touch-action: manipulation disables the double-tap
+  // zoom on tappable controls while keeping panning/scrolling. Apple-safe,
+  // unlike a maximum-scale / user-scalable=no viewport lockdown.
+  a,
+  button,
+  label,
+  summary,
+  [role='button'],
+  [role='link'],
+  [role='tab'],
+  [role='menuitem'],
+  [role='switch'] {
+    touch-action: manipulation;
+  }
+
+  // iOS auto-zooms the whole page when a focused field has font-size < 16px, and
+  // in-app that zoom sticks until the app is relaunched (the gesturestart and
+  // touch-action guards above don't cover this path). Floor every focusable
+  // text-entry field at 16px — in-app only, so the web keeps its type scale.
+  // html.epsilon-in-app outweighs the native/eps rules on specificity.
+  //   .spoiler-input__input           — compose "content warning" field
+  //   .simple_form textarea / select  — settings text areas & dropdowns
+  //   .input-copy input               — "copy link / code" fields
+  //   …-settings__search-input        — /categories search
+  //   .epsilon-auth textarea          — sign-up reason field
+  //   .column-select__input           — hashtag column react-select
+  .compose-form .spoiler-input__input,
+  .simple_form textarea,
+  .simple_form select,
+  .input-copy input[type='text'],
+  .epsilon-category-settings__search-input,
+  .epsilon-auth textarea,
+  .column-select__input input {
+    font-size: 16px !important;
+  }
+
   // ── PERF iOS : surfaces opaques + ombre allégée (fluidité du scroll) ───────
   // Le vrai coût du scroll in-app n'est PAS le flou (les cartes de post n'en ont
   // pas) mais : des surfaces semi-transparentes (55–72 %) posées AU-DESSUS du
@@ -3671,10 +3752,8 @@ html.epsilon-in-app {
 }
 
 .search__popout {
-  background: var(--eps-surface) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 10%) !important;
+  background: var(--eps-surface-solid) !important;
+  border: 1px solid var(--eps-border) !important;
   border-radius: var(--eps-radius-md) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 30%) !important;
   overflow: hidden !important;

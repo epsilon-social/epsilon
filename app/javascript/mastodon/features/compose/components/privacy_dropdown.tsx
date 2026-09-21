@@ -19,7 +19,7 @@ export const messages = defineMessages({
   public_short: { id: 'privacy.public.short', defaultMessage: 'Public' },
   public_long: {
     id: 'privacy.public.long',
-    defaultMessage: 'Anyone on and off Mastodon',
+    defaultMessage: 'Anyone on and off the fediverse',
   },
   unlisted_short: {
     id: 'privacy.unlisted.short',
@@ -28,7 +28,7 @@ export const messages = defineMessages({
   unlisted_long: {
     id: 'privacy.unlisted.long',
     defaultMessage:
-      'Hidden from Mastodon search results, trending, and public timelines',
+      'Hidden from Epsilon search results, trending, and public timelines',
   },
   private_short: { id: 'privacy.private.short', defaultMessage: 'Followers' },
   private_long: {
@@ -50,7 +50,7 @@ export const messages = defineMessages({
   unlisted_extra: {
     id: 'privacy.unlisted.additional',
     defaultMessage:
-      'This behaves exactly like public, except the post will not appear in live feeds or hashtags, explore, or Mastodon search, even if you are opted-in account-wide.',
+      'This behaves exactly like public, except the post will not appear in live feeds or hashtags, explore, or Epsilon search, even if you are opted-in account-wide.',
   },
 });
 

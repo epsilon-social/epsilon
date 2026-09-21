@@ -10,8 +10,10 @@ import AddPhotoAlternateIcon from '@/material-icons/400-24px/add_photo_alternate
 import EditIcon from '@/material-icons/400-24px/edit.svg?react';
 import PersonIcon from '@/material-icons/400-24px/person.svg?react';
 import { updateAccount } from 'mastodon/actions/accounts';
+import { showAlertForError } from 'mastodon/actions/alerts';
 import { closeOnboarding } from 'mastodon/actions/onboarding';
 import { Button } from 'mastodon/components/button';
+import { CalloutInline } from 'mastodon/components/callout_inline';
 import { Column } from 'mastodon/components/column';
 import { ColumnHeader } from 'mastodon/components/column_header';
 import {
@@ -19,6 +21,7 @@ import {
   TextInputField,
   Toggle,
 } from 'mastodon/components/form_fields';
+import type { FieldStatus } from 'mastodon/components/form_fields/form_field_wrapper';
 import { Icon } from 'mastodon/components/icon';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
 import { me } from 'mastodon/initial_state';
@@ -38,7 +41,15 @@ const messages = defineMessages({
     id: 'onboarding.profile.upload_avatar',
     defaultMessage: 'Upload profile picture',
   },
+  imageTooLarge: {
+    id: 'onboarding.profile.image_too_large',
+    defaultMessage: 'This image is too large. The maximum size is {limit} MB.',
+  },
 });
+
+// Mirrors AVATAR_LIMIT / HEADER_LIMIT (8.megabytes) enforced server-side.
+const IMAGE_SIZE_LIMIT_MB = 8;
+const IMAGE_SIZE_LIMIT = IMAGE_SIZE_LIMIT_MB * 1024 * 1024;
 
 const nullIfMissing = (path: string) =>
   path.endsWith('missing.png') ? null : path;
@@ -49,6 +60,37 @@ interface ApiAccountErrors {
   avatar?: unknown;
   header?: unknown;
 }
+
+// Extract a human-readable string from a field error, which is either a
+// client-side message (string) or the server's `details` entry (an array of
+// `{ error, description }` objects returned by ValidationErrorFormatter).
+const errorMessage = (value: unknown): string | undefined => {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    const [first] = value as unknown[];
+    if (
+      first &&
+      typeof first === 'object' &&
+      'description' in first &&
+      typeof (first as { description: unknown }).description === 'string'
+    ) {
+      return (first as { description: string }).description;
+    }
+  }
+  return undefined;
+};
+
+// Turn a field error into the `status` prop accepted by the form fields:
+// a full callout when we have a message, otherwise a bare error state.
+const fieldStatus = (value: unknown): FieldStatus | 'error' | undefined => {
+  if (!value) {
+    return undefined;
+  }
+  const message = errorMessage(value);
+  return message ? { variant: 'error', message } : 'error';
+};
 
 export const Profile: React.FC<{
   multiColumn?: boolean;
@@ -78,15 +120,19 @@ export const Profile: React.FC<{
   const handleDisplayNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setDisplayName(e.target.value);
+      setErrors((prev) =>
+        prev?.display_name ? { ...prev, display_name: undefined } : prev,
+      );
     },
-    [setDisplayName],
+    [],
   );
 
   const handleNoteChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setNote(e.target.value);
+      setErrors((prev) => (prev?.note ? { ...prev, note: undefined } : prev));
     },
-    [setNote],
+    [],
   );
 
   const handleDiscoverableChange = useCallback(
@@ -98,16 +144,44 @@ export const Profile: React.FC<{
 
   const handleAvatarChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setAvatar(e.target.files?.[0]);
+      const file = e.target.files?.[0];
+      if (file && file.size > IMAGE_SIZE_LIMIT) {
+        setErrors((prev) => ({
+          ...prev,
+          avatar: intl.formatMessage(messages.imageTooLarge, {
+            limit: IMAGE_SIZE_LIMIT_MB,
+          }),
+        }));
+        e.target.value = '';
+        return;
+      }
+      setErrors((prev) =>
+        prev?.avatar ? { ...prev, avatar: undefined } : prev,
+      );
+      setAvatar(file);
     },
-    [setAvatar],
+    [intl],
   );
 
   const handleHeaderChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setHeader(e.target.files?.[0]);
+      const file = e.target.files?.[0];
+      if (file && file.size > IMAGE_SIZE_LIMIT) {
+        setErrors((prev) => ({
+          ...prev,
+          header: intl.formatMessage(messages.imageTooLarge, {
+            limit: IMAGE_SIZE_LIMIT_MB,
+          }),
+        }));
+        e.target.value = '';
+        return;
+      }
+      setErrors((prev) =>
+        prev?.header ? { ...prev, header: undefined } : prev,
+      );
+      setHeader(file);
     },
-    [setHeader],
+    [intl],
   );
 
   const avatarPreview = useMemo(
@@ -155,9 +229,21 @@ export const Profile: React.FC<{
           setErrors(details);
         }
 
+        // EPSILON: updateAccount is a legacy thunk that rejects without a
+        // *_FAIL action, so it never reaches the global errorsMiddleware.
+        // Surface a toast here so upload/validation failures (incl. a 413 with
+        // no `details` payload) are never silent.
+        dispatch(showAlertForError(err));
+
         setIsSaving(false);
       });
   }, [dispatch, displayName, note, avatar, header, discoverable]);
+
+  const avatarError = errorMessage(errors?.avatar);
+  const headerError = errorMessage(errors?.header);
+  // Block submission while any field is in error so the user can't skip past a
+  // rejected upload (e.g. an oversized image) and get redirected to /home.
+  const hasErrors = !!errors && Object.values(errors).some(Boolean);
 
   return (
     <Column
@@ -227,6 +313,13 @@ export const Profile: React.FC<{
                 </label>
               </div>
 
+              {headerError && (
+                <CalloutInline variant='error' message={headerError} />
+              )}
+              {avatarError && (
+                <CalloutInline variant='error' message={avatarError} />
+              )}
+
               <div className='fields-group'>
                 <TextInputField
                   maxLength={maxDisplayNameLength ?? 40}
@@ -244,7 +337,7 @@ export const Profile: React.FC<{
                   }
                   value={displayName}
                   onChange={handleDisplayNameChange}
-                  status={errors?.display_name ? 'error' : undefined}
+                  status={fieldStatus(errors?.display_name)}
                   id='display_name'
                 />
               </div>
@@ -266,7 +359,7 @@ export const Profile: React.FC<{
                   }
                   value={note}
                   onChange={handleNoteChange}
-                  status={errors?.note ? 'error' : undefined}
+                  status={fieldStatus(errors?.note)}
                   id='note'
                 />
               </div>
@@ -288,7 +381,7 @@ export const Profile: React.FC<{
                   <span className='hint'>
                     <FormattedMessage
                       id='onboarding.profile.discoverable_hint'
-                      defaultMessage='When you opt in to discoverability on Mastodon, your posts may appear in search results and trending, and your profile may be suggested to people with similar interests to you.'
+                      defaultMessage='When you opt in to discoverability on Epsilon, your posts may appear in search results and trending, and your profile may be suggested to people with similar interests to you.'
                     />
                   </span>
                 </div>
@@ -307,7 +400,11 @@ export const Profile: React.FC<{
             <div className='spacer' />
 
             <div className='column-footer'>
-              <Button block onClick={handleSubmit} disabled={isSaving}>
+              <Button
+                block
+                onClick={handleSubmit}
+                disabled={isSaving || hasErrors}
+              >
                 {isSaving ? (
                   <LoadingIndicator />
                 ) : (

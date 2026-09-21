@@ -110,7 +110,7 @@ export const CollectionShareModal: React.FC<{
           <Button secondary onClick={handleShareViaPost}>
             <FormattedMessage
               id='collection.share_modal.share_via_post'
-              defaultMessage='Post on Mastodon'
+              defaultMessage='Post on Epsilon'
             />
           </Button>
           {'share' in navigator && (

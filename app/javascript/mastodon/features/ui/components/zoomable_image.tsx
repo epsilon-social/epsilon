@@ -12,6 +12,13 @@ const MIN_SCALE = 1;
 const MAX_SCALE = 4;
 const DOUBLE_CLICK_THRESHOLD = 250;
 
+// EPSILON : follow the finger 1:1 only inside the native shell (WKWebView),
+// where the spring "catch-up" reads as lag. On the web the springy feel is
+// intentionally kept. The class is set on <html> before first paint.
+const IN_APP =
+  typeof document !== 'undefined' &&
+  document.documentElement.classList.contains('epsilon-in-app');
+
 interface ZoomMatrix {
   containerWidth: number;
   containerHeight: number;
@@ -197,10 +204,20 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
           setDragging(false);
         }
 
-        void api.start({ x, y });
+        // EPSILON : in-app, track the finger 1:1 while dragging and let the
+        // spring settle only on release (rubberband snap-back) — otherwise the
+        // image trails behind the finger. On the web, keep the original spring.
+        void api.start({ x, y, immediate: IN_APP && active });
       },
 
-      onPinch({ origin: [ox, oy], first, movement: [ms], offset: [s], memo }) {
+      onPinch({
+        origin: [ox, oy],
+        first,
+        last,
+        movement: [ms],
+        offset: [s],
+        memo,
+      }) {
         if (!imageRef.current) {
           return;
         }
@@ -217,7 +234,10 @@ export const ZoomableImage: React.FC<ZoomableImageProps> = ({
         const x = memo[0] - (ms - 1) * memo[2]; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
         const y = memo[1] - (ms - 1) * memo[3]; // eslint-disable-line @typescript-eslint/no-unsafe-member-access
 
-        void api.start({ scale: s, x, y });
+        // EPSILON : in-app, immediate during the pinch so scale/pan follow the
+        // fingers; spring only on the last event for the rubberband settle back
+        // to bounds. On the web, keep the original spring behaviour.
+        void api.start({ scale: s, x, y, immediate: IN_APP && !last });
 
         return memo as [number, number, number, number];
       },

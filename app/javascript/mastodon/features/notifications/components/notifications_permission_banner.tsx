@@ -48,7 +48,7 @@ const NotificationsPermissionBanner: React.FC = () => {
       <p>
         <FormattedMessage
           id='notifications_permission_banner.how_to_control'
-          defaultMessage="To receive notifications when Mastodon isn't open, enable desktop notifications. You can control precisely which types of interactions generate desktop notifications through the {icon} button above once they're enabled."
+          defaultMessage="To receive notifications when Epsilon isn't open, enable desktop notifications. You can control precisely which types of interactions generate desktop notifications through the {icon} button above once they're enabled."
           values={{
             icon: (
               <Icon
