@@ -5,6 +5,13 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.15] - 2026-09-21
+
+### Changed
+
+- **Avatar par défaut dé-mastodonisé** : L'avatar de repli des comptes sans photo était encore l'illustration Mastodon ; remplacé par un nouveau visuel Epsilon (silhouette bleu-gris sur fond clair, 400×400 PNG). Tout compte sans photo (local ou distant) l'affiche automatiquement.
+- **Cache-busting de l'avatar par défaut** : Le placeholder est un fichier statique non-fingerprinté, mis en cache plusieurs semaines par les navigateurs ; un simple remplacement de fichier laisserait les clients existants sur l'ancienne image. L'URL par défaut servie par Paperclip est donc **versionnée par le chemin** (`/avatars/original/v<N>/missing.png`) via l'initializer sidecar `config/initializers/epsilon/default_avatar.rb` (surcharge `Paperclip::Attachment.default_options[:default_url]`) → le nouveau visuel se propage immédiatement à tous. Versioning **par le chemin et non `?v=N`** : Mastodon échappe les URLs d'assets (`?` → `%3F`, lien cassé — d'où son `use_timestamp: false`). Le template `default_url` étant global, il couvre aussi le header par défaut : les deux fichiers versionnés doivent exister (`public/avatars/original/v2/missing.png` + `public/headers/original/v2/missing.png`). La sentinelle front `nullIfMissing` (`onboarding/profile.tsx`) passe de `endsWith` à `includes('missing.png')` pour rester compatible avec le chemin versionné. **Pour changer le visuel par défaut : bumper `EPSILON_DEFAULT_MEDIA_VERSION` ET déposer les PNG sous `v<N>/`.**
+
 ## [0.3.14] - 2026-09-21
 
 ### Changed

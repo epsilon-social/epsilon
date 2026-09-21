@@ -51,8 +51,13 @@ const messages = defineMessages({
 const IMAGE_SIZE_LIMIT_MB = 8;
 const IMAGE_SIZE_LIMIT = IMAGE_SIZE_LIMIT_MB * 1024 * 1024;
 
+// ==========================================
+// EPSILON : DEFAULT AVATAR VERSIONING
+// The default avatar/header URL is now versioned (missing.png?v=N) to bust
+// the static asset cache, so match by substring instead of suffix.
+// ==========================================
 const nullIfMissing = (path: string) =>
-  path.endsWith('missing.png') ? null : path;
+  path.includes('missing.png') ? null : path;
 
 interface ApiAccountErrors {
   display_name?: unknown;
