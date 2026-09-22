@@ -5,6 +5,22 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.17] - 2026-09-22
+
+### Added
+
+- **Bouton afficher/masquer le mot de passe (pages d'auth)** : Les pages d'authentification server-rendered (inscription, connexion, réinitialisation) n'offraient aucun moyen de vérifier le mot de passe saisi. Un bouton œil est désormais injecté dans chaque `input[type="password"]` du shell `.epsilon-auth` : il bascule le champ entre `password` et `text` et échange l'icône (`visibility`/`visibility_off` du jeu material, déjà présentes au dépôt). Composant JS vanilla autonome `entrypoints/epsilon/password_reveal.ts` (chargé par `public.tsx`, même modèle que la modale de confirmation de suppression), libellés localisés via `epsilon_auth.show_password`/`hide_password` (en + fr, `default:` de repli pour les autres langues), style dans `styles/epsilon/auth.scss`. Accessible (`<button type="button">`, `aria-pressed`, `aria-label` localisé, atteignable au clavier) ; les honeypots (champs `text`/`url`) ne sont jamais décorés. Couvre inscription / connexion / réinitialisation (tout champ mot de passe sous `.epsilon-auth`). Tests Vitest.
+- **Avance automatique du focus sur la date de naissance** : Sur le triple champ jour/mois/année, dès qu'une case atteint sa longueur max le focus saute à la suivante, et `Backspace` sur une case vide revient à la précédente (caret placé en fin, pour enchaîner les suppressions). Câblage suivant l'**ordre du DOM** → fonctionne quel que soit l'ordre imposé par la locale (JJ/MM/AAAA en fr, AAAA/MM/JJ en en) et respecte le `maxlength` de chaque case (2 pour jour/mois, 4 pour l'année). Composant sidecar `entrypoints/epsilon/dob_autotab.ts` (chargé par `public.tsx`) + tests Vitest.
+
+### Changed
+
+- **Date de naissance — dimensionnement et localisation** : Trois ajustements sur le triple champ de `/auth/sign_up` (visible seulement si `Setting.min_age` est renseigné). (1) **Cases élargies** — le natif dimensionne les inputs à 32px en `content-box`, tassés une fois la hauteur min de 48px de la refonte appliquée ; élargis (2 chiffres = 64px, année = 92px, ciblés par `maxlength` donc indépendants de l'ordre de la locale), chiffres centrés + `tabular-nums` (`styles/epsilon/auth.scss`). (2) **Placeholders localisés** — le natif code en dur `DD/MM/YYYY` (anglais même sur une page FR) ; désormais lus via i18n (`simple_form.placeholders.user.date_of_birth_{1i,2i,3i}`, en + fr, repli sur la valeur native) → **FR `JJ/MM/AAAA`**, EN `DD/MM/YYYY`, via un **prepend sidecar** `Epsilon::DateOfBirthInputExtension` sur `DateOfBirthInput` (câblé dans `config/initializers/epsilon/extensions.rb` ; le corps recopie `#input` du natif, à re-synchroniser lors d'un upgrade). (3) **Libellé du champ** — la clé `simple_form.labels.user.date_of_birth` manquait en FR (SimpleForm retombait sur l'anglais « Date of birth ») → ajout de **« Date de naissance »**.
+- **Libellé de l'étape « Confirmer le courriel »** : Dans le stepper d'inscription, `auth.progress.confirm` valait en FR « Confirmer l'adresse de courriel » (31 car.), trop long pour la boîte de libellé (position absolue, `width: 100px`) → wrap sur 3-4 lignes et **débordement** sous les pastilles depuis la refonte. Raccourci en **« Confirmer le courriel »** (cohérent avec l'anglais « Confirm email » et les libellés voisins qui, eux, tiennent).
+
+### Fixed
+
+- **Espaces dans le nom d'utilisateur supprimés automatiquement (déblocage d'inscription)** : Le natif normalise le username avec `squish`, qui retire les espaces en début/fin mais **conserve un espace interne** (ex. « jean dupont »), ensuite **rejeté** par la validation de format → inscription bloquée sur un caractère souvent **invisible** (espace insécable U+00A0 d'un copier-coller, tabulation d'un autocomplete mobile). Un `before_validation` sidecar (`Epsilon::UsernameNormalizationExtension`, câblé dans l'initializer) retire désormais **tous** les caractères d'espacement (`gsub /[[:space:]]+/`), **scopé aux comptes locaux** (`if: :local?`) pour préserver le comportement natif sur les comptes **distants** (un espace interne y reste correctement rejeté). Couvert par des specs RSpec, dont un **test de garde** local vs distant.
+
 ## [0.3.16] - 2026-09-22
 
 ### Added

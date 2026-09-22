@@ -387,6 +387,7 @@ fr:
         jurisdiction: Juridiction
         min_age: Âge minimum
       user:
+        date_of_birth: Date de naissance
         date_of_birth_1i: Année
         date_of_birth_2i: Mois
         date_of_birth_3i: Jour
@@ -408,6 +409,11 @@ fr:
         events: Événements activés
         template: Modèle de payload
         url: URL du point de terminaison
+    placeholders:
+      user:
+        date_of_birth_1i: AAAA
+        date_of_birth_2i: MM
+        date_of_birth_3i: JJ
     'no': Non
     not_recommended: Non recommandé
     overridden: Surchargé

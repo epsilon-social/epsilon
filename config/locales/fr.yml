@@ -1579,7 +1579,7 @@ fr:
     migrate_account_html: Si vous voulez rediriger ce compte vers un autre, vous pouvez le <a href="%{path}">configurer ici</a>.
     or_log_in_with: Ou connectez-vous avec
     progress:
-      confirm: Confirmer l'adresse de courriel
+      confirm: Confirmer le courriel
       details: Vos infos
       list: Progression de l'inscription
       review: Vérification
@@ -1773,6 +1773,8 @@ fr:
     benefit_moderation_copy: Les contenus sont vérifiés avant d'être diffusés.
     benefit_feed_title: Fil pertinent
     benefit_feed_copy: Choisissez vos thématiques, gardez la main sur votre feed.
+    show_password: Afficher le mot de passe
+    hide_password: Masquer le mot de passe
   epsilon_cat:
     category_saved: "Abonnements mis à jour !"
     save: "Sauvegarder mes choix"

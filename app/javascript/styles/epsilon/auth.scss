@@ -206,6 +206,79 @@
     font-size: 0.78125rem;
   }
 
+  /* ---- show/hide password toggle (injected by password_reveal.ts) ---- */
+  .epsilon-password-field {
+    position: relative;
+    display: block;
+
+    // Leave room for the toggle so the value never runs under the button.
+    input[type='password'],
+    input[type='text'] {
+      padding-right: 46px;
+    }
+
+    &__toggle {
+      position: absolute;
+      inset-inline-end: 6px;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--eps-text-secondary);
+      transform: translateY(-50%);
+      cursor: pointer;
+      transition:
+        color 0.15s ease,
+        background 0.15s ease;
+
+      &:hover {
+        color: var(--eps-text-primary);
+        background: var(--eps-surface-hover);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--eps-brand-primary);
+        outline-offset: 1px;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+      }
+    }
+  }
+
+  /* ---- date of birth (day / month / year triple input) ---- */
+  // Native forms.scss sizes these boxes at 32px in content-box, which becomes
+  // cramped once the Epsilon 48px min-height applies. Widen them, center the
+  // digits, and target the year by maxlength so it stays correct whatever the
+  // locale-driven field order (day/month/year in fr, year/month/day in en).
+  .input.date_of_birth .label_input {
+    gap: 10px;
+
+    input[type='text'] {
+      box-sizing: border-box;
+      width: 64px;
+      flex: 0 0 auto;
+      padding: 12px 8px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+
+      // year is 4 digits and needs noticeably more room
+      &[maxlength='4'] {
+        width: 92px;
+      }
+    }
+  }
+
   /* ---- error / invalid states ---- */
   .input.field_with_errors {
     input[type='text'],

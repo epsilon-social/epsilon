@@ -3,7 +3,7 @@
   = vite_typescript_tag 'public.tsx', crossorigin: 'anonymous'
 
 - content_for :content do
-  .container-alt.epsilon-auth
+  .container-alt.epsilon-auth{ data: { 'password-show': t('epsilon_auth.show_password', default: 'Show password'), 'password-hide': t('epsilon_auth.hide_password', default: 'Hide password') } }
     %aside.epsilon-auth__brand
       = link_to root_path, class: 'epsilon-auth__brand-lockup' do
         %span.epsilon-auth__brand-mark E

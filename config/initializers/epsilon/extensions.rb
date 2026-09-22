@@ -11,6 +11,10 @@ Rails.application.config.to_prepare do
 
   User.include(Epsilon::UserBadgeExtension) if defined?(User)
 
+  Account.include(Epsilon::UsernameNormalizationExtension) if defined?(Account)
+
+  DateOfBirthInput.prepend(Epsilon::DateOfBirthInputExtension) if defined?(DateOfBirthInput)
+
   NotifyService.prepend(Epsilon::NotifyServiceExtension) if defined?(NotifyService)
   FanOutOnWriteService.prepend(Epsilon::FanOutOnWriteServiceExtension) if defined?(FanOutOnWriteService)
   ActivityPub::DistributionWorker.prepend(Epsilon::ActivityPubDistributionWorkerExtension) if defined?(ActivityPub::DistributionWorker)

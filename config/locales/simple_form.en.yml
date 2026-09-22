@@ -432,6 +432,11 @@ en:
         events: Enabled events
         template: Payload template
         url: Endpoint URL
+    placeholders:
+      user:
+        date_of_birth_1i: YYYY
+        date_of_birth_2i: MM
+        date_of_birth_3i: DD
     'no': 'No'
     not_recommended: Not recommended
     overridden: Overridden

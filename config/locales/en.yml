@@ -1773,6 +1773,8 @@ en:
     benefit_moderation_copy: Content is verified before it is shown.
     benefit_feed_title: Relevant feed
     benefit_feed_copy: Choose your topics, keep control of your feed.
+    show_password: Show password
+    hide_password: Hide password
   epsilon_cat:
     category_saved: "Subscriptions updated!"
     save: "Save my choice"

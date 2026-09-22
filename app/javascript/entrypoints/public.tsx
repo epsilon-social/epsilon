@@ -28,6 +28,10 @@ import 'cocoon-js-vanilla';
 /* ========================================== */
 /* EPSILON : confirmation modal for delete-account (and other opt-in forms) */
 import './epsilon/confirm_modal';
+/* EPSILON : show/hide password toggle on the auth forms */
+import './epsilon/password_reveal';
+/* EPSILON : auto-advance focus across the date-of-birth inputs */
+import './epsilon/dob_autotab';
 /* ========================================== */
 
 const messages = defineMessages({
