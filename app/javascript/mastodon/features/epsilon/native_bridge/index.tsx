@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 
 import { openNavigation } from 'mastodon/actions/navigation';
+import { useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
+import { useIdentity } from 'mastodon/identity_context';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
 import {
@@ -58,8 +60,14 @@ const useOverlayEmitter = (source: string, visible: boolean): void => {
 
 export const EpsilonNativeBridge: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { signedIn } = useIdentity();
+  // Reuse the exact entry point the "New Post" buttons use (sidebar + top
+  // navbar): the home-made compose overlay lives in a React context, not a
+  // Redux modal. The bridge is mounted inside EpsilonComposeProvider, so the
+  // hook resolves here.
+  const { openCompose } = useEpsilonCompose();
 
-  // ── Native -> web: open the sidebar on demand ────────────────────────────
+  // ── Native -> web: open the sidebar / compose on demand ──────────────────
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       // This listener receives ALL window messages, including from third-party
@@ -90,6 +98,23 @@ export const EpsilonNativeBridge: React.FC = () => {
       if (message.type === 'epsilon:open-menu') {
         // Reuse the existing navigation action — no new route, no simulated click.
         dispatch(openNavigation());
+      } else if (message.type === 'epsilon:compose') {
+        // The native "New Post" tab is a button, not a destination: open the
+        // compose overlay via the same action as the on-screen buttons.
+        // Gated on signedIn to match those buttons (hidden for guests); a
+        // guest message is ignored. openCompose is idempotent — re-firing it
+        // while the overlay is open is a no-op and never touches the draft.
+        //
+        // Defer one frame: unlike a React onClick, this fires from a native
+        // `message` task, so iOS WebKit paints the modal at its final state for
+        // one frame before the entrance animation binds (visible flash — the
+        // on-screen buttons don't show it). A rAF lets the mount + the
+        // animation's initial state commit together on a clean frame.
+        if (signedIn) {
+          requestAnimationFrame(() => {
+            openCompose();
+          });
+        }
       }
     };
 
@@ -97,7 +122,7 @@ export const EpsilonNativeBridge: React.FC = () => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [dispatch]);
+  }, [dispatch, openCompose, signedIn]);
 
   // ── Page teardown: balance the overlay signals ───────────────────────────
   // A full-page navigation (e.g. to a Rails /settings/* page) tears down the SPA

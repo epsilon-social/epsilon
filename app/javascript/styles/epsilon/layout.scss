@@ -443,8 +443,10 @@ body.theme-system {
 // PAS animées à l'entrée. Leurs surfaces portent un backdrop-filter (glass) ;
 // animer un dialogue flouté force iOS à recalculer le blur à chaque frame →
 // jank. Elles restent donc instantanées (comme en natif) = fluides. Seule la
-// modale compose a une entrée, car son contenu animé n'a pas de flou. Pour les
-// animer proprement, il faudrait rendre ces dialogues opaques (perdre le glass).
+// modale compose a une entrée : son contenu animé n'a pas de flou, et son scrim
+// flouté est isolé sur une couche ::before jamais animée (cf.
+// epsilon_compose_modal.scss). Pour animer ces dialogues natifs proprement, il
+// faudrait les rendre opaques (perdre le glass).
 
 .avatar,
 .account__avatar,
@@ -1281,6 +1283,7 @@ body.theme-system {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
     border-radius: var(--eps-radius) !important;
+    border: 1px solid var(--eps-border) !important;
     padding: 16px;
     margin-bottom: 24px;
     box-shadow: var(--eps-box-shadow) !important;
@@ -4211,6 +4214,7 @@ html.reduce-motion {
   --eps-text-secondary: #3a3a3a;
   --eps-border: rgba(0, 0, 0, 45%);
   --eps-border-hover: rgba(0, 0, 0, 65%);
+  --eps-compose-border: rgba(0, 0, 0, 45%);
 
   // Topbar opaque (le scrim flou est retiré en HC) : aplat = base claire du thème.
   .epsilon-top-navbar {
@@ -4225,6 +4229,7 @@ html.reduce-motion {
   --eps-text-secondary: #c4c8d0;
   --eps-border: rgba(255, 255, 255, 45%);
   --eps-border-hover: rgba(255, 255, 255, 65%);
+  --eps-compose-border: rgba(255, 255, 255, 45%);
 
   // Topbar opaque : aplat = « stone » sombre du thème.
   .epsilon-top-navbar {

@@ -1,14 +1,10 @@
-// Entrée de la modale : SANS animation pour l'instant. Le contenu (compose-form)
-// contient des surfaces/boutons EN VERRE (backdrop-filter, ex. le bouton publish)
-// → animer le conteneur (« pop ») recalcule leur flou frame par frame sur iOS =
-// jank. On revient donc à un affichage instantané (comme les modales natives).
-// À réintroduire seulement si on rend le contenu opaque, ou via un wrapper sans
-// flou. Le scrim + blur reste one-shot (jamais animé). Sortie = démontage.
 .epsilon-compose-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
   display: flex;
+
+  --eps-compose-scrim: rgb(0 0 0 / 40%);
 
   // Scroll lives on the overlay + the content is centered with `margin: auto`
   // (NOT align-items: center). With align-items: center, content taller than the
@@ -17,18 +13,99 @@
   overflow-y: auto;
   padding: max(16px, env(safe-area-inset-top)) 16px
     max(16px, env(safe-area-inset-bottom));
-  background: rgb(0 0 0 / 40%);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: var(--eps-compose-scrim);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    pointer-events: none;
+    animation: epsilon-compose-scrim-in 0.34s ease both;
+  }
 
   &__content {
+    position: relative;
+    z-index: 1;
     box-sizing: border-box;
     width: min(600px, 100%);
     margin: auto;
+
+    // État de base invisible : sur iOS/WebKit, le backwards-fill de l'animation
+    // n'est pas appliqué sur la 1re frame après insertion → l'élément clignote
+    // une frame à son état FINAL avant de jouer l'animation. En le laissant
+    // opacity:0 par défaut, cette frame est transparente = aucun flash. Les deux
+    // animations finissent à opacity:1 (fill both) et tiennent l'état visible.
+    opacity: 0;
+    will-change: transform, opacity;
+    animation: epsilon-compose-overlay-in 0.34s cubic-bezier(0.22, 1, 0.36, 1)
+      both;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: epsilon-compose-overlay-fade 0.2s ease both;
+    }
   }
 
   &--concealed .epsilon-compose-overlay__content {
     display: none;
+  }
+}
+
+// In-app (coque) : la barre d'onglets native se masque à l'ouverture du compose,
+// ce qui agrandit la WebView. Avec le centrage (margin auto), ce changement de
+// hauteur re-centre le contenu EN PLEIN milieu de l'animation = saut visible.
+// On garde le centrage mais on RETARDE l'apparition du contenu : grâce à
+// opacity:0 (base) + backwards-fill de l'animation, il reste invisible pendant
+// le délai, le temps que la tab bar se masque et que le viewport se stabilise.
+// Le re-centrage se fait donc à vide, puis le contenu se révèle déjà centré
+// dans le viewport final → centré ET sans saut. Le scrim n'est pas retardé
+// (l'écran s'assombrit immédiatement). Délai à ajuster selon la vitesse de
+// masquage de la tab bar. (Hors coque, aucune tab bar → pas de délai.)
+.epsilon-in-app .epsilon-compose-overlay__content {
+  animation-delay: 0.28s;
+}
+
+@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
+  .epsilon-compose-overlay {
+    --eps-compose-scrim: rgb(0 0 0 / 72%);
+  }
+}
+
+html[data-contrast='high'] .epsilon-compose-overlay {
+  --eps-compose-scrim: rgb(0 0 0 / 72%);
+}
+
+@keyframes epsilon-compose-scrim-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes epsilon-compose-overlay-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes epsilon-compose-overlay-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
