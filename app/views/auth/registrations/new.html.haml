@@ -84,3 +84,6 @@
     -# EPSILON: "sign in" outline button to the left of the submit
     = link_to t('auth.login'), new_user_session_path, class: 'button epsilon-auth__ghost'
     = f.button :button, @invite.present? ? t('auth.register') : sign_up_message, type: :submit
+
+-# EPSILON: support contact line
+= render 'auth/shared/support_hint'

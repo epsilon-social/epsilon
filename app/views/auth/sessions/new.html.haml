@@ -49,5 +49,8 @@
       - resource_class.omniauth_providers.each do |provider|
         = provider_sign_in_link(provider)
 
+-# EPSILON: support contact line
+= render 'auth/shared/support_hint'
+
 - unless within_authorization_flow?
   .form-footer= render 'auth/shared/links'

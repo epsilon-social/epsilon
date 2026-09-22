@@ -505,6 +505,25 @@
     }
   }
 
+  /* ---- support contact line (sign-in / sign-up) ---- */
+  &__support-hint {
+    margin: 18px 0 0;
+    color: var(--eps-text-secondary);
+    font-size: 0.78125rem;
+    line-height: 1.5;
+    text-align: center;
+
+    a {
+      color: var(--eps-brand-primary);
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
   /* ---- rules list (accept rules step) ---- */
   .rules-list {
     margin-bottom: 24px;

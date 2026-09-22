@@ -1775,6 +1775,7 @@ en:
     benefit_feed_copy: Choose your topics, keep control of your feed.
     show_password: Show password
     hide_password: Hide password
+    support_hint_html: Having trouble signing in or creating your account? If the problem persists, email us at %{email}.
   epsilon_cat:
     category_saved: "Subscriptions updated!"
     save: "Save my choice"

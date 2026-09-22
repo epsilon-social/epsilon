@@ -1775,6 +1775,7 @@ fr:
     benefit_feed_copy: Choisissez vos thématiques, gardez la main sur votre feed.
     show_password: Afficher le mot de passe
     hide_password: Masquer le mot de passe
+    support_hint_html: Un problème pour vous connecter ou créer votre compte ? Si le souci persiste, écrivez-nous à %{email}.
   epsilon_cat:
     category_saved: "Abonnements mis à jour !"
     save: "Sauvegarder mes choix"

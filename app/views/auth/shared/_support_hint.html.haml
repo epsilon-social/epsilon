@@ -1,0 +1,4 @@
+-# EPSILON: support contact line shown under the sign-in / sign-up forms
+- if Setting.site_contact_email.present?
+  %p.epsilon-auth__support-hint
+    = t('epsilon_auth.support_hint_html', email: mail_to(Setting.site_contact_email))
