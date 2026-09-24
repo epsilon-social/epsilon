@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.19] - 2026-09-24
+
+### Added
+
+- **Deep links mobiles (Universal Links iOS + App Links Android)** : Le domaine sert les deux fichiers d'association attendus par les OS — `/.well-known/apple-app-site-association` (iOS) et `/.well-known/assetlinks.json` (Android) — pour que les liens `epsilon.social` s'ouvrent dans les apps natives, notamment le lien de confirmation d'inscription (qui ouvrait Safari). Contrôleurs sidecar `Epsilon::WellKnown::*` servant un fichier versionné en `application/json`, 200 sans redirection ni session ; fédération inchangée. L'AASA exclut les routes techniques (`/auth/bridge`, `/oauth`, `/api`, `/admin`, `/sidekiq`, `/pghero`, `/auth/sign_in`) et n'ouvre l'app que sur le contenu et `/auth/confirmation`.
+
 ## [0.3.18] - 2026-09-23
 
 ### Fixed

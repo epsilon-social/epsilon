@@ -53,6 +53,9 @@ Rails.application.routes.draw do
     # lives under Epsilon::WellKnown. No .json extension, no redirect.
     # ==========================================
     get 'apple-app-site-association', to: 'epsilon/well_known/apple_app_site_association#show'
+    # Android App Links — keeps the literal .json extension. format: false so the
+    # dot is matched as a path segment, not parsed as a response format.
+    get 'assetlinks.json', to: 'epsilon/well_known/asset_links#show', format: false
     # ==========================================
 
     get 'change-password', to: redirect('/auth/edit'), as: nil

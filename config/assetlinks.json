@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "social.epsilon.app",
+      "sha256_cert_fingerprints": [
+        "F6:87:7F:BC:ED:75:94:64:D7:33:0B:F4:B6:E2:CB:37:B4:1B:52:EC:08:73:A3:3C:A3:73:32:AB:FA:5C:97:5D",
+        "95:DB:1D:46:E2:4A:AC:36:05:27:09:B5:77:10:FA:87:23:49:0A:EE:C5:EA:C3:B7:D4:EE:DA:C5:5C:D5:13:7D"
+      ]
+    }
+  }
+]
