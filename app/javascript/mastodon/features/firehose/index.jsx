@@ -38,6 +38,7 @@ const messages = defineMessages({
     defaultMessage: 'Live feed',
   },
   // EPSILON : MODERATION LIVE FEED FILTER
+  mediaOnly: { id: 'community.column_settings.media_only', defaultMessage: 'Media only' },
   filterToggle: { id: 'firehose.moderation_filter.toggle', defaultMessage: 'Content to moderate' },
   filterMedia: { id: 'firehose.moderation_filter.media', defaultMessage: 'Sensitive media' },
   filterCw: { id: 'firehose.moderation_filter.cw', defaultMessage: 'Content warnings' },
@@ -143,6 +144,12 @@ const Firehose = ({ feedType, multiColumn }) => {
   const handleScopeChange = useCallback(
     (e) => dispatch(changeSetting(['firehose', 'sensitiveScope'], e.currentTarget.dataset.scope)),
     [dispatch],
+  );
+
+  // EPSILON : re-exposed native "Media only" toggle (its column-header control is hidden by the redesign)
+  const handleToggleMedia = useCallback(
+    () => dispatch(changeSetting(['firehose', 'onlyMedia'], !onlyMedia)),
+    [dispatch, onlyMedia],
   );
 
   useEffect(() => {
@@ -262,40 +269,52 @@ const Firehose = ({ feedType, multiColumn }) => {
       )}
 
       {/* ========================================== */}
-      {/* EPSILON : MODERATION LIVE FEED FILTER */}
-      {/* Visible in-body toggle (the column-header settings panel is hidden */}
-      {/* in the Epsilon center layout). Moderators only. */}
+      {/* EPSILON : LIVE FEED FILTERS (in-body — the column-header settings */}
+      {/* dropdown is hidden by the Epsilon layout, so we surface them here). */}
+      {/* "Media only" is the re-exposed native toggle (all users); the */}
+      {/* moderation filter below is moderators only. */}
       {/* ========================================== */}
-      {canManageReports(permissions) && (
-        <div className='firehose__mod-filter'>
+      <div className='firehose__mod-filter'>
+        <div className='firehose__mod-filter__row'>
           <button
             type='button'
-            className={classNames('firehose__mod-filter__button', { active: onlySensitive })}
-            aria-pressed={onlySensitive}
-            onClick={handleToggleSensitive}
+            className={classNames('firehose__mod-filter__button', { active: onlyMedia })}
+            aria-pressed={onlyMedia}
+            onClick={handleToggleMedia}
           >
-            <ShieldIcon className='firehose__mod-filter__icon' />
-            {intl.formatMessage(messages.filterToggle)}
+            {intl.formatMessage(messages.mediaOnly)}
           </button>
 
-          {onlySensitive && (
-            <div className='firehose__mod-filter__scopes' role='group'>
-              {SENSITIVE_SCOPES.map((option) => (
-                <button
-                  key={option.value}
-                  type='button'
-                  data-scope={option.value}
-                  className={classNames('firehose__mod-filter__scope', { active: sensitiveScope === option.value })}
-                  aria-pressed={sensitiveScope === option.value}
-                  onClick={handleScopeChange}
-                >
-                  {intl.formatMessage(option.message)}
-                </button>
-              ))}
-            </div>
+          {canManageReports(permissions) && (
+            <button
+              type='button'
+              className={classNames('firehose__mod-filter__button', { active: onlySensitive })}
+              aria-pressed={onlySensitive}
+              onClick={handleToggleSensitive}
+            >
+              <ShieldIcon className='firehose__mod-filter__icon' />
+              {intl.formatMessage(messages.filterToggle)}
+            </button>
           )}
         </div>
-      )}
+
+        {canManageReports(permissions) && onlySensitive && (
+          <div className='firehose__mod-filter__scopes' role='group'>
+            {SENSITIVE_SCOPES.map((option) => (
+              <button
+                key={option.value}
+                type='button'
+                data-scope={option.value}
+                className={classNames('firehose__mod-filter__scope', { active: sensitiveScope === option.value })}
+                aria-pressed={sensitiveScope === option.value}
+                onClick={handleScopeChange}
+              >
+                {intl.formatMessage(option.message)}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       {/* ========================================== */}
 
       <StatusListContainer

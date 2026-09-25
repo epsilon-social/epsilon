@@ -2875,6 +2875,13 @@ body.theme-system {
   margin-bottom: 24px;
 }
 
+.firehose__mod-filter__row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
 .firehose__mod-filter__button {
   display: inline-flex;
   align-items: center;
