@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Sondages : nombre maximum d'options porté de 4 à 10** (`MAX_OPTIONS` dans `app/validators/poll_options_validator.rb`).
+
 ### Fixed
 
 - **Toggle « Média uniquement » ré-exposé dans le flux en direct** : La refonte UI masque le dropdown de réglages du `ColumnHeader` (`.column-header__collapsible` / `__setting-btn`), qui était le **seul** contrôle du filtre natif « Media only » (`firehose.onlyMedia`). Conséquence : un utilisateur l'ayant activé (avant la refonte, ou par accident) restait **coincé** à ne voir que les posts avec média, **sans aucun moyen visible de le désactiver** — et retirer le filtre de modération n'y changeait rien, `onlyMedia` étant un réglage **séparé** appliqué au fil de base. Le toggle est désormais **ré-exposé en pill dans le corps du Firehose** (visible pour tous, dans la même rangée que le filtre de modération), pilotant le **même réglage natif** `firehose.onlyMedia` (préférence UI par compte dans `Web::Setting`) — aucun nouvel accès, endpoint ni requête (chemin natif `only_media` inchangé). Corrige aussi le fait qu'aucun nouvel utilisateur ne pouvait plus (dés)activer « Média uniquement » depuis la refonte. **Fichiers core balisés `EPSILON`** : `features/firehose/index.jsx` (+ `styles/epsilon/layout.scss`). Aucune migration (front pur).
