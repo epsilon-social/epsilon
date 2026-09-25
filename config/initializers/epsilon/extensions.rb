@@ -15,6 +15,11 @@ Rails.application.config.to_prepare do
 
   DateOfBirthInput.prepend(Epsilon::DateOfBirthInputExtension) if defined?(DateOfBirthInput)
 
+  if defined?(AccountSearchService)
+    AccountSearchService::QueryBuilder.prepend(Epsilon::AccountSearchRankingExtension::QueryBuilder)
+    AccountSearchService::FullQueryBuilder.prepend(Epsilon::AccountSearchRankingExtension::FullQueryBuilder)
+  end
+
   NotifyService.prepend(Epsilon::NotifyServiceExtension) if defined?(NotifyService)
   FanOutOnWriteService.prepend(Epsilon::FanOutOnWriteServiceExtension) if defined?(FanOutOnWriteService)
   ActivityPub::DistributionWorker.prepend(Epsilon::ActivityPubDistributionWorkerExtension) if defined?(ActivityPub::DistributionWorker)
