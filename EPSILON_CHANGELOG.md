@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.20] - 2026-09-25
+
 ### Added
 
 - **Sondages : nombre maximum d'options porté de 4 à 10** (`MAX_OPTIONS` dans `app/validators/poll_options_validator.rb`).
