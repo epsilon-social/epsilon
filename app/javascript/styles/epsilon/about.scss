@@ -215,4 +215,17 @@
       }
     }
   }
+
+  &__credit {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--eps-text-secondary);
+    opacity: 0.75;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
 }

@@ -1,14 +1,8 @@
 import { FormattedMessage } from 'react-intl';
 
-import { GIF } from './gif';
-
 export const RegenerationIndicator: React.FC = () => (
   <div className='regeneration-indicator'>
-    <GIF
-      src='/loading.gif'
-      staticSrc='/loading.png'
-      className='regeneration-indicator__figure'
-    />
+    <img src='/loading.svg' alt='' className='regeneration-indicator__figure' />
 
     <div className='regeneration-indicator__label'>
       <strong>

@@ -186,6 +186,14 @@ const EpsilonAbout = ({ multiColumn }) => {
         </section>
 
         <LinkFooter context='about' />
+
+        <p className='epsilon-about__credit'>
+          <FormattedMessage
+            id='epsilon.about.illustrations_credit'
+            defaultMessage='Illustrations by {storyset}'
+            values={{ storyset: <a href='https://storyset.com' target='_blank' rel='noopener'>Storyset</a> }}
+          />
+        </p>
       </div>
 
       <Helmet>

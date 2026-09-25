@@ -8,6 +8,14 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 ### Added
 
 - **Sondages : nombre maximum d'options porté de 4 à 10** (`MAX_OPTIONS` dans `app/validators/poll_options_validator.rb`).
+- **Crédit Storyset** en bas de la page « À propos » (lien cliquable) — attribution requise par la licence des illustrations libres.
+
+### Changed
+
+- **Écran d'erreur : illustration remplacée** par une illustration libre (`public/oops.svg`), à la place de l'éléphant Mastodon (`oops.gif` / `oops.png`).
+- **Mascotte remplacée** par une illustration libre (`app/javascript/images/elephant_ui_plane.svg`, même nom conservé) — compose, annonces, mascotte par défaut.
+- **Indicateur « préparation du fil » remplacé** par une illustration libre (`public/loading.svg`), à la place de l'éléphant animé (`loading.gif` / `loading.png`).
+- **États vides : illustration remplacée** par une illustration libre (`app/javascript/images/elephant_ui.svg`, même nom conservé) — onglet « Mis en avant », collections, listes admin.
 
 ### Fixed
 

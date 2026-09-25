@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import { Button } from 'mastodon/components/button';
-import { GIF } from 'mastodon/components/gif';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
 
 export const ModalPlaceholder: React.FC<{
@@ -25,9 +24,9 @@ export const ModalPlaceholder: React.FC<{
         <LoadingIndicator />
       ) : (
         <div className='modal-placeholder__error'>
-          <GIF
-            src='/oops.gif'
-            staticSrc='/oops.png'
+          <img
+            src='/oops.svg'
+            alt=''
             className='modal-placeholder__error__image'
           />
 

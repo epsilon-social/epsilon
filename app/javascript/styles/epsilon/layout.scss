@@ -2953,6 +2953,18 @@ body.theme-system {
   }
 }
 
+// EPSILON : regeneration indicator ("Preparing your home feed") — sidecar tweaks
+// over the native style: drop the border, shrink the illustration, and push it
+// down (the native -50px margin-top pulled it too high).
+.regeneration-indicator {
+  border: none;
+
+  &__figure {
+    max-width: 220px;
+    margin-top: 0;
+  }
+}
+
 @keyframes epsilon-skeleton-pulse {
   0% {
     opacity: 0.4;
