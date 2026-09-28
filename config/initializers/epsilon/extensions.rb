@@ -4,6 +4,7 @@ Rails.application.config.to_prepare do
   Status.include(Epsilon::StatusExtension) if defined?(Status)
 
   PostStatusService.prepend(Epsilon::AiModerationPostStatusExtension) if defined?(PostStatusService)
+  PostStatusService.prepend(Epsilon::Categorization::PostStatusExtension) if defined?(PostStatusService)
   UpdateStatusService.prepend(Epsilon::AiModerationUpdateStatusExtension) if defined?(UpdateStatusService)
 
   REST::StatusSerializer.include(Epsilon::StatusSerializerExtension) if defined?(REST::StatusSerializer)

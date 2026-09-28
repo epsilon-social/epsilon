@@ -16,7 +16,7 @@ module Epsilon::Categorization::StatusExtension
       joins(sanitize_sql_array(['LEFT JOIN local_post_categorizations lpc ON statuses.id = lpc.status_id AND lpc.category_master_id = ? AND lpc.is_validated = TRUE', category_id])).where(lpc: { id: nil })
     }
 
-    after_commit :enqueue_categorization, on: :create
+    after_commit :enqueue_categorization, on: :create, unless: :local?
 
     private
 

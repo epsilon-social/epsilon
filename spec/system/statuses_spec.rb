@@ -9,7 +9,7 @@ RSpec.describe 'Status page' do
     visit short_account_status_path(account_username: status.account.username, id: status.id)
 
     expect(page)
-      .to have_css('noscript', text: /Mastodon/)
+      .to have_css('noscript', text: /Epsilon/) # EPSILON : REBRANDING — noscript_html mentions Epsilon
       .and have_css('body', class: 'app-body')
   end
 end

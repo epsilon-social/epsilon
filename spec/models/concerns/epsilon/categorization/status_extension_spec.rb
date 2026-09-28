@@ -33,12 +33,20 @@ RSpec.describe Epsilon::Categorization::StatusExtension do
   end
 
   describe 'categorization enqueuing' do
-    it 'enqueues the categorization worker when a status is created' do
+    before do
       allow(Epsilon::Categorization::CategorizeStatusWorker).to receive(:perform_async)
+    end
 
-      status = Fabricate(:status)
+    it 'enqueues the categorization worker when a remote status is created' do
+      status = Fabricate(:status, account: Fabricate(:account, domain: 'example.com'))
 
       expect(Epsilon::Categorization::CategorizeStatusWorker).to have_received(:perform_async).with(status.id)
+    end
+
+    it 'does not enqueue on create for a local status (its hashtags are not attached yet; PostStatusService enqueues later)' do
+      Fabricate(:status)
+
+      expect(Epsilon::Categorization::CategorizeStatusWorker).to_not have_received(:perform_async)
     end
   end
 end

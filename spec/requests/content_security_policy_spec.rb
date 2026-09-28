@@ -32,7 +32,7 @@ RSpec.describe 'Content-Security-Policy' do
       img-src 'self' data: blob: #{local_domain}
       manifest-src 'self' #{local_domain}
       media-src 'self' data: #{local_domain}
-      script-src 'self' #{local_domain} 'wasm-unsafe-eval' 'sha256-Z5KW83D+6/pygIQS3h9XDpF52xW3l3BHc7JL9tj3uMs='
+      script-src 'self' #{local_domain} 'wasm-unsafe-eval' #{inline_script_hashes}
       style-src 'self' #{local_domain} 'nonce-ZbA+JmE7+bK8F5qvADZHuQ=='
       worker-src 'self' blob: #{local_domain}
     CSP
@@ -41,4 +41,17 @@ RSpec.describe 'Content-Security-Policy' do
   def local_domain
     root_url(host: Rails.configuration.x.local_domain).chop
   end
+
+  # ==========================================
+  # EPSILON : IN-APP CONTEXT
+  # The fork renders two extra inline scripts (in-app context + locale
+  # refresh) next to the native theme-selection one; each adds a sha256 hash
+  # to script-src, in layout render order. Computed from the same source as
+  # the helper so the spec follows future edits to these files.
+  def inline_script_hashes
+    %w(theme-selection.js epsilon-in-app-context.js epsilon-locale-refresh.js)
+      .map { |path| "'sha256-#{InlineScriptManager.instance.file(path)[:digest]}'" }
+      .join(' ')
+  end
+  # ==========================================
 end

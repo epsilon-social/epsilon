@@ -10,7 +10,7 @@ RSpec.describe 'Home page' do
       visit root_path
 
       expect(page)
-        .to have_css('noscript', text: /Mastodon/)
+        .to have_css('noscript', text: /Epsilon/) # EPSILON : REBRANDING — noscript_html mentions Epsilon
         .and have_css('body', class: 'app-body')
       expect(find('.app-holder#mastodon')['data-props'])
         .to eq('{"locale":"en"}')
@@ -22,7 +22,7 @@ RSpec.describe 'Home page' do
       visit root_path
 
       expect(page)
-        .to have_css('noscript', text: /Mastodon/)
+        .to have_css('noscript', text: /Epsilon/) # EPSILON : REBRANDING — noscript_html mentions Epsilon
         .and have_css('body', class: 'app-body')
     end
 

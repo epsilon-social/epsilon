@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Specs natives réalignées sur le fork (run RSpec global de 7704 exemples, premier depuis un moment)** : 7 assertions attendaient un `noscript` contenant « Mastodon » alors que la chaîne `noscript_html` dit « Epsilon » depuis UI v5 (21/09, PR #40) — `spec/system/{about,home,privacy,statuses,tags,terms_of_service}_spec.rb`. Et la spec CSP attendait le seul hash sha256 natif (`theme-selection.js`) alors que les deux scripts inline Epsilon (`epsilon-in-app-context.js`, `epsilon-locale-refresh.js`) en ajoutent chacun un à `script-src` — hashes désormais calculés dynamiquement via `InlineScriptManager` (suivront les futurs edits de ces fichiers) : `spec/requests/content_security_policy_spec.rb`. Aucun autre échec réel : le reste de la suite est vert.
+
+- **Catégorisation des posts locaux réparée (course avec l'attachement des hashtags)** : Les posts locaux n'étaient quasiment jamais catégorisés (7 sur 603 en prod sur 7 jours), donc absents des fils par catégorie — alors que le contenu distant y arrivait bien. Cause : le worker de catégorisation était enclenché par un `after_commit on: :create` sur `Status`, qui part **avant** que `PostStatusService` attache les hashtags (`postprocess_status!`) ; le worker lisait une association `tags` vide et classait le post « non classé », sans retry. Le chemin distant, lui, attache les tags dans la transaction de création (d'où l'asymétrie). Fix : le callback modèle est restreint aux statuts distants, et les posts locaux sont enclenchés après `process_hashtags_service` via `Epsilon::Categorization::PostStatusExtension` (prepend sur `PostStatusService`). Rattrapage des posts jamais catégorisés : `rake epsilon:categorization:backfill_local[30]` (fenêtre en jours). Fichiers : `app/models/concerns/epsilon/categorization/status_extension.rb`, `app/services/concerns/epsilon/categorization/post_status_extension.rb` (nouveau), `config/initializers/epsilon/extensions.rb`, `lib/tasks/epsilon/categorization.rake` (nouveau).
+
 ## [0.3.21] - 2026-09-27
 
 ### Fixed

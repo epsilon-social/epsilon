@@ -12,7 +12,7 @@ RSpec.describe 'Tags' do
       visit tag_path(tag)
 
       expect(page)
-        .to have_css('noscript', text: /Mastodon/)
+        .to have_css('noscript', text: /Epsilon/) # EPSILON : REBRANDING — noscript_html mentions Epsilon
         .and have_css('body', class: 'app-body')
         .and have_private_cache_control
     end
