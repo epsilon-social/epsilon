@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.22] - 2026-09-28
+
 ### Fixed
 
 - **Specs natives réalignées sur le fork (run RSpec global de 7704 exemples, premier depuis un moment)** : 7 assertions attendaient un `noscript` contenant « Mastodon » alors que la chaîne `noscript_html` dit « Epsilon » depuis UI v5 (21/09, PR #40) — `spec/system/{about,home,privacy,statuses,tags,terms_of_service}_spec.rb`. Et la spec CSP attendait le seul hash sha256 natif (`theme-selection.js`) alors que les deux scripts inline Epsilon (`epsilon-in-app-context.js`, `epsilon-locale-refresh.js`) en ajoutent chacun un à `script-src` — hashes désormais calculés dynamiquement via `InlineScriptManager` (suivront les futurs edits de ces fichiers) : `spec/requests/content_security_policy_spec.rb`. Aucun autre échec réel : le reste de la suite est vert.
