@@ -5,6 +5,14 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.21] - 2026-09-27
+
+### Fixed
+
+- **Scroll une-doigt réparé dans la coque Android (WebView Chromium)** : Le fil ne défilait plus au doigt sur Android (le geste à deux doigts, si). Cause : la règle `overflow-x: clip` posée sur la racine `<html>` en in-app (écrêtage du débordement horizontal de page) fait que Chromium traite le viewport comme non-scrollable lors d'un geste à un doigt — comportement propre à Blink, sans effet sur le scroll vertical côté WebKit (iOS). La règle est désormais scopée à WebKit via une nouvelle classe `epsilon-in-app-webkit`, posée sur `<html>` uniquement quand `window.GestureEvent` existe (API WebKit, absente de Chromium) — détection de capacité, pas de chaîne UA. `epsilon-in-app` reste posée sur les **deux** plateformes → la barre de navigation web du bas reste masquée sur Android (la tab bar native la remplace). Fichiers : `app/javascript/inline/epsilon-in-app-context.js`, `app/javascript/styles/epsilon/layout.scss`.
+
+- **Comportements in-app iOS restreints à WebKit** : Deux gardes écrits et testés pour iOS gênaient Android une fois la coque déployée. (1) L'anti-zoom de page — events WebKit `gesturestart/change/end` + un `touchmove` **non-passif permanent** (`preventMultiTouchZoom`, qui maintient la séquence tactile annulable pour bloquer le pinch démarré en cours de scroll) — n'a de sens que sur WebKit et cassait le scroll Chromium. (2) La désactivation de la virtualisation du fil (tous les items montés), motivée par l'absence d'`overflow-anchor` sur WebKit, est inutile sur Chromium (ancrage natif) et y gonflait la mémoire sur longs fils. Les deux sont désormais gatés sur `window.GestureEvent`. Fichiers : `app/javascript/inline/epsilon-in-app-context.js`, `app/javascript/mastodon/components/scrollable_list/intersection_observer_article.jsx`.
+
 ## [0.3.20] - 2026-09-25
 
 ### Added

@@ -3288,18 +3288,18 @@ body.theme-system {
 
 /* ========================================== */
 
-// Dans la coque Expo (UA « EpsilonMobile/ »), la tab bar native remplace
-// notre barre du bas : on la masque et on reporte le dégagement bas.
-html.epsilon-in-app {
-  // Pas de scroll horizontal de page in-app. Un élément qui dépasse le viewport
-  // (ex. les chevrons du carrousel de suggestions en left/right: -24px) laissait
-  // « paner » toute la page et révéler une bande de fond à droite. Le
-  // `overflow-x: hidden` natif est sur `body`, mais le vrai scroller est `html`
-  // → on écrête ici. `clip` n'affecte ni le scroll vertical ni position: sticky,
-  // et ne casse pas le scroll interne des carrousels/onglets (leur propre
-  // overflow-x). Supporté iOS 16+.
+// WebKit only: `overflow-x: clip` on the root <html> breaks one-finger viewport
+// scrolling in Chromium (Android WebView), so scope it to WebKit. It clips page
+// horizontal overflow (the real scroller is <html>; the native overflow-x:hidden
+// sits on <body>) without touching vertical scroll or sticky. The carousel
+// chevrons that caused the leak are already hidden in-app on both platforms.
+html.epsilon-in-app-webkit {
   overflow-x: clip;
+}
 
+// In the Expo shell the native tab bar replaces our bottom bar: hide it and
+// shift the bottom inset accordingly.
+html.epsilon-in-app {
   // iOS double-tap-to-zoom slips past the gesturestart guard in
   // epsilon-in-app-context.js (that cancels pinch only). A stray double-tap on
   // an action control (reply, quote…) then leaves the whole page zoomed until

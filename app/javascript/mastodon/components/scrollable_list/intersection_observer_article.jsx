@@ -9,18 +9,16 @@ import { Article } from './components';
 const updateOnPropsForUnrendered = ['id', 'index', 'listLength', 'cachedHeight'];
 
 // ==========================================
-// EPSILON : SCROLL — VIRTUALISATION DÉSACTIVÉE EN IN-APP
-// En scroll-page iOS (coque WKWebView), l'IntersectionObserver tourne sans
-// rootMargin (bindToDocument → connect({})), donc chaque post est remplacé par
-// un placeholder invisible dès qu'il quitte le viewport. iOS n'ayant pas
-// d'overflow-anchor pour compenser, ça provoque un saut à chaque post, et des
-// écrans blancs / gels sous scroll rapide (l'observer ne suit pas l'inertie).
-// On garde donc tous les items montés en in-app. Le web conserve la
-// virtualisation (le navigateur a l'ancrage natif).
+// EPSILON : SCROLL — no virtualisation in-app (WebKit only)
+// WebKit lacks overflow-anchor, so virtualising the feed makes it jump on every
+// post. Keep all items mounted — but only on WebKit: Android (Chromium) has the
+// native anchor, where this would just bloat memory on long feeds. Detected via
+// GestureEvent (absent from Chromium), not the UA.
 // ==========================================
-const EPSILON_IN_APP =
+const EPSILON_IN_APP_WEBKIT =
   typeof document !== 'undefined' &&
-  document.documentElement.classList.contains('epsilon-in-app');
+  document.documentElement.classList.contains('epsilon-in-app') &&
+  typeof window.GestureEvent !== 'undefined';
 
 export default class IntersectionObserverArticle extends Component {
 
@@ -40,8 +38,8 @@ export default class IntersectionObserverArticle extends Component {
   };
 
   shouldComponentUpdate (nextProps, nextState) {
-    // EPSILON : in-app, jamais virtualisé → rendu normal (voir en-tête)
-    if (EPSILON_IN_APP) {
+    // EPSILON : never virtualised in-app → render normally (see header)
+    if (EPSILON_IN_APP_WEBKIT) {
       return true;
     }
 
@@ -64,8 +62,8 @@ export default class IntersectionObserverArticle extends Component {
 
     this.componentMounted = true;
 
-    // EPSILON : pas de virtualisation in-app → on n'observe pas (voir en-tête)
-    if (EPSILON_IN_APP) {
+    // EPSILON : no virtualisation in-app → don't observe (see header)
+    if (EPSILON_IN_APP_WEBKIT) {
       return;
     }
 
@@ -131,8 +129,8 @@ export default class IntersectionObserverArticle extends Component {
     const { children, id, index, listLength, cachedHeight } = this.props;
     const { isIntersecting, isHidden } = this.state;
 
-    // EPSILON : in-app, on ne masque jamais (pas de placeholder invisible)
-    if (!EPSILON_IN_APP && !isIntersecting && (isHidden || cachedHeight)) {
+    // EPSILON : in-app, never hide (no invisible placeholder)
+    if (!EPSILON_IN_APP_WEBKIT && !isIntersecting && (isHidden || cachedHeight)) {
       return (
         <Article
           ref={this.handleRef}

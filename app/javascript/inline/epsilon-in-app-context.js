@@ -1,58 +1,53 @@
 (function (element) {
-  // Detect the Expo shell WebView via its custom User-Agent.
-  // Only the stable prefix "EpsilonMobile/" is matched, never the version.
+  // Match the Expo shell WebView by its custom User-Agent prefix.
   if (navigator.userAgent.indexOf('EpsilonMobile/') === -1) {
     return;
   }
 
   element.classList.add('epsilon-in-app');
 
-  // In-app (WKWebView), clamp the resting zoom floor to 1.0 so the page can't
-  // sit below the viewport. minimum-scale only — we never use maximum-scale /
-  // user-scalable=no (which Apple flags). Web users are untouched: this runs
-  // only in-app.
+  // Clamp the zoom floor to 1.0 (minimum-scale only; never maximum-scale /
+  // user-scalable=no, which Apple flags).
   var viewport = document.querySelector('meta[name="viewport"]');
 
   if (viewport) {
     viewport.setAttribute('content', 'width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover');
   }
 
-  // WKWebView treats the viewport scale bounds as soft (a pinch rubber-bands
-  // past them), so minimum-scale alone can't stop the page floating over the
-  // shell background during the gesture. We cancel the WebKit pinch events to
-  // disable page zoom outright — like a native app. Images stay zoomable: the
-  // media viewer (ZoomableImage) runs its own transform-based zoom and already
-  // cancels these same events, so tapping a photo → pinch still works.
-  var preventGesture = function (event) {
-    event.preventDefault();
-  };
+  // WebKit-only zoom guards (iOS). Chromium (Android WebView) has no
+  // GestureEvent and the non-passive touchmove would only break its scrolling.
+  // Detect the capability, not the UA. `epsilon-in-app` stays on both platforms.
+  if (typeof window.GestureEvent !== 'undefined') {
+    // WebKit-only styling hook (e.g. `overflow-x: clip`, which breaks scrolling
+    // in Chromium). Kept separate from `epsilon-in-app` so CSS can target iOS.
+    element.classList.add('epsilon-in-app-webkit');
 
-  document.addEventListener('gesturestart', preventGesture, { passive: false });
-  document.addEventListener('gesturechange', preventGesture, { passive: false });
-  document.addEventListener('gestureend', preventGesture, { passive: false });
+    // Cancel the WebKit pinch events to disable page zoom. The media viewer
+    // runs its own transform zoom, so images stay zoomable there.
+    var preventGesture = function (event) {
+      event.preventDefault();
+    };
 
-  // gesturestart only fires when a pinch begins from rest. If a second finger
-  // lands mid-scroll (a touch sequence is already active), WebKit starts a pinch
-  // WITHOUT a fresh gesturestart, so the three listeners above miss it and the
-  // page zooms. A touchmove guard ARMED when the second finger lands can't fix
-  // this: iOS freezes a sequence's cancelability at its start, so once a scroll
-  // is underway the sequence is non-cancelable and a late preventDefault is
-  // ignored. The guard must therefore be present from the first touch of every
-  // sequence — hence permanent and non-passive. It early-returns for one-finger
-  // scroll (no preventDefault, scroll proceeds) and only cancels 2+ finger
-  // moves, leaving the media viewer's own pinch-to-zoom (.zoomable-image) alone.
-  var preventMultiTouchZoom = function (event) {
-    if (event.touches.length < 2) {
-      return;
-    }
+    document.addEventListener('gesturestart', preventGesture, { passive: false });
+    document.addEventListener('gesturechange', preventGesture, { passive: false });
+    document.addEventListener('gestureend', preventGesture, { passive: false });
 
-    var node = event.target;
-    if (node && node.closest && node.closest('.zoomable-image')) {
-      return;
-    }
+    // A second finger landing mid-scroll starts a pinch without a fresh
+    // gesturestart. iOS fixes cancelability at sequence start, so this must be
+    // permanent and non-passive. Cancels 2+ finger moves only; scroll passes.
+    var preventMultiTouchZoom = function (event) {
+      if (event.touches.length < 2) {
+        return;
+      }
 
-    event.preventDefault();
-  };
+      var node = event.target;
+      if (node && node.closest && node.closest('.zoomable-image')) {
+        return;
+      }
 
-  document.addEventListener('touchmove', preventMultiTouchZoom, { passive: false });
+      event.preventDefault();
+    };
+
+    document.addEventListener('touchmove', preventMultiTouchZoom, { passive: false });
+  }
 })(document.documentElement);
