@@ -11,6 +11,12 @@ $eps-card-hover-overlay: rgb(255 255 255 / 6%);
   margin-bottom: 16px;
   background: var(--eps-card-bg);
 
+  // In the right widgets column the flex gap (16px) already spaces the
+  // widgets — the timeline-facing margin would double it.
+  .epsilon-widgets & {
+    margin-bottom: 0;
+  }
+
   &__title {
     margin: 0 0 6px;
     color: $eps-card-text;

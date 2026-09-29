@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 import { toggleNavigation } from 'mastodon/actions/navigation';
 import { EpsilonHomeFilter } from './epsilon_home_filter';
+import EpsilonStoreBadges from './epsilon_store_badges';
 
 import { InlineFollowSuggestions } from 'mastodon/features/home_timeline/components/inline_follow_suggestions';
 import { useIdentity } from 'mastodon/identity_context';
@@ -140,6 +141,8 @@ const EpsilonLayoutContent = ({ children }) => {
           {signedIn && (
             <EpsilonCategorySuggestions />
           )}
+
+          <EpsilonStoreBadges />
 
         </div>
       </aside>

@@ -6,7 +6,12 @@ class Trends::Statuses < Trends::Base
   BATCH_SIZE = 100
 
   self.default_options = {
-    threshold: 5,
+    # ==========================================
+    # EPSILON : TRENDS
+    # Lower entry bar for a small instance: 2 interactions
+    # (reblogs + favourites) instead of the native 5
+    threshold: 2,
+    # ==========================================
     review_threshold: 3,
     score_halflife: 1.hour.freeze,
     decay_threshold: 0.3,

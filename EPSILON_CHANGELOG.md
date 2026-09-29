@@ -5,6 +5,23 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.23] - 2026-09-29
+
+### Added
+
+- **Badges de téléchargement App Store dans le layout web** : badge officiel Apple (SVG, FR/EN selon la locale, lockup noir en thème clair / blanc en thème sombre via les nouvelles variables `--eps-display-on-light/dark` des mixins de thème) affiché dans la colonne de droite sous les catégories (>1024px) et dans le footer de la sidebar gauche en petit format (≤768px, drawer). Rien entre 769 et 1024px : le rail d'icônes (104px) ne peut pas contenir un badge conforme (minimum Apple 40px de haut, réduction interdite). Masqué dans la coque (`html.epsilon-in-app`). Badge Google Play affiché grisé, non cliquable, avec pastille « Bientôt disponible » FR/EN (`GOOGLE_PLAY_AVAILABLE = false` à basculer après validation Play Store, lien `social.epsilon.app` déjà câblé). Fichiers : `epsilon/components/epsilon_store_badges.jsx` (nouveau), `styles/epsilon/store_badges.scss` (nouveau), `images/epsilon/badges/` (6 SVG), `epsilon_layout.jsx`, `epsilon_sidebar.jsx`, `layout.scss`, `application.scss`.
+
+### Fixed
+
+- **Scroll horizontal causé par la ligne de version du footer** : la version (longue sur le fork) est `white-space: nowrap` dans le module natif → passée en `normal` (ciblage `li:last-child`, classe hashée) ; confinement `max-width` + `overflow-wrap: anywhere` généralisé du mode rail à tous les breakpoints (`layout.scss`).
+- **Liens du footer clippés en mode rail (769–1264px) + styles footer morts depuis la 4.6** : `LinkFooter` est passé en CSS module à l'upgrade 4.6 (classes hashées) — tous les styles epsilon ciblant `.link-footer` étaient du code mort (d'où liens soulignés et débordement : le `<footer>`, flex item centré, prenait sa largeur fit-content ~130px dans le rail de 104px et était clippé des deux côtés par l'`overflow` de la colonne). Styles réécrits sur `footer[data-context='default']` : base (0.75rem, sans soulignement, hover) + rail 769–1264px (`max-width: 100%`, 0.59rem centré, `overflow-wrap: anywhere`) ; drawer ≤768px sur les défauts du module. Reproduit et validé via harnais Playwright. Fichier : `styles/epsilon/layout.scss`.
+
+### Changed
+
+- **Seuil d'entrée des posts tendances abaissé de 5 à 2 interactions** (reblogs + favoris, `threshold` dans `app/models/trends/statuses.rb`) — adapté à une petite instance ; decay et demi-vie natifs conservés.
+
+- **Explorer s'ouvre sur les suggestions de comptes** : `/explore` redirige côté SPA vers `/explore/suggestions` (connecté) ou `/explore/posts` (anonyme) au lieu d'afficher les posts tendances, souvent vides sur une petite instance — corrige notamment l'onglet Explorer de la coque mobile, sans rebuild d'app. Les posts tendances restent accessibles via l'onglet « Posts » (`/explore/posts`, route déjà servie par le wildcard Rails). Fichier core balisé `EPSILON` : `app/javascript/mastodon/features/explore/index.tsx`.
+
 ## [0.3.22] - 2026-09-28
 
 ### Fixed

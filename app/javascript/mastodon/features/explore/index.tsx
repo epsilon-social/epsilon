@@ -2,7 +2,7 @@ import { useCallback, useRef } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
-import { NavLink, Switch, Route } from 'react-router-dom';
+import { NavLink, Switch, Route, Redirect } from 'react-router-dom';
 
 import { Helmet } from '@unhead/react/helmet';
 
@@ -81,7 +81,7 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
           />
         </NavLink>
 
-        <NavLink exact to='/explore'>
+        <NavLink exact to='/explore/posts'>
           <FormattedMessage
             tagName='div'
             id='explore.trending_statuses'
@@ -95,9 +95,18 @@ const Explore: React.FC<{ multiColumn: boolean }> = ({ multiColumn }) => {
         <Route path='/explore/suggestions' component={Suggestions} />
         <Route path='/explore/tags' component={Tags} />
         <Route path='/explore/links' component={Links} />
-        <Route exact path={['/explore', '/explore/posts']}>
+        <Route exact path='/explore/posts'>
           <Statuses multiColumn={multiColumn} />
         </Route>
+        {/* ========================================== */}
+        {/* EPSILON : DEFAULT EXPLORE TAB TO PEOPLE    */}
+        {/* ========================================== */}
+        <Redirect
+          exact
+          from='/explore'
+          to={signedIn ? '/explore/suggestions' : '/explore/posts'}
+        />
+        {/* ========================================== */}
       </Switch>
 
       <Helmet>

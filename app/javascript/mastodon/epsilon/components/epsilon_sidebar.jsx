@@ -44,6 +44,7 @@ import { LinkFooter} from 'mastodon/features/ui/components/link_footer';
 import { useAppSelector } from 'mastodon/store';
 import { Avatar } from 'mastodon/components/avatar';
 import { EpsilonBadges } from './epsilon_badges';
+import EpsilonStoreBadges from './epsilon_store_badges';
 import { DisabledAccountBanner } from '../../features/navigation_panel/components/disabled_account_banner'
 
 import { IconWithBadge } from 'mastodon/components/icon_with_badge';
@@ -340,6 +341,7 @@ const EpsilonSidebar = () => {
         )}
 
         <LinkFooter />
+        <EpsilonStoreBadges />
         </div>
     </div>
   );

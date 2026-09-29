@@ -81,6 +81,11 @@ $eps-navbar-height: 56px;
   --color-bg-overlay-highlight: var(--eps-nav-hover) !important;
   --eps-favourite: #f43f5e;
   --color-text-favourite-highlight: var(--eps-favourite) !important;
+
+  // Theme-conditional display (e.g. store badges: black artwork on light
+  // backgrounds, white artwork on dark ones) — inherit and use as `display:`.
+  --eps-display-on-light: block;
+  --eps-display-on-dark: none;
 }
 
 @mixin epsilon-dark-theme {
@@ -135,6 +140,10 @@ $eps-navbar-height: 56px;
   --color-bg-overlay-highlight: var(--eps-nav-hover) !important;
   --eps-favourite: #f43f5e;
   --color-text-favourite-highlight: var(--eps-favourite) !important;
+
+  // Theme-conditional display counterpart of the light-theme pair.
+  --eps-display-on-light: none;
+  --eps-display-on-dark: block;
 }
 
 html[data-color-scheme='light'],
@@ -1530,24 +1539,37 @@ body.theme-system {
     width: 100%;
     box-sizing: border-box;
 
-    .link-footer {
+    // LinkFooter is a CSS module since 4.6 (hashed classes — the old
+    // .link-footer class no longer exists in the DOM): hook on the element
+    // and its data-context attribute instead.
+    footer[data-context='default'] {
       margin-top: 16px;
       margin-bottom: 16px;
+      color: var(--eps-text-secondary);
+      font-size: 0.75rem;
+      line-height: 1.5;
 
-      p {
-        color: var(--eps-text-secondary);
-        font-size: 0.75rem;
-        line-height: 1.5;
-        margin: 0;
+      // Never let a long unbreakable token (domain, version…) push the
+      // footer wider than the column and create a horizontal scroll: cap
+      // the width and allow breaking anywhere, at every breakpoint.
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
 
-        a {
-          color: inherit;
-          text-decoration: none;
-          transition: color var(--eps-dur-base) ease;
+      // The version item (last of the list, hashed module class) is
+      // white-space: nowrap natively, which forbids any line break — with
+      // the fork's long version string it forces a horizontal scroll.
+      li:last-child {
+        white-space: normal;
+      }
 
-          &:hover {
-            color: var(--eps-text-primary);
-          }
+      a {
+        color: inherit;
+        text-decoration: none;
+        transition: color var(--eps-dur-base) ease;
+
+        &:hover {
+          color: var(--eps-text-primary);
         }
       }
     }
@@ -1633,18 +1655,17 @@ body.theme-system {
       flex-direction: column;
       align-items: center;
 
-      .link-footer {
-        margin-top: 24px;
-        padding: 0 4px;
-
-        p {
+      // Icon-rail mode only (769–1264px; ≤768px is the drawer). The
+      // max-width/overflow-wrap containment now lives in the base rule
+      // (applies at every breakpoint); here only the rail-specific
+      // compact typography remains.
+      @media (width >= 769px) {
+        footer[data-context='default'] {
+          margin-top: 24px;
+          padding: 20px 6px;
           font-size: 0.59375rem;
           line-height: 1.4;
           text-align: center;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          column-gap: 3px;
         }
       }
     }
@@ -3613,12 +3634,6 @@ html.epsilon-in-app {
       margin-right: 12px !important;
       padding: 0 !important;
       align-items: stretch !important;
-
-      .link-footer p {
-        justify-content: flex-start !important;
-        font-size: 0.75rem !important;
-        text-align: left !important;
-      }
     }
 
     &__divider {
