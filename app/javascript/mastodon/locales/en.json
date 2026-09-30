@@ -777,6 +777,8 @@
   "firehose.all": "All",
   "firehose.local": "This server",
   "firehose.moderation_filter.all": "Both",
+  "firehose.moderation_filter.categories": "Categories",
+  "firehose.moderation_filter.categories_all": "All",
   "firehose.moderation_filter.cw": "Content warnings",
   "firehose.moderation_filter.media": "Sensitive media",
   "firehose.moderation_filter.toggle": "Content to moderate",

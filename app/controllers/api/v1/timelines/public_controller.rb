@@ -12,6 +12,13 @@ class Api::V1::Timelines::PublicController < Api::V1::Timelines::BaseController
   PERMITTED_PARAMS = %i(local remote limit only_media sensitive_scope).freeze
   # EPSILON : MODERATION LIVE FEED FILTER — accepted values for `sensitive_scope`
   SENSITIVE_SCOPES = { 'media' => :media, 'cw' => :cw, 'all' => :all }.freeze
+  # ==========================================
+  # EPSILON : MODERATION CATEGORY FEED FILTER
+  # `category_ids[]`: returns only posts categorized into at least one of the
+  # given categories (moderation tool, moderators only). Hard cap as a
+  # defensive bound on the IN list.
+  # ==========================================
+  MAX_FILTER_CATEGORY_IDS = 50
 
   def show
     cache_if_unauthenticated!
@@ -55,7 +62,9 @@ class Api::V1::Timelines::PublicController < Api::V1::Timelines::BaseController
       remote: truthy_param?(:remote),
       only_media: truthy_param?(:only_media),
       # EPSILON : MODERATION LIVE FEED FILTER
-      sensitive_scope: sensitive_moderation_scope
+      sensitive_scope: sensitive_moderation_scope,
+      # EPSILON : MODERATION CATEGORY FEED FILTER
+      category_ids: moderation_category_ids
     )
   end
 
@@ -71,6 +80,30 @@ class Api::V1::Timelines::PublicController < Api::V1::Timelines::BaseController
     return unless current_user&.can?(:manage_reports)
 
     SENSITIVE_SCOPES[params[:sensitive_scope]]
+  end
+  # ==========================================
+
+  # ==========================================
+  # EPSILON : MODERATION CATEGORY FEED FILTER
+  # Same server-side guard as the sensitive filter: honored for moderators
+  # only (manage_reports), gates the capability, not data (posts are public).
+  # Returns an array of integer ids, or nil (no filter).
+  # ==========================================
+  def moderation_category_ids
+    return unless current_user&.can?(:manage_reports)
+
+    Array(params[:category_ids])
+      .take(MAX_FILTER_CATEGORY_IDS)
+      .filter_map { |id| Integer(id, exception: false) }
+      .presence
+  end
+
+  # EPSILON : MODERATION CATEGORY FEED FILTER — carry the filter over into the
+  # next/prev pagination links (PERMITTED_PARAMS only handles scalar params).
+  def permitted_params
+    category_ids = moderation_category_ids
+
+    category_ids ? super.merge(category_ids: category_ids) : super
   end
   # ==========================================
 

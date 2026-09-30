@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 
 import { useIntl, defineMessages, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 import classNames from 'classnames';
+// EPSILON : MODERATION CATEGORY FEED FILTER
+import { List as ImmutableList } from 'immutable';
 import { NavLink } from 'react-router-dom';
 
 import { useIdentity } from '@/mastodon/identity_context';
@@ -17,7 +19,9 @@ import { connectPublicStream, connectCommunityStream } from 'mastodon/actions/st
 import { expandPublicTimeline, expandCommunityTimeline } from 'mastodon/actions/timelines';
 import { DismissableBanner } from 'mastodon/components/dismissable_banner';
 // EPSILON : MODERATION LIVE FEED FILTER — sidecar actions (native action files untouched)
-import { expandModerationFeed, connectModerationFeedStream } from 'mastodon/epsilon/actions/moderation_feed';
+import { expandModerationFeed, connectModerationFeedStream, moderationTimelineId } from 'mastodon/epsilon/actions/moderation_feed';
+// EPSILON : MODERATION CATEGORY FEED FILTER — sidecar category pills
+import { ModerationCategoryFilter } from 'mastodon/epsilon/components/moderation_category_filter';
 import { localLiveFeedAccess, remoteLiveFeedAccess, domain } from 'mastodon/initial_state';
 import { canViewFeed, canManageReports } from 'mastodon/permissions';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
@@ -43,7 +47,12 @@ const messages = defineMessages({
   filterMedia: { id: 'firehose.moderation_filter.media', defaultMessage: 'Sensitive media' },
   filterCw: { id: 'firehose.moderation_filter.cw', defaultMessage: 'Content warnings' },
   filterAll: { id: 'firehose.moderation_filter.all', defaultMessage: 'Both' },
+  // EPSILON : MODERATION CATEGORY FEED FILTER
+  filterCategories: { id: 'firehose.moderation_filter.categories', defaultMessage: 'Categories' },
 });
+
+// EPSILON : MODERATION CATEGORY FEED FILTER — stable default for the selector
+const emptyCategoryIds = ImmutableList();
 
 // EPSILON : MODERATION LIVE FEED FILTER — segmented scope choices (default 'all')
 const SENSITIVE_SCOPES = [
@@ -87,8 +96,18 @@ const Firehose = ({ feedType, multiColumn }) => {
   const onlySensitiveSetting = useAppSelector((state) => state.getIn(['settings', 'firehose', 'onlySensitive'], false));
   const sensitiveScope = useAppSelector((state) => state.getIn(['settings', 'firehose', 'sensitiveScope'], 'all'));
   const onlySensitive = canManageReports(permissions) && onlySensitiveSetting;
-  const timelineId = onlySensitive
-    ? `${feedType}${onlyMedia ? ':media' : ''}:sensitive:${sensitiveScope}`
+  // EPSILON : MODERATION CATEGORY FEED FILTER — settings only honored for moderators
+  const categoriesEnabledSetting = useAppSelector((state) => state.getIn(['settings', 'firehose', 'categoriesEnabled'], false));
+  const categoryIdsSetting = useAppSelector((state) => state.getIn(['settings', 'firehose', 'categoryIds'], emptyCategoryIds));
+  const categoriesEnabled = canManageReports(permissions) && categoriesEnabledSetting;
+  const activeCategoryIds = useMemo(
+    () => (categoriesEnabled ? categoryIdsSetting.toJS().map(Number).sort((a, b) => a - b) : []),
+    [categoriesEnabled, categoryIdsSetting],
+  );
+  const moderationActive = onlySensitive || activeCategoryIds.length > 0;
+  const moderationScope = onlySensitive ? sensitiveScope : null;
+  const timelineId = moderationActive
+    ? moderationTimelineId(feedType, onlyMedia, moderationScope, activeCategoryIds)
     : `${feedType}${onlyMedia ? ':media' : ''}`;
   const hasUnread = useAppSelector((state) => state.getIn(['timelines', timelineId, 'unread'], 0) > 0);
 
@@ -112,8 +131,8 @@ const Firehose = ({ feedType, multiColumn }) => {
   const handleLoadMore = useCallback(
     (maxId) => {
       // EPSILON : MODERATION LIVE FEED FILTER — route to the sidecar feed when active
-      if (onlySensitive) {
-        dispatch(expandModerationFeed({ feedType, maxId, onlyMedia, scope: sensitiveScope }));
+      if (moderationActive) {
+        dispatch(expandModerationFeed({ feedType, maxId, onlyMedia, scope: moderationScope, categoryIds: activeCategoryIds }));
         return;
       }
 
@@ -129,7 +148,7 @@ const Firehose = ({ feedType, multiColumn }) => {
         break;
       }
     },
-    [dispatch, onlyMedia, onlySensitive, sensitiveScope, feedType],
+    [dispatch, onlyMedia, moderationActive, moderationScope, activeCategoryIds, feedType],
   );
 
   const handleHeaderClick = useCallback(() => columnRef.current?.scrollTop(), []);
@@ -146,6 +165,35 @@ const Firehose = ({ feedType, multiColumn }) => {
     [dispatch],
   );
 
+  // EPSILON : MODERATION CATEGORY FEED FILTER — toggle the category filter on/off
+  const handleToggleCategories = useCallback(
+    () => dispatch(changeSetting(['firehose', 'categoriesEnabled'], !categoriesEnabled)),
+    [dispatch, categoriesEnabled],
+  );
+
+  // EPSILON : MODERATION CATEGORY FEED FILTER — add/remove a category from the selection
+  const handleCategoryToggle = useCallback(
+    (categoryId) => {
+      const next = categoryIdsSetting.includes(categoryId)
+        ? categoryIdsSetting.filterNot((id) => id === categoryId)
+        : categoryIdsSetting.push(categoryId);
+
+      dispatch(changeSetting(['firehose', 'categoryIds'], next));
+    },
+    [dispatch, categoryIdsSetting],
+  );
+
+  // EPSILON : MODERATION CATEGORY FEED FILTER — "All" pill: select every
+  // category, or clear the selection when everything is already selected
+  const handleCategoryToggleAll = useCallback(
+    (allIds) => {
+      const allSelected = allIds.every((id) => categoryIdsSetting.includes(id));
+
+      dispatch(changeSetting(['firehose', 'categoryIds'], allSelected ? emptyCategoryIds : ImmutableList(allIds)));
+    },
+    [dispatch, categoryIdsSetting],
+  );
+
   // EPSILON : re-exposed native "Media only" toggle (its column-header control is hidden by the redesign)
   const handleToggleMedia = useCallback(
     () => dispatch(changeSetting(['firehose', 'onlyMedia'], !onlyMedia)),
@@ -155,11 +203,14 @@ const Firehose = ({ feedType, multiColumn }) => {
   useEffect(() => {
     let disconnect;
 
-    // EPSILON : MODERATION LIVE FEED FILTER — route to the sidecar feed when active
-    if (onlySensitive) {
-      dispatch(expandModerationFeed({ feedType, onlyMedia, scope: sensitiveScope }));
-      if (signedIn) {
-        disconnect = dispatch(connectModerationFeedStream({ feedType, onlyMedia, scope: sensitiveScope }));
+    // EPSILON : MODERATION LIVE FEED FILTER — route to the sidecar feed when active.
+    // With categories selected there is no live stream (categorization runs
+    // async after a post is created, so streamed payloads cannot be filtered
+    // by category client-side): the feed is load-on-demand instead.
+    if (moderationActive) {
+      dispatch(expandModerationFeed({ feedType, onlyMedia, scope: moderationScope, categoryIds: activeCategoryIds }));
+      if (signedIn && activeCategoryIds.length === 0) {
+        disconnect = dispatch(connectModerationFeedStream({ feedType, onlyMedia, scope: moderationScope }));
       }
 
       return () => disconnect?.();
@@ -187,7 +238,7 @@ const Firehose = ({ feedType, multiColumn }) => {
     }
 
     return () => disconnect?.();
-  }, [dispatch, signedIn, feedType, onlyMedia, onlySensitive, sensitiveScope]);
+  }, [dispatch, signedIn, feedType, onlyMedia, moderationActive, moderationScope, activeCategoryIds]);
 
   const prependBanner = feedType === 'community' ? (
     <DismissableBanner id='community_timeline'>
@@ -296,6 +347,17 @@ const Firehose = ({ feedType, multiColumn }) => {
               {intl.formatMessage(messages.filterToggle)}
             </button>
           )}
+
+          {canManageReports(permissions) && (
+            <button
+              type='button'
+              className={classNames('firehose__mod-filter__button', { active: categoriesEnabled })}
+              aria-pressed={categoriesEnabled}
+              onClick={handleToggleCategories}
+            >
+              {intl.formatMessage(messages.filterCategories)}
+            </button>
+          )}
         </div>
 
         {canManageReports(permissions) && onlySensitive && (
@@ -313,6 +375,10 @@ const Firehose = ({ feedType, multiColumn }) => {
               </button>
             ))}
           </div>
+        )}
+
+        {categoriesEnabled && (
+          <ModerationCategoryFilter selectedIds={activeCategoryIds} onToggle={handleCategoryToggle} onToggleAll={handleCategoryToggleAll} />
         )}
       </div>
       {/* ========================================== */}

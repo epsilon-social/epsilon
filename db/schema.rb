@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_29_143722) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -948,6 +948,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_120000) do
     t.string "source", limit: 20, null: false
     t.bigint "status_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["category_master_id", "status_id"], name: "idx_epsilon_lpc_category_status_validated", order: { status_id: :desc }, where: "is_validated"
     t.index ["category_master_id"], name: "index_local_post_categorizations_on_category_master_id"
     t.index ["status_id", "category_master_id"], name: "idx_unique_post_categories", unique: true
     t.index ["status_id"], name: "index_local_post_categorizations_on_status_id"

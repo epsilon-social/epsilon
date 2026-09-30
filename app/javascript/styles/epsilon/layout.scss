@@ -2974,6 +2974,17 @@ body.theme-system {
   }
 }
 
+// Category pills (moderator category filter), shown when the filter is active.
+// Reuses the scope-pill look; wraps because there are ~23 categories.
+.firehose__mod-filter__categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  max-width: 620px;
+  padding: 4px 16px 0;
+}
+
 // EPSILON : regeneration indicator ("Preparing your home feed") — sidecar tweaks
 // over the native style: drop the border, shrink the illustration, and push it
 // down (the native -50px margin-top pulled it too high).

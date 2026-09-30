@@ -776,6 +776,8 @@
   "filtered_notifications_banner.title": "Notifications filtrées",
   "firehose.all": "Tout",
   "firehose.moderation_filter.all": "Les deux",
+  "firehose.moderation_filter.categories": "Catégories",
+  "firehose.moderation_filter.categories_all": "Toutes",
   "firehose.moderation_filter.cw": "Avertissements (CW)",
   "firehose.moderation_filter.media": "Médias sensibles",
   "firehose.moderation_filter.toggle": "Contenu à modérer",

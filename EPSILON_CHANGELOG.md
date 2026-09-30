@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Filtre par catégories dans le Firehose (modérateurs)** : bouton « Catégories » à côté du filtre de contenu sensible — sélection multiple parmi les catégories actives (pill « Toutes » pour tout cocher/décocher), le fil ne montre que les posts catégorisés dedans (filtré côté serveur via `category_ids[]`, gaté `manage_reports`, cumulable avec le filtre sensible et « Media only », conservé dans les liens de pagination). Pas de stream live en mode catégories (la catégorisation est asynchrone) : fil à la demande. Index partiel `idx_epsilon_lpc_category_status_validated` sur `local_post_categorizations`. Core balisé : `public_feed.rb`, `api/v1/timelines/public_controller.rb`, `features/firehose/index.jsx` ; sidecar : `epsilon/actions/moderation_feed.js`, `epsilon/components/moderation_category_filter.jsx` (nouveau), spec de requête.
+
 ## [0.3.23] - 2026-09-29
 
 ### Added

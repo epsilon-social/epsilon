@@ -9,6 +9,7 @@ class PublicFeed
   # @option [Boolean] :remote
   # @option [Boolean] :only_media
   # @option [Symbol] :sensitive_scope (:media, :cw, :all)
+  # @option [Array<Integer>] :category_ids
   def initialize(account, options = {})
     @account = account
     @options = options
@@ -32,6 +33,8 @@ class PublicFeed
     scope.merge!(media_only_scope) if media_only?
     # EPSILON : MODERATION LIVE FEED FILTER
     scope.merge!(sensitive_scope_filter) if sensitive_scope?
+    # EPSILON : MODERATION CATEGORY FEED FILTER
+    scope.merge!(category_filter_scope) if category_filter?
     scope.merge!(language_scope) if account&.chosen_languages.present?
 
     scope.to_a_paginated_by_id(limit, max_id: max_id, since_id: since_id, min_id: min_id)
@@ -96,6 +99,14 @@ class PublicFeed
   end
   # ==========================================
 
+  # ==========================================
+  # EPSILON : MODERATION CATEGORY FEED FILTER
+  # ==========================================
+  def category_filter?
+    options[:category_ids].present?
+  end
+  # ==========================================
+
   def public_scope
     Status.public_visibility.joins(:account).merge(Account.without_suspended.without_silenced)
   end
@@ -135,6 +146,23 @@ class PublicFeed
     else
       Status.where("statuses.sensitive OR statuses.spoiler_text <> ''")
     end
+  end
+  # ==========================================
+
+  # ==========================================
+  # EPSILON : MODERATION CATEGORY FEED FILTER
+  # EXISTS instead of a JOIN: a post can belong to several of the selected
+  # categories, and EXISTS keeps the scope duplicate-free without a DISTINCT.
+  # Covered by the partial index `idx_epsilon_lpc_category_status_validated`
+  # (category_master_id, status_id DESC WHERE is_validated).
+  # ==========================================
+  def category_filter_scope
+    categorizations = Epsilon::Categorization::LocalPostCategorization
+      .validated
+      .where(category_master_id: options[:category_ids])
+      .where(Epsilon::Categorization::LocalPostCategorization.arel_table[:status_id].eq(Status.arel_table[:id]))
+
+    Status.where(categorizations.arel.exists)
   end
   # ==========================================
 
