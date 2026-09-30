@@ -19,8 +19,9 @@
 
   .fields-group
     = f.simple_fields_for :account do |ff|
+      -# EPSILON : SIGNUP UX — drop the confusing "@domain" suffix, show the rules with an example on its own line
       = ff.input :username,
-                 append: "@#{site_hostname}",
+                 hint: safe_join([t('simple_form.hints.defaults.username'), tag.br, t('auth.sign_up.username_example')]),
                  input_html: { autocomplete: 'off', pattern: '[a-zA-Z0-9_]+', maxlength: Account::USERNAME_LENGTH_LIMIT },
                  required: true,
                  wrapper: :with_label
@@ -29,8 +30,8 @@
               input_html: { autocomplete: 'username' },
               required: true,
               wrapper: :with_label
+    -# EPSILON : SIGNUP UX — show the password rules (native hint was disabled)
     = f.input :password,
-              hint: false,
               input_html: { autocomplete: 'new-password', minlength: User.password_length.first, maxlength: User.password_length.last },
               required: true,
               wrapper: :with_label

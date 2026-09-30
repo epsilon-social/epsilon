@@ -88,5 +88,17 @@
       aspect-ratio: 3 / 1 !important;
       height: auto !important;
     }
+
+    // Banner/avatar edit buttons: the native module backs them with
+    // --color-bg-primary, remapped to transparent by Epsilon, so they
+    // vanish over the banner image. Give them an opaque surface instead.
+    .icon-button[class*='account_edit__imageButton'] {
+      --default-bg-color: var(--eps-surface-solid);
+      --hover-bg-color: color-mix(
+        in srgb,
+        var(--eps-surface-solid) 90%,
+        var(--eps-text-primary)
+      );
+    }
   }
 }

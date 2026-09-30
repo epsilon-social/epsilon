@@ -5,6 +5,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.24] - 2026-09-30
+
+### Changed
+
+- **Formulaire d'inscription clarifié** : suffixe `@epsilon.social` retiré du champ identifiant (incompris des inscrits) ; règles affichées explicitement — identifiant : lettres sans accents, chiffres et tirets bas uniquement, pas d'espaces ni de points, 30 caractères max, avec un exemple sur sa propre ligne ; mot de passe : hint natif « au moins 8 caractères » réactivé. Fichiers : `app/views/auth/registrations/new.html.haml` (balisé), `config/locales/simple_form.{fr,en}.yml`, `config/locales/{fr,en}.yml` (clé `auth.sign_up.username_example`).
+
+### Fixed
+
+- **Bouton de modification bannière/avatar invisible (page Modifier le profil)** : le module natif lui donne un fond `--color-bg-primary`, remappé « transparent » par le thème Epsilon → bouton fondu dans l'image de bannière. Fond opaque `--eps-surface-solid` + hover opaque dérivé (`color-mix`), via hook sidecar. Fichier : `styles/epsilon/profile.scss`.
+
 ### Added
 
 - **Filtre par catégories dans le Firehose (modérateurs)** : bouton « Catégories » à côté du filtre de contenu sensible — sélection multiple parmi les catégories actives (pill « Toutes » pour tout cocher/décocher), le fil ne montre que les posts catégorisés dedans (filtré côté serveur via `category_ids[]`, gaté `manage_reports`, cumulable avec le filtre sensible et « Media only », conservé dans les liens de pagination). Pas de stream live en mode catégories (la catégorisation est asynchrone) : fil à la demande. Index partiel `idx_epsilon_lpc_category_status_validated` sur `local_post_categorizations`. Core balisé : `public_feed.rb`, `api/v1/timelines/public_controller.rb`, `features/firehose/index.jsx` ; sidecar : `epsilon/actions/moderation_feed.js`, `epsilon/components/moderation_category_filter.jsx` (nouveau), spec de requête.

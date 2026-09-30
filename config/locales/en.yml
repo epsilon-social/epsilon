@@ -1615,6 +1615,7 @@ en:
       manual_review: Sign-ups on %{domain} go through manual review by our moderators. To help us process your registration, write a bit about yourself and why you want an account on %{domain}.
       preamble: With an account on this Epsilon server, you'll be able to follow any other person on the fediverse, regardless of where their account is hosted.
       title: Let's get you set up on %{domain}.
+      username_example: "Example: john_smith75"
     status:
       account_status: Account status
       confirming: Waiting for email confirmation to be completed.

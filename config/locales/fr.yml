@@ -1615,6 +1615,7 @@ fr:
       manual_review: Les inscriptions sur %{domain} passent par une revue manuelle de nos modérateurs. Pour les aider, écrivez un peu plus sur vous et pourquoi vous souhaitez créer un compte sur %{domain}.
       preamble: Avec un compte sur ce serveur Epsilon, vous pourrez suivre n'importe quelle autre personne du fediverse, quel que soit l'endroit où son compte est hébergé.
       title: Mettons les choses en place pour %{domain}.
+      username_example: "Exemple : jean_dupont75"
     status:
       account_status: État du compte
       confirming: En attente de la confirmation par courrier électronique.
