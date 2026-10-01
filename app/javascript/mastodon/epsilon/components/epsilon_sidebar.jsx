@@ -70,7 +70,7 @@ const messages = defineMessages({
   search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
   notifications: { id: 'tabs_bar.notifications', defaultMessage: 'Notifications' },
   explore: { id: 'explore.title', defaultMessage: 'Trending' },
-  firehose: { id: 'column.firehose', defaultMessage: 'Live feeds' },
+  firehose: { id: 'epsilon.firehose.title', defaultMessage: 'Epsilon feed' },
   direct: { id: 'navigation_bar.direct', defaultMessage: 'Private mentions' },
   favourites: { id: 'navigation_bar.favourites', defaultMessage: 'Favorites' },
   bookmarks: { id: 'navigation_bar.bookmarks', defaultMessage: 'Bookmarks' },
@@ -229,11 +229,11 @@ const EpsilonSidebar = () => {
           <DisabledAccountBanner />
         ) : (
           <div className='epsilon-sidebar__guest'>
-            {showTrending && (
-              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`} />
-            )}
             {showFirehose && (
               <ColumnLink to={firehoseLink} icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(firehoseText)} className={getNavClass('/public')} />
+            )}
+            {showTrending && (
+              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`} />
             )}
             <ColumnLink transparent href='/about' icon='info' iconComponent={InfoIcon} text={intl.formatMessage(messages.about)} className={getNavClass('/about')} />
 
@@ -266,16 +266,16 @@ const EpsilonSidebar = () => {
           <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={`${getNavClass('/home', true)} epsilon-sidebar__item--in-app-hidden`} />
         )}
 
+        {signedIn && showFirehose && (
+          <ColumnLink to={firehoseLink} icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(firehoseText)} className={getNavClass('/public')} />
+        )}
+
         {signedIn && (
           <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--in-app-hidden epsilon-sidebar__item--wide-hidden`} />
         )}
 
         {signedIn && showTrending && (
           <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`}/>
-        )}
-
-        {signedIn && showFirehose && (
-          <ColumnLink to={firehoseLink} icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(firehoseText)} className={getNavClass('/public')} />
         )}
 
         {signedIn && (

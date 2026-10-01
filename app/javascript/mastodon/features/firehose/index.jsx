@@ -49,6 +49,8 @@ const messages = defineMessages({
   filterAll: { id: 'firehose.moderation_filter.all', defaultMessage: 'Both' },
   // EPSILON : MODERATION CATEGORY FEED FILTER
   filterCategories: { id: 'firehose.moderation_filter.categories', defaultMessage: 'Categories' },
+  // EPSILON : LIVE FEED RENAME
+  epsilonTitle: { id: 'epsilon.firehose.title', defaultMessage: 'Epsilon feed' },
 });
 
 // EPSILON : MODERATION CATEGORY FEED FILTER — stable default for the selector
@@ -289,8 +291,16 @@ const Firehose = ({ feedType, multiColumn }) => {
     title = messages.title_singular;
   }
 
+  // ==========================================
+  // EPSILON : LIVE FEED RENAME — single "Epsilon feed" title whatever the
+  // enabled scopes; the Column label and Helmet below also read `title`
+  // (natively they used messages.title).
+  // ==========================================
+  title = messages.epsilonTitle;
+  // ==========================================
+
   return (
-    <Column bindToDocument={!multiColumn} ref={columnRef} label={intl.formatMessage(messages.title)}>
+    <Column bindToDocument={!multiColumn} ref={columnRef} label={intl.formatMessage(title)}>
       <ColumnHeader
         icon='globe'
         iconComponent={PublicIcon}
@@ -394,7 +404,7 @@ const Firehose = ({ feedType, multiColumn }) => {
       />
 
       <Helmet>
-        <title>{intl.formatMessage(messages.title)}</title>
+        <title>{intl.formatMessage(title)}</title>
         <meta name='robots' content='noindex' />
       </Helmet>
     </Column>

@@ -2884,60 +2884,89 @@ body.theme-system {
 
 // ==========================================
 // EPSILON : MODERATION LIVE FEED FILTER
-// Visible in-body toggle for moderators (the column-header settings panel is
-// hidden in the Epsilon center layout, so we surface it here). Amber "active"
-// state to read as a moderation filter, distinct from the blue nav pills.
+// Visible in-body toggles (the column-header settings panel is hidden in the
+// Epsilon center layout, so we surface them here). "Media only" is shown to
+// everyone; the moderation/category toggles are moderators only. Buttons
+// mirror the home "Filtres" button (.epsilon-filter-btn): same size, pill
+// outline and hover/active fill, left-aligned at the top of the feed.
 // ==========================================
 .firehose__mod-filter {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .firehose__mod-filter__row {
   display: inline-flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 8px;
 }
 
 .firehose__mod-filter__button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  box-sizing: border-box;
-  height: 38px;
-  padding: 10px 18px;
-  border: 1px solid var(--eps-border);
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border: 1px solid var(--eps-brand-primary);
   border-radius: var(--eps-radius-pill);
-  background: var(--eps-surface);
-  color: var(--eps-text-secondary);
+  background: transparent;
+  color: var(--eps-brand-primary);
   font-size: 0.875rem;
-  font-weight: 400;
-  line-height: 18px;
+  font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition:
+    all 0.25s ease,
+    transform 0.12s ease;
 
-  &:hover {
-    border-color: var(--eps-border-hover);
-    background: var(--eps-surface-hover);
-    color: var(--eps-text-primary);
+  @media (width <= 768px) {
+    padding: 12px 20px;
+  }
+
+  // Press feedback lives in the global EPSILON : PRESS FEEDBACK block
+  // (reduced-motion aware); only the snappier transform timing is local.
+
+  // Neutral grey hover (same fill as the home "Filtres" button) so it never
+  // reads as the brand-filled .active state — toggling off under the cursor
+  // must show a visible brand → grey change.
+  @media (hover: hover) {
+    &:hover {
+      background: var(--eps-border-hover);
+      color: var(--eps-brand-primary);
+    }
   }
 
   &.active {
-    border-color: transparent;
-    background: linear-gradient(90deg, #ffe1b3 0%, #ffc879 100%);
-    color: #4a2c00;
-    font-weight: 500;
+    border-color: var(--eps-button-brand);
+    background: var(--eps-button-brand);
+    color: var(--eps-button-brand-text);
+  }
+
+  body.theme-mastodon-light & {
+    border-color: var(--eps-text-secondary);
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--eps-nav-hover);
+        color: var(--eps-brand-primary);
+      }
+    }
+
+    &.active {
+      border-color: var(--eps-button-brand);
+      background: var(--eps-button-brand);
+      color: var(--eps-button-brand-text);
+    }
   }
 }
 
 .firehose__mod-filter__icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   fill: currentColor;
 }
 
@@ -3703,9 +3732,11 @@ html.epsilon-in-app {
     border-radius: var(--eps-radius-pill);
     font-size: 0.875rem;
     font-weight: 500;
-    color: var(--eps-text-primary);
+    color: var(--eps-brand-primary);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition:
+      all 0.25s ease,
+      transform 0.12s ease;
     flex-shrink: 0;
     border: 1px solid var(--eps-brand-primary);
 
@@ -3713,17 +3744,33 @@ html.epsilon-in-app {
       padding: 12px 20px !important;
     }
 
-    &:hover,
+    @media (hover: hover) {
+      &:hover {
+        background: var(--eps-border-hover);
+        color: var(--eps-brand-primary);
+      }
+    }
+
     &.active {
-      background: var(--eps-border-hover);
+      border-color: var(--eps-button-brand);
+      background: var(--eps-button-brand);
+      color: var(--eps-button-brand-text);
     }
 
     body.theme-mastodon-light & {
       border: 1px solid var(--eps-text-secondary);
 
-      &:hover,
+      @media (hover: hover) {
+        &:hover {
+          background: var(--eps-nav-hover);
+          color: var(--eps-brand-primary);
+        }
+      }
+
       &.active {
-        background: var(--eps-nav-hover);
+        border-color: var(--eps-button-brand);
+        background: var(--eps-button-brand);
+        color: var(--eps-button-brand-text);
       }
     }
 
@@ -4266,6 +4313,17 @@ html.reduce-motion {
     background: #f4f7fa !important;
     border-bottom: 0.5px solid var(--eps-border) !important;
   }
+
+  .firehose__mod-filter__button:not(.active),
+  .epsilon-home-filter .epsilon-filter-btn:not(.active) {
+    color: var(--eps-text-primary);
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--eps-surface-hover);
+      }
+    }
+  }
 }
 
 @mixin epsilon-contrast-dark {
@@ -4280,6 +4338,24 @@ html.reduce-motion {
   .epsilon-top-navbar {
     background: #1f1e1e !important;
     border-bottom: 0.5px solid var(--eps-border) !important;
+  }
+
+  .firehose__mod-filter__button:not(.active),
+  .epsilon-home-filter .epsilon-filter-btn:not(.active) {
+    color: var(--eps-text-primary);
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--eps-surface-hover);
+      }
+    }
+  }
+
+  .firehose__mod-filter__button.active,
+  .epsilon-home-filter .epsilon-filter-btn.active {
+    border-color: var(--eps-brand-primary);
+    background: var(--eps-brand-primary);
+    color: #16171a;
   }
 }
 
@@ -4364,6 +4440,7 @@ html:not(.reduce-motion) {
     .notification__filter-bar a:active,
     .notification__filter-bar button:active,
     .tag-pill:active,
+    .firehose__mod-filter__button:active,
     .epsilon-category-tile:active,
     .epsilon-category-suggestions__pill:active,
     .epsilon-category-settings__item:active,

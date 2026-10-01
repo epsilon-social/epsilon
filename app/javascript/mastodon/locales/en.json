@@ -704,6 +704,7 @@
   "epsilon.category_suggestions.preparing": "Preparing your feed…",
   "epsilon.category_suggestions.show_more": "Show more",
   "epsilon.category_suggestions.title": "Improve your feed relevance",
+  "epsilon.firehose.title": "Epsilon feed",
   "epsilon.home.empty_message": "Your news feed is empty. Here are some account suggestions to fill it:",
   "epsilon.home.filter": "Filter",
   "epsilon.moderation.icon.title": "Verified and secured by our AI moderation system",

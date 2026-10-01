@@ -673,6 +673,7 @@
   "epsilon.about.title": "À propos",
   "epsilon.about.illustrations_credit": "Illustrations par {storyset}",
   "epsilon.badges.granted_on": "Obtenu le {date}",
+  "epsilon.firehose.title": "Flux Epsilon",
   "epsilon.status_follow.follow": "Suivre {name}",
   "epsilon.status_follow.requested": "Demande d’abonnement en attente",
   "epsilon.status_follow.unfollow": "Ne plus suivre {name}",

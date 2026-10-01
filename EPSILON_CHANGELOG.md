@@ -5,11 +5,17 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.25] - 2026-10-01
+
 ### Added
 
 - **Bouton de suivi dans les posts** : bouton rond à droite du header de chaque post (fils, tendances, recherche, notifications, réponses de threads — pas les profils ni les posts cités), pour suivre/ne plus suivre sans passer par le profil — indispensable dans la coque, où la hover card n'existe pas. Outline brand au repos, coche sur fond bleu plein une fois suivi, sablier si compte verrouillé en attente d'approbation ; animation bulle au suivi et à l'inverse (gatée reduced-motion), désabonnement via la modale native de confirmation. Slot réservé dès le rendu (bouton fantôme puis fondu) : aucun décalage de l'horodatage. Relations chargées en batch (une requête par page de fil, endpoint natif indexé + caché) ; debounce de `fetchRelationships` abaissé de 500 ms à 0 (flush au tick suivant, batching par page conservé, support `maxWait` ajouté au helper). Sidecar : `epsilon/components/status_follow_button.jsx`, `styles/epsilon/components/status_follow.scss` (nouveaux) ; core balisé : `components/status.jsx`, `actions/accounts.js`, `utils/debounce.ts`, `layout.scss` (press feedback) ; i18n `epsilon.status_follow.*`.
 
 ### Changed
+
+- **Le fil public devient « Flux Epsilon »** : renommage dans la sidebar et le titre de la page/onglet navigateur via la nouvelle clé `epsilon.firehose.title` (« Epsilon feed » / « Flux Epsilon »), à la place des titres natifs par scope ; l'entrée remonte entre Accueil et Tendances (ordre aligné aussi pour les visiteurs non connectés). Empreinte native minimale : le bloc de titre natif reste intact, écrasé par une ligne balisée. Fichiers : `epsilon/components/epsilon_sidebar.jsx`, `features/firehose/index.jsx` (balisé), `locales/fr.json`.
+
+- **Filtres du Flux Epsilon et bouton Filtres de la home unifiés** : les boutons « Media only » (tous les utilisateurs), « Contenu à modérer » et « Catégories » (modérateurs) partagent désormais le même langage que le bouton Filtres de la home, lui-même réaligné — texte et bordure bleu brand au repos, hover gris neutre (gaté `hover: hover` pour le tactile), état actif en fond brand plein texte blanc, retour d'appui (compression via le bloc press feedback global, gaté reduced-motion). Rangée alignée à gauche au-dessus du fil. Contraste élevé : texte `--eps-text-primary` au repos/hover, hover sur `--eps-surface-hover`, actif HC sombre en bleu clair/texte sombre (AA). Fichiers : `styles/epsilon/layout.scss` (styles + mixins HC), `features/firehose/index.jsx` (toggle « Media only » natif ré-exposé dans le corps du fil, balisé).
 
 - **README remplacé par le README Epsilon** : notice de fork Mastodon v4.6.0, statut du self-hosting (non supporté, seeds et env documentés), attribution et licence AGPL (`README.md`).
 
