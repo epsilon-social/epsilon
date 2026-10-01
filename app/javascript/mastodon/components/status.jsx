@@ -14,6 +14,11 @@ import { ContentWarning } from 'mastodon/components/content_warning';
 import { FilterWarning } from 'mastodon/components/filter_warning';
 import { Icon }  from 'mastodon/components/icon';
 import { PictureInPicturePlaceholder } from 'mastodon/components/picture_in_picture_placeholder';
+// ==========================================
+// EPSILON : IN-POST FOLLOW BUTTON
+// ==========================================
+import { EpsilonStatusFollowButton } from 'mastodon/epsilon/components/status_follow_button';
+// ==========================================
 import { withOptionalRouter, WithOptionalRouterPropTypes } from 'mastodon/utils/react_router';
 
 import Card from '../features/status/components/card';
@@ -581,12 +586,21 @@ class Status extends ImmutablePureComponent {
     const header = this.props.headerRenderFn
       ? this.props.headerRenderFn({ status, account, avatarSize, messages, onHeaderClick: this.handleHeaderClick, featured })
       : (
+        // ==========================================
+        // EPSILON : IN-POST FOLLOW BUTTON — injected via the native
+        // contentAfterDate slot (far right of the header); skipped inside
+        // quoted posts (keep them quiet) and on profile timelines
+        // (contextType `account:*`, the profile header already has the
+        // real follow button).
+        // ==========================================
         <StatusHeader
           status={status}
           account={account}
           avatarSize={avatarSize}
           onHeaderClick={this.handleHeaderClick}
+          contentAfterDate={!isQuotedPost && !this.props.contextType?.startsWith('account') && <EpsilonStatusFollowButton accountId={status.getIn(['account', 'id'])} />}
         />
+        // ==========================================
       );
 
     return (

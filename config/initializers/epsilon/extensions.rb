@@ -23,5 +23,8 @@ Rails.application.config.to_prepare do
 
   NotifyService.prepend(Epsilon::NotifyServiceExtension) if defined?(NotifyService)
   FanOutOnWriteService.prepend(Epsilon::FanOutOnWriteServiceExtension) if defined?(FanOutOnWriteService)
+  FollowService.prepend(Epsilon::Categorization::FollowServiceExtension) if defined?(FollowService)
+  PrecomputeFeedService.prepend(Epsilon::Categorization::PrecomputeFeedServiceExtension) if defined?(PrecomputeFeedService)
+  UnmergeWorker.prepend(Epsilon::Categorization::UnmergeWorkerExtension) if defined?(UnmergeWorker)
   ActivityPub::DistributionWorker.prepend(Epsilon::ActivityPubDistributionWorkerExtension) if defined?(ActivityPub::DistributionWorker)
 end

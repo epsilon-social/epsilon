@@ -1,0 +1,129 @@
+.epsilon-status-follow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-block-start: -2px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--eps-brand-primary);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--eps-brand-primary);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.12s ease,
+    opacity 0.2s ease;
+
+  &--ghost {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (hover: hover) {
+    &:not(.epsilon-status-follow--engaged):hover {
+      background: var(--eps-surface-hover);
+    }
+  }
+
+  &--engaged {
+    border-color: var(--eps-button-brand);
+    background: var(--eps-button-brand);
+    color: var(--eps-button-brand-text);
+
+    @media (hover: hover) {
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+}
+
+.epsilon-status-follow__bubble {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--eps-brand-primary);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+html:not(.reduce-motion) {
+  @media (prefers-reduced-motion: no-preference) {
+    .epsilon-status-follow--anim-in {
+      animation: epsilon-follow-pop 450ms cubic-bezier(0.175, 0.885, 0.32, 1.4);
+
+      .epsilon-status-follow__bubble {
+        animation: epsilon-follow-burst 450ms ease-out;
+      }
+    }
+
+    .epsilon-status-follow--anim-out {
+      animation: epsilon-follow-unpop 300ms ease-out;
+
+      .epsilon-status-follow__bubble {
+        border-color: var(--eps-text-secondary);
+        animation: epsilon-follow-deflate 300ms ease-in;
+      }
+    }
+  }
+}
+
+@keyframes epsilon-follow-pop {
+  0% {
+    transform: scale(0.65);
+  }
+
+  60% {
+    transform: scale(1.15);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes epsilon-follow-burst {
+  0% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+@keyframes epsilon-follow-unpop {
+  0% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes epsilon-follow-deflate {
+  0% {
+    opacity: 1;
+    transform: scale(1.6);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}

@@ -246,7 +246,14 @@ export default function timelines(state = initialState, action) {
     } else if (blockAccountSuccess.match(action) || muteAccountSuccess.match(action)) {
       return filterTimelines(state, action.payload.relationship, action.payload.statuses);
     } else if (unfollowAccountSuccess.match(action)) {
-      return filterTimeline('home', state, action.payload.relationship, action.payload.statuses);
+      // ==========================================
+      // EPSILON : KEEP POSTS ON UNFOLLOW — natively the home timeline is
+      // vacated client-side (filterTimeline). Jarring with the in-post follow
+      // button, and category-subscribed posts legitimately stay in the feed;
+      // the server keeps Redis consistent (unmerge + category re-backfill).
+      // ==========================================
+      return state;
+      // ==========================================
     } else if (disconnectTimeline.match(action)) {
       return state.update(
         action.payload.timeline,

@@ -4296,6 +4296,10 @@ html.reduce-motion {
   .epsilon-top-navbar__scrim {
     display: none !important;
   }
+
+  .modal-root__overlay {
+    background: rgba(0, 0, 0, 72%) !important;
+  }
 }
 
 // OS setting.
@@ -4371,7 +4375,8 @@ html:not(.reduce-motion) {
 
     // Small round controls take a slightly deeper press.
     .epsilon-layout__center .status__action-bar .icon-button:active,
-    .epsilon-compose .icon-button:active {
+    .epsilon-compose .icon-button:active,
+    .epsilon-status-follow:active {
       transform: scale(0.86);
     }
   }

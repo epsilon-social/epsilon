@@ -472,7 +472,15 @@ const debouncedFetchRelationships = debounceWithDispatchAndArguments((dispatch, 
   }).catch(error => {
     dispatch(fetchRelationshipsFail(error));
   });
-}, { delay: 500 });
+// ==========================================
+// EPSILON : IN-POST FOLLOW BUTTON — zero delay: lodash still flushes on the
+// next tick, so a page of statuses (mounted in one tick) stays batched into
+// a single request (was 500ms). Staggered mounts (desktop scroll reveals,
+// stream inserts) each flush their own small, cached request — acceptable,
+// and starvation by a busy stream is impossible at 0.
+// ==========================================
+}, { delay: 0 });
+// ==========================================
 
 export function fetchRelationships(accountIds) {
   return (dispatch, getState) => {

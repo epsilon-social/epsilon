@@ -5,9 +5,21 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Bouton de suivi dans les posts** : bouton rond à droite du header de chaque post (fils, tendances, recherche, notifications, réponses de threads — pas les profils ni les posts cités), pour suivre/ne plus suivre sans passer par le profil — indispensable dans la coque, où la hover card n'existe pas. Outline brand au repos, coche sur fond bleu plein une fois suivi, sablier si compte verrouillé en attente d'approbation ; animation bulle au suivi et à l'inverse (gatée reduced-motion), désabonnement via la modale native de confirmation. Slot réservé dès le rendu (bouton fantôme puis fondu) : aucun décalage de l'horodatage. Relations chargées en batch (une requête par page de fil, endpoint natif indexé + caché) ; debounce de `fetchRelationships` abaissé de 500 ms à 0 (flush au tick suivant, batching par page conservé, support `maxWait` ajouté au helper). Sidecar : `epsilon/components/status_follow_button.jsx`, `styles/epsilon/components/status_follow.scss` (nouveaux) ; core balisé : `components/status.jsx`, `actions/accounts.js`, `utils/debounce.ts`, `layout.scss` (press feedback) ; i18n `epsilon.status_follow.*`.
+
 ### Changed
 
 - **README remplacé par le README Epsilon** : notice de fork Mastodon v4.6.0, statut du self-hosting (non supporté, seeds et env documentés), attribution et licence AGPL (`README.md`).
+
+- **Les posts restent affichés au désabonnement** : le fil visible n'est plus vidé des posts du compte désabonné (comportement natif court-circuité) ; côté serveur, les backfills de catégories sont ré-enfilés après l'unmerge — au rechargement, les posts relevant d'une catégorie souscrite restent dans le fil. Core balisé : `reducers/timelines.js` ; sidecar : `epsilon/categorization/unmerge_worker_extension.rb` (nouveau).
+
+### Fixed
+
+- **Fil bloqué sur « Préparation de votre flux principal… » pour les comptes abonnés à des catégories** : au premier follow alors qu'on ne suit encore personne, le natif masque le fil derrière l'écran de régénération jusqu'au passage du MergeWorker — qui n'arrive jamais pour un follow distant tant que l'Accept ActivityPub n'est pas revenu. Marquage sauté quand le compte a des abonnements de catégories (le fil n'est pas vide) ; et la régénération native (retour d'inactivité, vacuum) ne reconstruisant le fil que depuis les follows, les backfills de catégories sont ré-enfilés après — un compte « catégories seulement » ne perd plus son fil. Sidecar : `epsilon/categorization/{follow_service,precompute_feed_service}_extension.rb` (nouveaux), `config/initializers/epsilon/extensions.rb`.
+
+- **Contraste élevé : scrim des modales natives assombri** (40 % → 72 %, aligné sur le scrim du compose) : le flou étant retiré en HC, l'assombrissement doit séparer seul la modale du fond. Visualiseur média inchangé (fond 92 %). Fichier : `styles/epsilon/layout.scss` (mixin `epsilon-flatten-glass`).
 
 ## [0.3.24] - 2026-09-30
 
