@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **README remplacé par le README Epsilon** : notice de fork Mastodon v4.6.0, statut du self-hosting (non supporté, seeds et env documentés), attribution et licence AGPL (`README.md`).
+
 ## [0.3.24] - 2026-09-30
 
 ### Changed

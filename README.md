@@ -1,90 +1,65 @@
-> [!NOTE]
-> Want to learn more about Mastodon?
-> Click below to find out more in a video.
+# Epsilon
 
-<p align="center">
-  <a style="text-decoration:none" href="https://www.youtube.com/watch?v=IPSbNdBmWKE">
-    <img alt="Mastodon hero image" src="./docs/hero-nodes.gif" />
-  </a>
-</p>
+**Epsilon** is a French social network built on [Mastodon](https://github.com/mastodon/mastodon). It is a fork of **Mastodon v4.6.0** that adds content categorization, AI-assisted moderation, and a complete redesign of the web interface.
 
-<p align="center">
-  <a style="text-decoration:none" href="https://github.com/mastodon/mastodon/releases">
-    <img src="https://img.shields.io/github/release/mastodon/mastodon.svg" alt="Release" /></a>
-  <a style="text-decoration:none" href="https://github.com/mastodon/mastodon/actions/workflows/test-ruby.yml">
-    <img src="https://github.com/mastodon/mastodon/actions/workflows/test-ruby.yml/badge.svg" alt="Ruby Testing" /></a>
-  <a style="text-decoration:none" href="https://crowdin.com/project/mastodon">
-    <img src="https://d322cqt584bo4o.cloudfront.net/mastodon/localized.svg" alt="Crowdin" /></a>
-</p>
+- Instance: [epsilon.social](https://epsilon.social)
+- iOS app: [Epsilon Social on the App Store](https://apps.apple.com/app/epsilon-social/id6804720532)
+- Changelog of all Epsilon-specific changes: [EPSILON_CHANGELOG.md](EPSILON_CHANGELOG.md) (in French)
 
-Mastodon is a **free, open-source social network server** based on [ActivityPub](https://www.w3.org/TR/activitypub/) where users can follow friends and discover new ones. On Mastodon, users can publish anything they want: links, pictures, text, and video. All Mastodon servers are interoperable as a federated network (users on one server can seamlessly communicate with users from another one, including non-Mastodon software that implements ActivityPub!)
+## About this repository
 
-## Navigation
+This repository contains the source code of what runs in production at epsilon.social, published in compliance with the **AGPLv3** license inherited from Mastodon.
 
-- [Project homepage 🐘](https://joinmastodon.org)
-- [Donate to support development 🎁](https://joinmastodon.org/sponsors#donate)
-  - [View sponsors](https://joinmastodon.org/sponsors)
-- [Blog 📰](https://blog.joinmastodon.org)
-- [Documentation 📚](https://docs.joinmastodon.org)
-- [Official container image 🚢](https://github.com/mastodon/mastodon/pkgs/container/mastodon)
+Day-to-day development happens in a private repository; this public repository is updated at each production deployment. Issues and feature branches are not mirrored here — the commit history of the production branch is.
 
-## Features
+## What's different from Mastodon
 
-<img src="./app/javascript/images/elephant_ui_working.svg?raw=true" align="right" width="30%" />
+Epsilon follows a **non-destructive "sidecar" architecture**: native Mastodon tables and logic are left untouched wherever possible. New behavior lives in parallel tables (`epsilon_*`, `category_*`) and `ActiveSupport::Concern` extensions, and every unavoidable edit to a core file is flagged with an `EPSILON` comment block. This keeps upstream upgrades tractable (upstream releases are merged, not rebased).
 
-**Part of the Fediverse. Based on open standards, with no vendor lock-in.** - the network goes beyond just Mastodon; anything that implements ActivityPub is part of a broader social network known as [the Fediverse](https://jointhefediverse.net/). You can follow and interact with users on other servers (including those running different software), and they can follow you back.
+Main additions:
 
-**Real-time, chronological timeline updates** - updates of people you're following appear in real-time in the UI.
+- **Content categorization** — 23 official categories (FR/EN), hashtag-to-category mapping, automatic categorization of local posts, per-category subscriptions and feeds, crowdsourced category votes, admin tooling.
+- **AI-assisted moderation** — statuses go through a moderation state machine (`unmoderated → pending_ai → approved / manual_review / rejected`) scored by [Mistral](https://mistral.ai). Fail-open by design: if the API is unavailable, posts publish normally. Includes a kill switch, configurable thresholds and prompt, and an admin dashboard.
+- **UI redesign** — three-column layout, light/dark themes, compose modal, redesigned Explore/Trends/Notifications, onboarding flow for category selection.
+- **Extended limits** — 9,000-character posts, 10 media attachments.
 
-**Media attachments** - upload and view images and videos attached to the updates. Videos with no audio track are treated like animated GIFs; normal videos loop continuously.
+## Running Epsilon yourself
 
-**Safety and moderation tools** - Mastodon includes private posts, locked accounts, phrase filtering, muting, blocking, and many other features, along with a reporting and moderation system.
+Honest disclaimer: **self-hosting Epsilon is possible but not officially supported.** This code is published for transparency and license compliance; it is deployed and tested on exactly one instance. There is no installation documentation beyond Mastodon's, no migration path from a stock Mastodon instance is guaranteed, and some UI surfaces assume Epsilon's data has been seeded.
 
-**OAuth2 and a straightforward REST API** - Mastodon acts as an OAuth2 provider, and third party apps can use the REST and Streaming APIs. This results in a [rich app ecosystem](https://joinmastodon.org/apps) with a variety of choices!
+If you want to try anyway:
 
-## Deployment
+1. Follow the standard [Mastodon installation guide](https://docs.joinmastodon.org/admin/install/) — the stack (Ruby on Rails, PostgreSQL, Redis, Sidekiq, Node.js) and deployment configurations are unchanged.
+2. Run the Epsilon seeds, without which categorization features will be empty or broken:
 
-### Tech stack
+   ```sh
+   RAILS_ENV=production bin/rails epsilon:categories:seed   # official categories (idempotent)
+   RAILS_ENV=production bin/rails epsilon:hashtags:seed     # hashtag→category mappings
+   RAILS_ENV=production bin/rails epsilon:setup_sentinel    # AI moderation system account
+   ```
 
-- [Ruby on Rails](https://github.com/rails/rails) powers the REST API and other web pages.
-- [PostgreSQL](https://www.postgresql.org/) is the main database.
-- [Redis](https://redis.io/) and [Sidekiq](https://sidekiq.org/) are used for caching and queueing.
-- [Node.js](https://nodejs.org/) powers the streaming API.
-- [React.js](https://reactjs.org/) and [Redux](https://redux.js.org/) are used for the dynamic parts of the interface.
-- [BrowserStack](https://www.browserstack.com/) supports testing on real devices and browsers. (This project is tested with BrowserStack)
-- [Chromatic](https://www.chromatic.com/) provides visual regression testing. (This project is tested with Chromatic)
+3. Optional environment variables:
+   - `MISTRAL_API_KEY` — enables AI moderation. Without it, moderation fails open and posts publish normally.
+   - `EPSILON_FIRST_PARTY_CLIENT_ID` — OAuth client ID of the first-party mobile app.
 
-### Requirements
-
-- **Ruby** 3.3+
-- **PostgreSQL** 14+
-- **Redis** 7.0+
-- **Node.js** 22+
-- **FFmpeg** 5.1+
-
-This repository includes deployment configurations for **Docker and docker-compose**, as well as for other environments like Heroku and Scalingo. For Helm charts, reference the [mastodon/chart repository](https://github.com/mastodon/chart). A [**standalone** installation guide](https://docs.joinmastodon.org/admin/install/) is available in the main documentation.
+Bug reports from self-hosters are welcome, but support is best-effort.
 
 ## Contributing
 
-Mastodon is **free, open-source software** licensed under **AGPLv3**. We welcome contributions and help from anyone who wants to improve the project.
+The project is young and the contribution process is not formalized yet. Bug reports and security reports are welcome through the issue tracker. If you want to contribute code, please open an issue first to discuss it.
 
-You should read the overall [CONTRIBUTING](https://github.com/mastodon/.github/blob/main/CONTRIBUTING.md) guide, which covers our development processes.
+## Upstream
 
-You should also read and understand the [CODE OF CONDUCT](https://github.com/mastodon/.github/blob/main/CODE_OF_CONDUCT.md) that enables us to maintain a welcoming and inclusive community. Collaboration begins with mutual respect and understanding.
+Epsilon is possible thanks to [Mastodon](https://joinmastodon.org) and its contributors. General documentation about running and using Mastodon lives at [docs.joinmastodon.org](https://docs.joinmastodon.org). Epsilon tracks upstream releases by merging them.
 
-You can learn about setting up a development environment in the [DEVELOPMENT](docs/DEVELOPMENT.md) documentation.
+## License
 
-If you would like to help with translations 🌐 you can do so on [Crowdin](https://crowdin.com/project/mastodon).
+Copyright (c) 2026 Epsilon (modifications)
+Copyright (c) 2016-2025 Eugen Rochko & other [Mastodon contributors](AUTHORS.md) (original work)
 
-## LICENSE
-
-Copyright (c) 2016-2025 Eugen Rochko (+ [`mastodon authors`](AUTHORS.md))
-
-Licensed under GNU Affero General Public License as stated in the [LICENSE](LICENSE):
+Licensed under the GNU Affero General Public License v3 as stated in [LICENSE](LICENSE):
 
 ```text
-Copyright (c) 2016-2025 Eugen Rochko & other Mastodon contributors
-
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU Affero General Public License as published by the Free
 Software Foundation, either version 3 of the License, or (at your option) any
