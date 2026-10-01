@@ -29,6 +29,8 @@ import { PictureInPicturePlaceholder } from 'mastodon/components/picture_in_pict
 import StatusContent from 'mastodon/components/status_content';
 import { QuotedStatus } from 'mastodon/components/status_quoted';
 import { VisibilityIcon } from 'mastodon/components/visibility_icon';
+// EPSILON : IN-POST FOLLOW BUTTON
+import { EpsilonStatusFollowButton } from 'mastodon/epsilon/components/status_follow_button';
 import { Audio } from 'mastodon/features/audio';
 import { CollectionPreviewCard } from 'mastodon/features/collections/components/collection_preview_card';
 import scheduleIdleTask from 'mastodon/features/ui/util/schedule_idle_task';
@@ -462,6 +464,15 @@ export const DetailedStatus: React.FC<{
             </>
           )}
         </Link>
+
+        {/* ========================================== */}
+        {/* EPSILON : IN-POST FOLLOW BUTTON — sibling of the header link */}
+        {/* (no button inside a Link), pinned top-right via CSS. */}
+        {/* ========================================== */}
+        <EpsilonStatusFollowButton
+          accountId={status.getIn(['account', 'id']) as string}
+        />
+        {/* ========================================== */}
 
         {matchedFilters && (
           <FilterWarning

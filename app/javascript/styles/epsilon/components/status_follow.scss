@@ -50,6 +50,21 @@
   }
 }
 
+.detailed-status {
+  position: relative;
+
+  .epsilon-status-follow {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+    margin-block-start: 0;
+  }
+
+  .detailed-status__display-name {
+    padding-inline-end: 38px;
+  }
+}
+
 .epsilon-status-follow__bubble {
   position: absolute;
   inset: -2px;
