@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.26] - 2026-10-05
+
 ### Security
 
 - **Les posts en attente de modération IA n'étaient masqués que des fils poussés (fan-out)** : toutes les lectures directes en base les servaient à n'importe quel utilisateur — fil public/hashtags, profil (API, outbox ActivityPub, RSS), URL directe et fils de discussion, régénération du fil home et backfill de catégories. Fermé par le scope `Status.epsilon_without_pending_ai` appliqué via cinq extensions sidecar : `StatusPolicy#show?` (couvre statut, threads, recherche et interactions), `PublicFeed#public_scope` (+ `TagFeed` par héritage), `AccountStatusesFilter`, `FeedManager` (`filter_from_home`/`filter_from_list?`, couvre régénération, merge au follow et backfill catégories) et l'hydratation Redis (`Feed#from_redis`, purge de lecture des ids déjà fuités dans les feeds). L'auteur et le staff (`manage_reports`) gardent la visibilité (posts grisés). Index partiel `epsilon_ai_status_moderations(status_id) WHERE state=1` (concurrently). Sidecar : `epsilon/ai_moderation_{public_feed,feed,account_statuses_filter,feed_manager,status_policy,accounts_controller}_extension.rb` (nouveaux).
