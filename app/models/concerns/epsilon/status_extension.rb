@@ -15,6 +15,19 @@ module Epsilon::StatusExtension
     delegate :unmoderated?, :pending_ai?, :approved?, :manual_review?, :rejected?,
              to: :epsilon_ai_status_moderation_or_default
 
+    # Excludes statuses still held for AI moderation -- and reblogs whose
+    # target is held, so a boost cannot resurface the content of a post that
+    # went back to pending_ai (edit re-moderation). The held set is tiny and
+    # covered by the partial index index_epsilon_ai_moderations_pending_status_id,
+    # so both correlated NOT EXISTS probes stay cheap on hot read paths.
+    scope :epsilon_without_pending_ai, lambda {
+      pending     = ::Epsilon::AiStatusModeration.pending_ai
+      held_self   = pending.where(pending.arel_table[:status_id].eq(arel_table[:id]))
+      held_target = pending.where(pending.arel_table[:status_id].eq(arel_table[:reblog_of_id]))
+
+      where.not(held_self.arel.exists).where.not(held_target.arel.exists)
+    }
+
     before_create :epsilon_set_pending_ai_state, if: :epsilon_requires_moderation?
     after_create_commit :epsilon_trigger_remote_ai_moderation, if: :pending_ai?
   end

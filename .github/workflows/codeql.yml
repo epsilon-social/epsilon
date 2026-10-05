@@ -1,18 +1,16 @@
 name: 'CodeQL'
 
 on:
-  merge_group:
+  # ==========================================
+  # EPSILON : CI
+  # Fork policy: run only on the production branch, plus manual dispatch.
+  # Upstream PR / merge_group / main|stable-* triggers are intentionally
+  # dropped so CI does not run on feature branches or pull requests.
+  # ==========================================
   push:
     branches:
-      - 'main'
-      - 'stable-*'
-  pull_request:
-    branches:
-      - 'main'
-      - 'stable-*'
-  schedule:
-    - cron: '22 6 * * 1'
-
+      - 'production'
+  workflow_dispatch:
 jobs:
   analyze:
     name: Analyze

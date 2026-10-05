@@ -31,6 +31,7 @@ class Epsilon::ModerationEvent < ApplicationRecord
     rejected: 2,
     reaper_released: 3,
     fail_open: 4,
+    manual_approved: 5,
   }
 
   enum :source, {
@@ -38,6 +39,7 @@ class Epsilon::ModerationEvent < ApplicationRecord
     native: 1,
     reaper: 2,
     remoderation: 3,
+    admin: 4,
   }, prefix: :source
 
   scope :search_acct, lambda { |query|

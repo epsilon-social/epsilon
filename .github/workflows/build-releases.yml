@@ -50,18 +50,28 @@ jobs:
     uses: ./.github/workflows/build-container-image.yml
     with:
       file_to_build: Dockerfile
+      # ==========================================
+      # EPSILON : CI
+      # Push to the fork's GHCR only (GITHUB_TOKEN suffices); the
+      # upstream Docker Hub/ghcr targets need secrets and permissions
+      # this repository does not have.
+      # ==========================================
       push_to_images: |
-        tootsuite/mastodon
-        ghcr.io/mastodon/mastodon
+        ghcr.io/epsilon-social/epsilon-private
       # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages
       cache: false
       # Only tag with latest when ran against the latest stable branch
       # This needs to be updated after each minor version release
       flavor: |
         latest=${{ needs.check-latest-stable.outputs.latest }}
+      # ==========================================
+      # EPSILON : CI
+      # Our tags (epsilon-vX.Y.Z) are not pep440 -- the pep440 types
+      # would emit zero image tags and fail the push. Use the raw
+      # git tag as the image tag instead.
+      # ==========================================
       tags: |
-        type=pep440,pattern={{raw}}
-        type=pep440,pattern=v{{major}}.{{minor}}
+        type=ref,event=tag
     secrets: inherit
 
   build-image-streaming:
@@ -69,16 +79,24 @@ jobs:
     uses: ./.github/workflows/build-container-image.yml
     with:
       file_to_build: streaming/Dockerfile
+      # ==========================================
+      # EPSILON : CI
+      # Same as above: fork GHCR only.
+      # ==========================================
       push_to_images: |
-        tootsuite/mastodon-streaming
-        ghcr.io/mastodon/mastodon-streaming
+        ghcr.io/epsilon-social/epsilon-private-streaming
       # Do not use cache when building releases, so apt update is always ran and the release always contain the latest packages
       cache: false
       # Only tag with latest when ran against the latest stable branch
       # This needs to be updated after each minor version release
       flavor: |
         latest=${{ needs.check-latest-stable.outputs.latest }}
+      # ==========================================
+      # EPSILON : CI
+      # Our tags (epsilon-vX.Y.Z) are not pep440 -- the pep440 types
+      # would emit zero image tags and fail the push. Use the raw
+      # git tag as the image tag instead.
+      # ==========================================
       tags: |
-        type=pep440,pattern={{raw}}
-        type=pep440,pattern=v{{major}}.{{minor}}
+        type=ref,event=tag
     secrets: inherit

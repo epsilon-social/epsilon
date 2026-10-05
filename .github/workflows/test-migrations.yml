@@ -1,27 +1,16 @@
 name: Historical data migration test
 
 on:
-  merge_group:
+  # ==========================================
+  # EPSILON : CI
+  # Fork policy: run only on the production branch, plus manual dispatch.
+  # Upstream PR / merge_group / main|stable-* triggers are intentionally
+  # dropped so CI does not run on feature branches or pull requests.
+  # ==========================================
   push:
     branches:
-      - 'main'
-      - 'stable-*'
-    paths:
-      - 'Gemfile*'
-      - '.ruby-version'
-      - '**/*.rb'
-      - '.github/workflows/test-migrations.yml'
-      - 'lib/tasks/tests.rake'
-      - 'lib/tasks/db.rake'
-
-  pull_request:
-    paths:
-      - 'Gemfile*'
-      - '.ruby-version'
-      - '**/*.rb'
-      - '.github/workflows/test-migrations.yml'
-      - 'lib/tasks/tests.rake'
-
+      - 'production'
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest

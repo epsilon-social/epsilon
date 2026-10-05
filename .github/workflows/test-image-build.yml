@@ -1,14 +1,11 @@
 name: Test container image build
 on:
-  pull_request:
-    paths:
-      - .github/workflows/build-nightly.yml
-      - .github/workflows/build-push-pr.yml
-      - .github/workflows/build-releases.yml
-      - .github/workflows/test-image-build.yml
-      - Dockerfile
-      - streaming/Dockerfile
-      - .dockerignore
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
+  workflow_dispatch:
 permissions:
   contents: read
 

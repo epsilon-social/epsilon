@@ -1,33 +1,15 @@
 name: JavaScript Testing
 on:
-  merge_group:
+  # ==========================================
+  # EPSILON : CI
+  # Fork policy: run only on the production branch, plus manual dispatch.
+  # Upstream PR / merge_group / main|stable-* triggers are intentionally
+  # dropped so CI does not run on feature branches or pull requests.
+  # ==========================================
   push:
     branches:
-      - 'main'
-      - 'stable-*'
-    paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - '.nvmrc'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.snap'
-      - '.github/workflows/test-js.yml'
-
-  pull_request:
-    paths:
-      - 'package.json'
-      - 'yarn.lock'
-      - '.nvmrc'
-      - '**/*.js'
-      - '**/*.jsx'
-      - '**/*.ts'
-      - '**/*.tsx'
-      - '**/*.snap'
-      - '.github/workflows/test-js.yml'
-
+      - 'production'
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest

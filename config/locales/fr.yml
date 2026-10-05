@@ -43,6 +43,7 @@ fr:
             rejected: Rejeté
             reaper_released: Rattrapé (job perdu)
             fail_open: Publié pendant une panne
+            manual_approved: Approuvé manuellement
           sensitive: Avec avertissement
           breakdown: Découpage
           range_label: Plage
@@ -112,6 +113,9 @@ fr:
           restore: Restaurer
           restore_confirm: Restaurer ce post ? Il sera republié et son strike automatique annulé.
           restored: Post restauré et republié.
+          approve: Approuver maintenant
+          approve_confirm: Publier ce post sans attendre le verdict de l'IA ? Il sera publié et distribué immédiatement.
+          approved: Post approuvé et publié.
           sensitive_hint: Ces posts publiés ont reçu un avertissement de contenu par l'IA. Retirez l'avertissement sur un faux positif — le post reste publié, seul l'avertissement est enlevé.
           remove_cw: Retirer l'avertissement
           remove_cw_confirm: Retirer l'avertissement de contenu IA de ce post ?

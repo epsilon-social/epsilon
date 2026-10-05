@@ -21,6 +21,16 @@ module Admin
         @statuses = Status.unscoped.where(id: @moderations.map(&:status_id)).includes(:account).index_by(&:id)
       end
 
+      def approve
+        authorize :epsilon_ai_moderation_setting, :update?
+
+        status = Status.find(params[:id])
+        ::Epsilon::ApproveHeldStatusService.new.call(status)
+
+        redirect_back_or_to admin_epsilon_ai_moderations_path,
+                            notice: t('admin.epsilon.ai_moderation.moderations.approved')
+      end
+
       def restore
         authorize :epsilon_ai_moderation_setting, :update?
 

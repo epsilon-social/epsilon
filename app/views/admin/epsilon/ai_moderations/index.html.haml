@@ -25,6 +25,7 @@
           %th= t('admin.epsilon.ai_moderation.moderations.age')
           %th
       %tbody
+        - show_approve = %w(pending stuck needs_attention).include?(@filter)
         - @moderations.each do |moderation|
           - status = @statuses[moderation.status_id]
           - next if status.nil?
@@ -35,6 +36,9 @@
             %td= t('admin.epsilon.ai_moderation.health.ago', time: time_ago_in_words(moderation.updated_at))
             %td.epsilon-moderation-actions
               = link_to t('admin.epsilon.ai_moderation.moderations.manage'), admin_account_status_path(status.account_id, status.id)
+              - if show_approve
+                - approve_confirm = t('admin.epsilon.ai_moderation.moderations.approve_confirm')
+                = button_to t('admin.epsilon.ai_moderation.moderations.approve'), approve_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: approve_confirm }
               - if @filter == 'rejected'
                 = button_to t('admin.epsilon.ai_moderation.moderations.restore'), restore_admin_epsilon_ai_moderation_path(status.id), class: 'button', data: { confirm: t('admin.epsilon.ai_moderation.moderations.restore_confirm') }
               - if @filter == 'sensitive'

@@ -1,8 +1,11 @@
 name: Build container image for PR
 on:
-  pull_request:
-    types: [labeled, synchronize, reopened, ready_for_review, opened]
-
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
+  workflow_dispatch:
 permissions:
   contents: read
   packages: write

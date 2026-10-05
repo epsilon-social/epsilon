@@ -152,7 +152,14 @@ RSpec.describe Trends::Statuses do
     subject.add(status, reblog.account_id, at_time)
   end
 
+  # ==========================================
+  # EPSILON : TRENDS
+  # Read the threshold from the subject under test, not default_options: the
+  # subject is built with threshold: 5 while Epsilon lowered the default to 2,
+  # so seeding default_options[:threshold] reblogs left every status below the
+  # bar (no StatusTrend rows, empty queries).
+  # ==========================================
   def default_threshold_value
-    described_class.default_options[:threshold]
+    subject.options[:threshold]
   end
 end

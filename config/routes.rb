@@ -264,6 +264,7 @@ Rails.application.routes.draw do
         member do
           post :restore
           post :remove_content_warning
+          post :approve
         end
       end
 

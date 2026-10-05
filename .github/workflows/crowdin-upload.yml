@@ -1,21 +1,12 @@
 name: Crowdin / Upload translations
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'stable-*'
-    paths:
-      - crowdin.yml
-      - app/javascript/mastodon/locales/en.json
-      - config/locales/en.yml
-      - config/locales/simple_form.en.yml
-      - config/locales/activerecord.en.yml
-      - config/locales/devise.en.yml
-      - config/locales/doorkeeper.en.yml
-      - .github/workflows/crowdin-upload.yml
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
   workflow_dispatch:
-
 jobs:
   upload-translations:
     runs-on: ubuntu-latest

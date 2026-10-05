@@ -1,9 +1,12 @@
 name: PR Needs Rebase
 
 on:
-  schedule:
-    - cron: '0 * * * *'
-
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
+  workflow_dispatch:
 permissions:
   pull-requests: write
 

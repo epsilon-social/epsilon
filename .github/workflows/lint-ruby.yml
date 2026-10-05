@@ -1,29 +1,15 @@
 name: Ruby Linting
 on:
-  merge_group:
+  # ==========================================
+  # EPSILON : CI
+  # Fork policy: run only on the production branch, plus manual dispatch.
+  # Upstream PR / merge_group / main|stable-* triggers are intentionally
+  # dropped so CI does not run on feature branches or pull requests.
+  # ==========================================
   push:
     branches:
-      - 'main'
-      - 'stable-*'
-    paths:
-      - 'Gemfile*'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - 'bin/rubocop'
-      - '**/*.rb'
-      - '**/*.rake'
-      - '.github/workflows/lint-ruby.yml'
-
-  pull_request:
-    paths:
-      - 'Gemfile*'
-      - '.rubocop*.yml'
-      - '.ruby-version'
-      - 'bin/rubocop'
-      - '**/*.rb'
-      - '**/*.rake'
-      - '.github/workflows/lint-ruby.yml'
-
+      - 'production'
+  workflow_dispatch:
 jobs:
   lint:
     runs-on: ubuntu-latest

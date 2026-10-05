@@ -331,13 +331,13 @@ const EpsilonSidebar = () => {
 
       <div className='epsilon-sidebar__footer'>
         {signedIn && (
-          <a href='/auth/sign_out' data-method='delete' className='epsilon-sidebar__item'
-            onClick={handleLogoutClick}
-            type='button'
-          >
+          // A plain button, not an <a href data-method='delete'>: the Rails UJS
+          // form submission that the anchor triggers is blocked by the web app's
+          // `form-action 'none'` CSP. The confirmation modal logs out via XHR.
+          <button className='epsilon-sidebar__item' onClick={handleLogoutClick} type='button'>
             <Icon id='sign-out' icon={LogoutIcon} />
             <span>{intl.formatMessage(messages.logout)}</span>
-          </a>
+          </button>
         )}
 
         <LinkFooter />

@@ -1,9 +1,11 @@
 name: Build nightly container image
 on:
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
   workflow_dispatch:
-  schedule:
-    - cron: '0 2 * * *' # run at 2 AM UTC
-
 permissions:
   contents: read
   packages: write

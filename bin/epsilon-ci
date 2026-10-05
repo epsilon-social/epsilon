@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Run the GitHub Actions checks locally, natively -- no Docker, no `act`.
+# Each check below mirrors the command a CI workflow runs, so a green run here
+# means the same job should pass on GitHub. The heavy test-ruby/build-releases
+# pipelines are not faithfully reproducible under `act` anyway; running their
+# underlying commands (as here) is the honest local signal.
+#
+# Usage:
+#   bin/epsilon-ci            # run every check
+#   bin/epsilon-ci ruby js    # run only the named checks
+# Checks: rubocop brakeman haml css js typecheck format testjs i18n ruby
+
+set -uo pipefail
+cd "$(dirname "$0")/.." || exit 1
+
+# Single-instance lock. Two concurrent runs share the RSpec test DB + Redis and
+# every tool cache (eslint/rubocop/oxfmt/vite), which produces spurious failures
+# -- never run two at once. mkdir is atomic, so it is a reliable lock.
+LOCK_DIR="tmp/epsilon-ci.lock"
+if ! mkdir "$LOCK_DIR" 2>/dev/null; then
+  echo "Another bin/epsilon-ci run is in progress (lock: $LOCK_DIR)." >&2
+  echo "Run checks one at a time. If no run is active, remove the lock dir." >&2
+  exit 1
+fi
+trap 'rmdir "$LOCK_DIR" 2>/dev/null' EXIT
+
+failed=()
+run() { # <label> <command...>
+  echo "▶ $1"
+  if "${@:2}"; then echo "✓ $1"; else echo "✗ $1"; failed+=("$1"); fi
+  echo
+}
+
+want() { [ ${#TARGETS[@]} -eq 0 ] || printf '%s\n' "${TARGETS[@]}" | grep -qx "$1"; }
+
+TARGETS=("$@")
+
+# — Lint / format (workflows: lint-ruby, lint-haml, lint-css, lint-js, format-check)
+want rubocop   && run "Ruby Linting (rubocop)"   bin/rubocop --format github
+want brakeman  && run "Security (brakeman)"       bin/brakeman
+want haml      && run "Haml Linting"              bin/haml-lint --reporter github
+want css       && run "CSS Linting"               yarn lint:css
+want js        && run "JS Linting"                yarn workspaces foreach --all --parallel run lint:js --max-warnings 0
+want typecheck && run "TypeScript"                yarn typecheck
+# Exact CI command (respects .oxfmtrc.json ignores). CAVEAT: oxfmt scans the
+# whole working tree, so it also flags local-only *untracked* files (CLAUDE.md,
+# docs/, scratchpad) that CI never sees. If the only files it reports are
+# untracked, CI is green -- check with `git status` before worrying.
+want format    && run "Formatting (oxfmt)"        yarn format:check
+
+# — Tests (workflows: test-js, test-ruby)
+# `--run` forces a single run; the bare `yarn test:js` enters vitest's
+# interactive watch mode locally (CI runs it non-interactively).
+want testjs    && run "JavaScript Testing"        yarn test:js --run
+# Ruby suite: CI uses flatware to shard; locally plain rspec is simpler and equivalent.
+want ruby      && run "Ruby Testing (rspec)"      bundle exec rspec
+
+# — i18n (workflow: check-i18n)
+# NOTE: `i18n-tasks check-normalized` fails on en.yml/fr.yml as pre-existing
+# debt (see CLAUDE.md) -- only the extract check is run here to avoid a
+# guaranteed-red, off-topic failure.
+want i18n      && run "i18n extract"              yarn i18n:extract --throws
+
+if [ ${#failed[@]} -eq 0 ]; then
+  echo "All checks passed."
+else
+  echo "Failed: ${failed[*]}"
+  exit 1
+fi

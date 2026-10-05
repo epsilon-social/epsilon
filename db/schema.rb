@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_29_143722) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -605,6 +605,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_29_143722) do
     t.bigint "status_id", null: false
     t.datetime "updated_at", null: false
     t.index ["ai_failed_open"], name: "index_epsilon_ai_status_moderations_on_failed_open", where: "(ai_failed_open = true)"
+    t.index ["status_id"], name: "index_epsilon_ai_moderations_pending_status_id", where: "(state = 1)"
     t.index ["status_id"], name: "index_epsilon_ai_status_moderations_on_status_id", unique: true
     t.index ["updated_at"], name: "index_epsilon_ai_status_moderations_pending", where: "(state = 1)"
   end
@@ -632,6 +633,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_29_143722) do
     t.string "slug", limit: 50, null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_epsilon_badges_on_slug", unique: true
+  end
+
+  create_table "epsilon_curated_feed_items", force: :cascade do |t|
+    t.bigint "added_by_account_id"
+    t.datetime "created_at", null: false
+    t.bigint "curated_feed_id", null: false
+    t.integer "position", default: 0, null: false
+    t.integer "state", default: 0, null: false
+    t.bigint "status_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["added_by_account_id"], name: "index_epsilon_curated_feed_items_on_added_by_account_id"
+    t.index ["curated_feed_id", "state", "position"], name: "idx_epsilon_curated_feed_items_timeline", order: { position: :desc }
+    t.index ["curated_feed_id", "status_id"], name: "idx_epsilon_curated_feed_items_unique", unique: true
+    t.index ["status_id"], name: "index_epsilon_curated_feed_items_on_status_id"
+  end
+
+  create_table "epsilon_curated_feeds", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "description_translations", default: {}, null: false
+    t.datetime "ends_at"
+    t.string "icon"
+    t.string "name", null: false
+    t.jsonb "name_translations", default: {}, null: false
+    t.bigint "parent_id"
+    t.integer "position", default: 0, null: false
+    t.string "slug", null: false
+    t.datetime "starts_at"
+    t.integer "state", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_epsilon_curated_feeds_on_parent_id"
+    t.index ["slug"], name: "index_epsilon_curated_feeds_on_slug", unique: true
   end
 
   create_table "epsilon_live_invitations", force: :cascade do |t|
@@ -1747,6 +1779,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_29_143722) do
   add_foreign_key "epsilon_ai_metadata", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_ai_status_moderations", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_badge_pending_grants", "epsilon_badges"
+  add_foreign_key "epsilon_curated_feed_items", "accounts", column: "added_by_account_id", on_delete: :nullify
+  add_foreign_key "epsilon_curated_feed_items", "epsilon_curated_feeds", column: "curated_feed_id", on_delete: :cascade
+  add_foreign_key "epsilon_curated_feed_items", "statuses", on_delete: :cascade
+  add_foreign_key "epsilon_curated_feeds", "epsilon_curated_feeds", column: "parent_id", on_delete: :cascade
   add_foreign_key "epsilon_live_questions", "accounts"
   add_foreign_key "epsilon_live_questions", "live_sessions"
   add_foreign_key "fasp_backfill_requests", "fasp_providers"

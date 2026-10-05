@@ -1,9 +1,11 @@
 name: Crowdin / Download translations
 on:
-  schedule:
-    - cron: '17 4 * * *' # Every day
+  # ==========================================
+  # EPSILON : CI
+  # Upstream-only automation, irrelevant to the fork under the
+  # production-only policy: manual dispatch only.
+  # ==========================================
   workflow_dispatch:
-
 permissions:
   contents: write
   pull-requests: write

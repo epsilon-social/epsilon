@@ -32,11 +32,12 @@ RSpec.describe 'Log out' do
       expect(page)
         .to have_css('body', class: 'app-body')
 
-      within '.navigation-panel' do
-        click_on 'More'
-      end
-
-      within '.dropdown-menu' do
+      # ==========================================
+      # EPSILON : UI
+      # The Epsilon layout replaces the native navigation panel; the sidebar
+      # exposes a direct Logout entry that opens the native confirmation modal.
+      # ==========================================
+      within '.epsilon-sidebar' do
         click_on 'Logout'
       end
 

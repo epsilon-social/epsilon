@@ -43,6 +43,7 @@ en:
             rejected: Rejected
             reaper_released: Recovered (lost job)
             fail_open: Published during outage
+            manual_approved: Manually approved
           sensitive: With content warning
           breakdown: Breakdown
           range_label: Range
@@ -112,6 +113,9 @@ en:
           restore: Restore
           restore_confirm: Restore this post? It will be republished and its automated strike removed.
           restored: Post restored and republished.
+          approve: Approve now
+          approve_confirm: Release this post without waiting for the AI verdict? It will be published and distributed immediately.
+          approved: Post approved and published.
           sensitive_hint: These published posts were flagged with a content warning by the AI. Lift the warning on a false positive — the post stays published, only the warning is removed.
           remove_cw: Remove warning
           remove_cw_confirm: Remove the AI content warning from this post?
