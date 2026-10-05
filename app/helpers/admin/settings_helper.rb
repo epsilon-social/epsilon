@@ -2,7 +2,10 @@
 
 module Admin::SettingsHelper
   def captcha_available?
-    Rails.configuration.x.captcha.secret_key.present? && Rails.configuration.x.captcha.site_key.present?
+    # ==========================================
+    # EPSILON : SELF-HOSTED CAPTCHA (ALTCHA)
+    Captcha.provider.present?
+    # ==========================================
   end
 
   def login_activity_title(activity)

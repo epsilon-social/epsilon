@@ -92,6 +92,10 @@ Rails.application.routes.draw do
       post 'captcha_confirmation', to: 'confirmations#confirm_captcha', as: :captcha_confirmation
 
       # ==========================================
+      # EPSILON : SELF-HOSTED CAPTCHA (ALTCHA)
+      get 'captcha_challenge', to: 'captchas#challenge', as: :captcha_challenge
+      # ==========================================
+      # ==========================================
       # EPSILON : SESSION BRIDGE (OAuth Bearer -> Devise web session)
       # ==========================================
       get 'bridge', to: 'bridge#show'

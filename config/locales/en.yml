@@ -1551,6 +1551,7 @@ en:
   auth:
     apply_for_account: Request an account
     captcha_confirmation:
+      failed: The anti-robot verification failed. Please try again.
       help_html: If you have issues solving the CAPTCHA, you can get in touch with us through %{email} and we can assist you.
       hint_html: Just one more thing! We need to confirm you're a human (this is so we can keep the spam out!). Solve the CAPTCHA below and click "Continue".
       title: Security check

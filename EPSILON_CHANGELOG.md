@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.27] - 2026-10-05
+
+### Added
+
+- **Captcha auto-hébergé ALTCHA (proof-of-work)** : remplace hCaptcha à la confirmation d'e-mail par un défi cryptographique résolu en arrière-plan dans le navigateur (gem `altcha` + widget bundlé Vite) — zéro service externe, zéro script tiers, pas de cookies ni tracking (RGPD par construction, projet tchèque MIT), CSP non élargie (le widget tamponne son style avec le nonce de page via `csp_meta_tag`), accessible WCAG. Abstraction provider upstream-able avec auto-détection par env : `ALTCHA_HMAC_KEY` → ALTCHA, sinon `HCAPTCHA_*` → hCaptcha (toujours supporté). Challenge signé HMAC servi par `GET /auth/captcha_challenge` (TTL 10 min, difficulté réglable via `COST`/`COUNTER_RANGE`), anti-replay par nonce one-time Redis, payloads malformés refusés sans exception. Throttles Rack::Attack dédiés : challenge 30/5 min/IP, soumission 25/5 min/IP (non couverts par les throttles natifs). Widget aux couleurs brand (variables `--altcha-*` remappées sur `--eps-*`, suit clair/sombre), i18n fr, skin checkbox Epsilon exclu de son DOM interne (pas de Shadow DOM). Sidecar : `app/lib/captcha.rb`, `app/lib/captcha/{altcha,hcaptcha}_provider.rb`, `app/controllers/auth/captchas_controller.rb`, `entrypoints/captcha.ts` (nouveaux) ; core balisé : `concerns/auth/captcha_concern.rb` (refactor provider-agnostique), `config/routes.rb`, `config/captcha.yml`, `helpers/admin/settings_helper.rb`, `config/initializers/rack_attack.rb` ; styles : `styles/epsilon/auth.scss` ; locales : clé `auth.captcha_confirmation.failed` (`en.yml`/`fr.yml`) ; specs : détection de provider, vérification/anti-replay, endpoint challenge (spec système natif inchangé). Env serveur : `ALTCHA_HMAC_KEY` (`openssl rand -hex 32`), activation via la case existante de `/admin/settings/registrations`.
+
 ## [0.3.26] - 2026-10-05
 
 ### Security

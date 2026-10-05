@@ -170,6 +170,23 @@ class Rack::Attack
   end
   # ==========================================
 
+  # ==========================================
+  # EPSILON : SELF-HOSTED CAPTCHA (ALTCHA)
+  # ==========================================
+  # Challenge generation is unauthenticated and costs one KDF derivation per
+  # call. The widget needs one challenge per page load, plus a refetch when it
+  # expires (every 10 minutes), so this stays generous for shared IPs.
+  throttle('throttle_epsilon_captcha_challenge/ip', limit: 30, period: 5.minutes) do |req|
+    req.throttleable_remote_ip if req.get? && req.path_matches?('/auth/captcha_challenge')
+  end
+
+  # Captcha submissions: a legitimate user submits once or twice. Not covered
+  # by throttle_sign_up_attempts, whose path_matches? anchors to /auth exactly.
+  throttle('throttle_captcha_confirmation/ip', limit: 25, period: 5.minutes) do |req|
+    req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/captcha_confirmation')
+  end
+  # ==========================================
+
   self.throttled_responder = lambda do |request|
     now        = Time.now.utc
     match_data = request.env['rack.attack.match_data']

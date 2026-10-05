@@ -3,7 +3,11 @@
 module Auth::CaptchaConcern
   extend ActiveSupport::Concern
 
-  include Hcaptcha::Adapters::ViewMethods
+  # ==========================================
+  # EPSILON : CAPTCHA PROVIDER ABSTRACTION
+  # Delegates to Captcha.provider (hCaptcha or self-hosted ALTCHA),
+  # auto-detected from environment variables. See app/lib/captcha.rb.
+  # ==========================================
 
   CAPTCHA_DIRECTIVES = %w(
     connect_src
@@ -12,17 +16,16 @@ module Auth::CaptchaConcern
     style_src
   ).freeze
 
-  CAPTCHA_SOURCES = %w(
-    https://*.hcaptcha.com
-    https://hcaptcha.com
-  ).freeze
-
   included do
     helper_method :render_captcha
   end
 
+  def captcha_provider
+    @captcha_provider ||= Captcha.provider
+  end
+
   def captcha_available?
-    Rails.configuration.x.captcha.secret_key.present? && Rails.configuration.x.captcha.site_key.present?
+    captcha_provider.present?
   end
 
   def captcha_enabled?
@@ -40,15 +43,10 @@ module Auth::CaptchaConcern
   def check_captcha!
     return true unless captcha_required?
 
-    if verify_hcaptcha
+    if captcha_provider.verify(self)
       true
     else
-      if block_given?
-        message = flash[:hcaptcha_error]
-        flash.delete(:hcaptcha_error)
-        yield message
-      end
-
+      yield captcha_provider.error_message(self) if block_given?
       false
     end
   end
@@ -56,28 +54,31 @@ module Auth::CaptchaConcern
   def extend_csp_for_captcha!
     return unless captcha_required? && request.content_security_policy.present?
 
-    request.content_security_policy = captcha_adjusted_policy
+    sources = captcha_provider&.csp_sources
+    return if sources.blank?
+
+    request.content_security_policy = captcha_adjusted_policy(sources)
   end
 
   def render_captcha
     return unless captcha_required?
 
-    hcaptcha_tags
+    captcha_provider.widget_html(helpers)
   end
 
   private
 
-  def captcha_adjusted_policy
+  def captcha_adjusted_policy(sources)
     request.content_security_policy.clone.tap do |policy|
-      populate_captcha_policy(policy)
+      populate_captcha_policy(policy, sources)
     end
   end
 
-  def populate_captcha_policy(policy)
+  def populate_captcha_policy(policy, sources)
     CAPTCHA_DIRECTIVES.each do |directive|
       values = policy.send(directive)
 
-      CAPTCHA_SOURCES.each do |source|
+      sources.each do |source|
         values << source unless values.include?(source) || values.include?('https:')
       end
 

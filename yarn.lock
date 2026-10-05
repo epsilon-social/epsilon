@@ -2927,6 +2927,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^4.1.10"
     "@vitest/coverage-v8": "npm:^4.1.0"
     "@vitest/ui": "npm:^4.1.0"
+    altcha: "npm:^3.2.4"
     arrow-key-navigation: "npm:^1.2.0"
     async-mutex: "npm:^0.5.0"
     axios: "npm:^1.4.0"
@@ -5525,6 +5526,15 @@ __metadata:
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
   checksum: 10c0/ec3ba10a573c6b60f94639ffc53526275917a2df6810e4ab5a6b959d87459f9ef3f00d5e7865b82677cb7d21590355b34da14d1d0b9c32d75f95a187e76fff35
+  languageName: node
+  linkType: hard
+
+"altcha@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "altcha@npm:3.2.4"
+  dependencies:
+    hash-wasm: "npm:^4.12.0"
+  checksum: 10c0/656882d13683a022a287035de6d984309309923a1da3d96ca87ddc3d62cfc45f60f3c743ea9a15e17bbf9294471774b5e1f0bf3805269a789d06d2b70c9d366b
   languageName: node
   linkType: hard
 
@@ -8461,6 +8471,13 @@ __metadata:
   dependencies:
     has-symbols: "npm:^1.0.3"
   checksum: 10c0/a8b166462192bafe3d9b6e420a1d581d93dd867adb61be223a17a8d6dad147aa77a8be32c961bb2f27b3ef893cae8d36f564ab651f5e9b7938ae86f74027c48c
+  languageName: node
+  linkType: hard
+
+"hash-wasm@npm:^4.12.0":
+  version: 4.12.0
+  resolution: "hash-wasm@npm:4.12.0"
+  checksum: 10c0/6cb95055319810b6f673de755289960683a9831807690795f0e8918b2fd7e6ae5b82a9dc47cbace171cf2814b412ef68c315a0ead0b4d96bd3e56a05e4bde136
   languageName: node
   linkType: hard
 

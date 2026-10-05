@@ -335,7 +335,9 @@
     }
   }
 
-  input[type='checkbox'] {
+  // The ALTCHA captcha widget renders in light DOM (no Shadow DOM): keep the
+  // Epsilon checkbox skin off its internal checkbox, which has its own styles.
+  input[type='checkbox']:not(altcha-widget input) {
     appearance: none;
     box-sizing: border-box;
     flex: 0 0 auto;
@@ -368,6 +370,25 @@
         transform: rotate(45deg);
       }
     }
+  }
+
+  /* ---- ALTCHA captcha widget ---- */
+  // The widget is themed through its own CSS custom properties: remap them
+  // onto the Epsilon tokens so it follows the light/dark theme automatically.
+  altcha-widget {
+    // Custom elements are inline by default: block + margin to breathe
+    // before the help text that follows on the confirmation page.
+    display: block;
+    margin-bottom: 20px;
+
+    --altcha-color-success: var(--eps-brand-primary);
+    --altcha-color-success-content: var(--eps-text-white);
+    --altcha-color-primary: var(--eps-brand-primary);
+    --altcha-color-base: var(--eps-surface);
+    --altcha-color-base-content: var(--eps-text-primary);
+    --altcha-checkbox-border-color: var(--eps-border);
+    --altcha-border-color: var(--eps-border);
+    --altcha-border-radius: 14px; // match the auth form inputs
   }
 
   /* ---- buttons ---- */
