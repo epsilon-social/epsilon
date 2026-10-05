@@ -7,6 +7,7 @@ class Epsilon::Categorization::SubscribeBackfillWorker
   sidekiq_options queue: 'pull', retry: 3, lock: :until_executed
 
   BACKFILL_LIMIT = 200
+  MAX_PER_AUTHOR = 3
 
   def perform(account_id, category_master_id)
     account = Account.find_by(id: account_id)
@@ -27,7 +28,16 @@ class Epsilon::Categorization::SubscribeBackfillWorker
 
     statuses = Status.where(id: status_ids).includes(:account, reblog: :account).to_a
 
-    filter_home_statuses(account, statuses)
+    filter_home_statuses(account, cap_per_author(statuses))
+  end
+
+  # Keep at most MAX_PER_AUTHOR of the newest statuses per author so a
+  # prolific account cannot dominate the backfilled home feed.
+  def cap_per_author(statuses)
+    statuses
+      .sort_by { |status| -status.id }
+      .group_by(&:account_id)
+      .flat_map { |_, author_statuses| author_statuses.first(MAX_PER_AUTHOR) }
   end
 
   def recent_status_ids(category_master_id)

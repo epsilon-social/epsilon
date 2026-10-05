@@ -9,6 +9,12 @@ import { isNonStatusId } from '@/mastodon/actions/timelines_typed';
 import StatusList from '@/mastodon/components/status_list';
 import { me } from '@/mastodon/initial_state';
 
+// ==========================================
+// EPSILON : STATUS STACKS
+// ==========================================
+import { collapseIntoStacks } from '@/mastodon/epsilon/selectors/status_stacks';
+// ==========================================
+
 const makeGetStatusIds = (pending = false) => createSelector([
   (state, { type }) => state.getIn(['settings', type], ImmutableMap()),
   (state, { type, maxItems }) => {
@@ -21,8 +27,14 @@ const makeGetStatusIds = (pending = false) => createSelector([
     return items;
   },
   (state)           => state.get('statuses'),
-], (columnSettings, statusIds, statuses) => {
-  return statusIds.filter(id => {
+  // ==========================================
+  // EPSILON : STATUS STACKS
+  // ==========================================
+  (state)           => state.get('accounts'),
+  (state, { type }) => type,
+  // ==========================================
+], (columnSettings, statusIds, statuses, accounts, type) => {
+  const filteredStatusIds = statusIds.filter(id => {
     if (isNonStatusId(id)) return true;
 
     const statusForId = statuses.get(id);
@@ -43,6 +55,20 @@ const makeGetStatusIds = (pending = false) => createSelector([
 
     return true;
   });
+
+  // ==========================================
+  // EPSILON : STATUS STACKS
+  // Collapse prolific remote authors into stacks (home timeline only;
+  // pending items stay flat so the "new posts" counter remains exact).
+  // ==========================================
+  const stacksEnabled = columnSettings.getIn(['epsilon', 'stacks'], true);
+
+  if (!pending && type === 'home' && stacksEnabled) {
+    return collapseIntoStacks(filteredStatusIds, statuses, accounts);
+  }
+  // ==========================================
+
+  return filteredStatusIds;
 });
 
 const makeMapStateToProps = () => {

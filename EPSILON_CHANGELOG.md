@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Piles anti-spam dans la home** : un auteur distant qui publie 3 posts ou plus dans la même heure d'horloge (fenêtres fixes 12h–13h, 13h–14h…) est replié en une « pile » à la position de son post le plus ancien (cartes empilées + bouton « Voir les N autres posts », dépli inline) — un compte prolifique n'occupe plus qu'un slot visible par heure. Groupement purement client (aucune donnée perdue, Redis intouché), home uniquement, comptes locaux et reblogs exclus, désactivable via le bouton Filtres (« Grouper les posts »). En complément, le backfill d'abonnement à une catégorie est plafonné à 3 posts par auteur. Le load-more au scroll est doublé d'un auto-remplissage (`scrollable_list`, balisé) : quand le repli (piles ou filtres home) rend le contenu plus court que le viewport, les pages suivantes se chargent seules jusqu'à remplir l'écran. Perf mesurée : sélecteur 0,5 ms sur une feed pleine (800 items), dépli d'une pile de 50 posts en ~185 ms à 60 fps. Au repli, la vue revient sur la pile (no-op si déjà visible) au lieu de laisser l'utilisateur échoué plus bas dans le fil. Sidecar : `epsilon/selectors/status_stacks.js` (+ tests), `epsilon/components/status_stack.jsx`, `styles/epsilon/components/status_stack.scss` ; core balisé : `features/ui/containers/status_list_container.js`, `components/status_list.jsx` ; backend : `workers/epsilon/categorization/subscribe_backfill_worker.rb` ; i18n `epsilon.status_stack.*`, `epsilon.home.filter.stacks`.
+
 ### Changed
 
 - **Sidebar in-app : Accueil, Tendances, Notifications et Recherche rétablis** : ces entrées (doublons des onglets natifs de la coque) étaient masquées dans le tiroir in-app — elles réapparaissent pour tous ; la règle `epsilon-sidebar__item--in-app-hidden`, plus utilisée, est supprimée. NB : taper une de ces entrées empile la destination dans l'onglet natif actif au lieu de basculer d'onglet. Fichiers : `epsilon/components/epsilon_sidebar.jsx`, `styles/epsilon/layout.scss`.

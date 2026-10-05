@@ -20,6 +20,7 @@ export const EpsilonHomeFilter = () => {
   const showsReblogs = useAppSelector((state) => state.settings.getIn(['home', 'shows', 'reblog']));
   const showsReplies = useAppSelector((state) => state.settings.getIn(['home', 'shows', 'reply']));
   const showsQuotes = useAppSelector((state) => state.settings.getIn(['home', 'shows', 'quote'], true));
+  const stacksEnabled = useAppSelector((state) => state.settings.getIn(['home', 'epsilon', 'stacks'], true));
 
   const handleClick = useCallback(() => setOpen(true), []);
   const handleHide = useCallback(() => setOpen(false), []);
@@ -27,6 +28,10 @@ export const EpsilonHomeFilter = () => {
   const handleChange = useCallback((event) => {
     const { name, checked } = event.target;
     dispatch(changeSetting(['home', 'shows', name], checked));
+  }, [dispatch]);
+
+  const handleStacksChange = useCallback((event) => {
+    dispatch(changeSetting(['home', 'epsilon', 'stacks'], event.target.checked));
   }, [dispatch]);
 
   return (
@@ -90,6 +95,18 @@ export const EpsilonHomeFilter = () => {
                 checked={showsReplies}
                 onChange={handleChange}
                 id={`${accessibleId}-replies`}
+              />
+            </div>
+
+            <div className='epsilon-filter-dropdown__row'>
+              <label htmlFor={`${accessibleId}-stacks`}>
+                <FormattedMessage id='epsilon.home.filter.stacks' defaultMessage='Group posts' />
+              </label>
+              <Toggle
+                name='stacks'
+                checked={stacksEnabled}
+                onChange={handleStacksChange}
+                id={`${accessibleId}-stacks`}
               />
             </div>
           </div>

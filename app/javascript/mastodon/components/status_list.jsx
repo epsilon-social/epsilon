@@ -21,6 +21,15 @@ import EpsilonCategorySuggestions from '../features/epsilon/category_suggestions
 import { AlternatingSuggestions } from '../features/epsilon/categorization/components/alternating_suggestions';
 /* ========================================== */
 
+/* ========================================== */
+/* EPSILON : STATUS STACKS                    */
+/* ========================================== */
+import { List as ImmutableList } from 'immutable';
+
+import { EpsilonStatusStack } from '../epsilon/components/status_stack';
+import { stackAnchorId } from '../epsilon/selectors/status_stacks';
+/* ========================================== */
+
 
 export default class StatusList extends ImmutablePureComponent {
 
@@ -51,7 +60,12 @@ export default class StatusList extends ImmutablePureComponent {
 
   handleLoadOlder = debounce(() => {
     const { statusIds, lastId, onLoadMore } = this.props;
-    onLoadMore(lastId || (statusIds.size > 0 ? statusIds.last() : undefined));
+    /* ========================================== */
+    /* EPSILON : STATUS STACKS                    */
+    /* The last item may be a stack: unwrap it to its anchor id. */
+    /* ========================================== */
+    onLoadMore(lastId || (statusIds.size > 0 ? stackAnchorId(statusIds.last()) : undefined));
+    /* ========================================== */
   }, 300, { leading: true });
 
   setRef = c => {
@@ -68,6 +82,29 @@ export default class StatusList extends ImmutablePureComponent {
 
     let scrollableContent = (isLoading || statusIds.size > 0) ? (
       statusIds.map((statusId, index) => {
+        /* ========================================== */
+        /* EPSILON : STATUS STACKS                    */
+        /* A nested list is a stack of posts from one prolific remote author. */
+        /* ========================================== */
+        if (ImmutableList.isList(statusId)) {
+          return (
+            <EpsilonStatusStack
+              /* Key on the NEWEST member: it is loaded first (backward
+                 pagination), so the key stays stable while older members
+                 join the stack — the anchor id does not. A changing first
+                 child key would also misfire ScrollableList's prepend
+                 scroll compensation. */
+              key={`epsilon-stack:${statusId.last()}`}
+              statusIds={statusId}
+              contextType={timelineId}
+              scrollKey={this.props.scrollKey}
+              withCounters={this.props.withCounters}
+              statusProps={statusProps}
+            />
+          );
+        }
+        /* ========================================== */
+
         switch(statusId) {
         case TIMELINE_SUGGESTIONS:
           return (
@@ -81,9 +118,9 @@ export default class StatusList extends ImmutablePureComponent {
         case TIMELINE_GAP:
           return (
             <LoadGap
-              key={'gap:' + statusIds.get(index + 1)}
+              key={'gap:' + stackAnchorId(statusIds.get(index + 1))} // EPSILON : STATUS STACKS — unwrap stacks
               disabled={isLoading}
-              param={index > 0 ? statusIds.get(index - 1) : null}
+              param={index > 0 ? stackAnchorId(statusIds.get(index - 1)) : null} // EPSILON : STATUS STACKS — anchor = oldest rendered id above the gap
               onClick={onLoadMore}
             />
           );

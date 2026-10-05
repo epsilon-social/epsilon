@@ -190,7 +190,33 @@ class ScrollableList extends PureComponent {
 
     // Handle initial scroll position
     this.handleScroll();
+
+    /* ========================================== */
+    /* EPSILON : STATUS STACKS                    */
+    /* ========================================== */
+    this.maybeFillViewport();
+    /* ========================================== */
   }
+
+  /* ========================================== */
+  /* EPSILON : STATUS STACKS                    */
+  /* Scroll-driven load-more starves when the rendered content is shorter
+     than the viewport (scrollTop stays 0) — e.g. when stacks or the home
+     filters collapse most of a page. Keep fetching until the screen is
+     filled or the timeline is exhausted. */
+  /* ========================================== */
+  maybeFillViewport = throttle(() => {
+    if (!this.node || !this.props.onLoadMore || !this.props.hasMore || this.props.isLoading) {
+      return;
+    }
+
+    if (this.getScrollHeight() <= this.getClientHeight() + 400) {
+      this.props.onLoadMore();
+    }
+  }, 500, {
+    trailing: true,
+  });
+  /* ========================================== */
 
   getScrollPosition = () => {
     if (this.node && (this.getScrollTop() > 0 || this.mouseMovedRecently)) {
@@ -237,6 +263,12 @@ class ScrollableList extends PureComponent {
     if (snapshot !== null) {
       this.setScrollTop(this.getScrollHeight() - snapshot);
     }
+
+    /* ========================================== */
+    /* EPSILON : STATUS STACKS                    */
+    /* ========================================== */
+    this.maybeFillViewport();
+    /* ========================================== */
   }
 
   cacheMediaWidth = (width) => {
