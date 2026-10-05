@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Sidebar in-app : Accueil, Tendances, Notifications et Recherche rétablis** : ces entrées (doublons des onglets natifs de la coque) étaient masquées dans le tiroir in-app — elles réapparaissent pour tous ; la règle `epsilon-sidebar__item--in-app-hidden`, plus utilisée, est supprimée. NB : taper une de ces entrées empile la destination dans l'onglet natif actif au lieu de basculer d'onglet. Fichiers : `epsilon/components/epsilon_sidebar.jsx`, `styles/epsilon/layout.scss`.
+
 ## [0.3.25] - 2026-10-01
 
 ### Added

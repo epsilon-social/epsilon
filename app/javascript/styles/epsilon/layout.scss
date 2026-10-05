@@ -3426,14 +3426,6 @@ html.epsilon-in-app {
     display: none !important;
   }
 
-  // Entrées de sidebar qui doublonnent un onglet natif (Home, Search,
-  // Trending/Explore, Notifications) : masquées in-app pour ne pas empiler la
-  // destination dans l'onglet actif. New Post reste (ouvre une modale, ne
-  // navigue pas).
-  .epsilon-sidebar__item--in-app-hidden {
-    display: none !important;
-  }
-
   // Flèches de défilement du carrousel de suggestions : inutiles au doigt et
   // positionnées hors cadre (left/right: -24px) → on les retire in-app, ce qui
   // supprime la cause directe du dépassement (le clip ci-dessus fait le reste).

@@ -156,7 +156,7 @@ const EpsilonNotificationsLink = ({ getNavClass, intl }) => {
   return (
     <ColumnLink
       to='/notifications'
-      className={`${getNavClass('/notifications')} epsilon-sidebar__item--in-app-hidden`}
+      className={getNavClass('/notifications')}
       text={intl.formatMessage(messages.notifications)}
       icon={
         <IconWithBadge
@@ -233,7 +233,7 @@ const EpsilonSidebar = () => {
               <ColumnLink to={firehoseLink} icon='globe' iconComponent={PublicIcon} text={intl.formatMessage(firehoseText)} className={getNavClass('/public')} />
             )}
             {showTrending && (
-              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`} />
+              <ColumnLink to='/explore' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={getNavClass('/explore')} />
             )}
             <ColumnLink transparent href='/about' icon='info' iconComponent={InfoIcon} text={intl.formatMessage(messages.about)} className={getNavClass('/about')} />
 
@@ -263,7 +263,7 @@ const EpsilonSidebar = () => {
         )}
 
         {signedIn && (
-          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={`${getNavClass('/home', true)} epsilon-sidebar__item--in-app-hidden`} />
+          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={getNavClass('/home', true)} />
         )}
 
         {signedIn && showFirehose && (
@@ -271,11 +271,11 @@ const EpsilonSidebar = () => {
         )}
 
         {signedIn && (
-          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--in-app-hidden epsilon-sidebar__item--wide-hidden`} />
+          <ColumnLink to='/search' icon='search' iconComponent={SearchIcon} text={intl.formatMessage(messages.search)} className={`${getNavClass('/search')} epsilon-sidebar__item--wide-hidden`} />
         )}
 
         {signedIn && showTrending && (
-          <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={`${getNavClass('/explore')} epsilon-sidebar__item--in-app-hidden`}/>
+          <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={getNavClass('/explore')}/>
         )}
 
         {signedIn && (
