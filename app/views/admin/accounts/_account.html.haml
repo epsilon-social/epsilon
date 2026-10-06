@@ -20,17 +20,33 @@
             - else
               = friendly_number_to_human account.followers_count
             %small= t('accounts.followers', count: account.followers_count)
+          -# EPSILON : ADMIN ACCOUNTS FOLLOWING COUNT
+          %td.accounts-table__count.optional
+            - if account.unavailable? || account.user_pending?
+              \-
+            - else
+              = friendly_number_to_human account.following_count
+            %small= t('accounts.following', count: account.following_count)
           %td.accounts-table__count
             = relevant_account_timestamp(account)
             %small= t('accounts.last_active')
           %td.accounts-table__extra
             - if account.local?
               - if account.user_email
-                = link_to account.user_email_domain, admin_accounts_path(email: "%@#{account.user_email_domain}"), title: account.user_email
+                -# EPSILON : ADMIN ACCOUNTS FULL EMAIL
+                = link_to account.user_email, admin_accounts_path(email: "%@#{account.user_email_domain}"), title: account.user_email
               - else
                 \-
               %br/
               %samp.ellipsized-ip= relevant_account_ip(account, params[:ip])
+          -# EPSILON : ADMIN ACCOUNTS SIGNUP REASON COLUMN
+          - signup_reason = account.user&.invite_request&.text.presence
+          %td.accounts-table__count.optional.epsilon-signup-reason{ data: { reason: signup_reason } }
+            - if signup_reason
+              = material_symbol('check', class: 'active')
+            - else
+              \-
+            %small= t('admin.epsilon.accounts.signup_reason')
     - if !account.unavailable? && account.user_pending? && account.user&.invite_request&.text.present?
       .batch-table__row__content__quote
         %p= account.user&.invite_request&.text

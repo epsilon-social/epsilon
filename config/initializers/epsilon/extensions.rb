@@ -14,6 +14,8 @@ Rails.application.config.to_prepare do
 
   Account.include(Epsilon::UsernameNormalizationExtension) if defined?(Account)
 
+  AccountFilter.prepend(Epsilon::AccountFilterExtension) if defined?(AccountFilter)
+
   DateOfBirthInput.prepend(Epsilon::DateOfBirthInputExtension) if defined?(DateOfBirthInput)
 
   if defined?(AccountSearchService)

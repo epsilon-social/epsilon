@@ -24,8 +24,14 @@
     .filter-subset.filter-subset--with-select
       %strong= t 'generic.order_by'
       .input.select
+        -# EPSILON : ADMIN ACCOUNTS ENGAGEMENT ORDERING
+        - order_options = [[t('relationships.most_recent'), 'recent'],
+                           [t('relationships.last_active'), 'active'],
+                           [t('admin.epsilon.accounts.order.most_followers'), 'followers'],
+                           [t('admin.epsilon.accounts.order.most_following'), 'following'],
+                           [t('admin.epsilon.accounts.order.most_statuses'), 'statuses']]
         = form.select :order,
-                      options_for_select([[t('relationships.most_recent'), 'recent'], [t('relationships.last_active'), 'active']], params[:order])
+                      options_for_select(order_options, params[:order])
 
   .fields-group
     - %i(username by_domain display_name email ip).each do |key|

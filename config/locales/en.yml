@@ -29,6 +29,12 @@ en:
     self_follow_error: Following your own account is not allowed
   admin:
     epsilon:
+      accounts:
+        order:
+          most_followers: Most followers
+          most_following: Most following
+          most_statuses: Most posts
+        signup_reason: Reason
       ai_moderation:
         title: AI Moderation Settings
         updated: AI moderation settings successfully updated

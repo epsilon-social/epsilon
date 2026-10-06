@@ -1,0 +1,32 @@
+td.epsilon-signup-reason {
+  position: relative;
+
+  &[data-reason] {
+    cursor: help;
+  }
+
+  &[data-reason]:hover::after {
+    content: attr(data-reason);
+    position: absolute;
+    top: calc(100% - 10px);
+    inset-inline-end: 16px;
+    z-index: 100;
+    width: max-content;
+    max-width: 360px;
+    padding: 10px 14px;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 8px;
+    background: var(--eps-surface-solid);
+    color: var(--color-text-primary);
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: start;
+    white-space: pre-line;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+  }
+}
+
+.batch-table__row:has(td.epsilon-signup-reason[data-reason]:hover)
+  .batch-table__row__content {
+  overflow: visible;
+}

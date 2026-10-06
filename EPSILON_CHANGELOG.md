@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.3.28] - 2026-10-06
+
+### Added
+
+- **Recherche de comptes admin enrichie (`/admin/accounts`)** : trois nouveaux tris « Plus d'abonnés », « Plus d'abonnements » et « Plus de messages » (compteurs natifs `account_stats`, `LEFT JOIN` + `DESC NULLS LAST`, départage par id) ; colonne « abonnements » ajoutée entre abonnés et dernière activité ; email complet affiché au lieu du seul domaine (le lien filtre toujours par domaine) ; colonne booléenne « Raison » en bout de ligne (coche si le compte a rempli la raison d'inscription, tiret sinon) dont le survol révèle le texte intégral dans une bulle 100 % CSS (`::after` + `attr(data-reason)`, clip `overflow` de la ligne levé pendant le hover via `:has()`). Zéro migration : données natives (`account_stats`, `users`, `user_invite_requests`) déjà préchargées par le filtre admin, pas de N+1. Sidecar : `models/concerns/epsilon/account_filter_extension.rb`, `styles/epsilon/admin_accounts.scss` (nouveaux) ; core balisé : `admin/accounts/index.html.haml`, `admin/accounts/_account.html.haml` ; i18n `admin.epsilon.accounts.*` (`en.yml`/`fr.yml`).
+
 ## [0.3.27] - 2026-10-05
 
 ### Added

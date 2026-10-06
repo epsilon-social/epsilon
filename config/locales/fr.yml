@@ -29,6 +29,12 @@ fr:
     self_follow_error: Suivre votre propre compte n'est pas autorisé
   admin:
     epsilon:
+      accounts:
+        order:
+          most_followers: Plus d’abonnés
+          most_following: Plus d’abonnements
+          most_statuses: Plus de messages
+        signup_reason: Raison
       ai_moderation:
         title: Paramètres de Modération IA
         updated: Paramètres de modération IA mis à jour avec succès
