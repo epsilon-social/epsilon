@@ -111,4 +111,29 @@ describe('epsilonCuratedTimelines', () => {
     expect(state.bySlug.decouverte?.statusIds).toEqual(['1']);
     expect(state.bySlug.monde?.statusIds).toEqual(['2']);
   });
+
+  // Fuse: a failing endpoint must stop pagination — without it, StatusList
+  // retries "load more" in a tight 404/5xx request loop.
+  it('stops paginating and flags notFound on a 404', () => {
+    const state = epsilonCuratedTimelines(initial, {
+      type: expandEpsilonCuratedTimeline.rejected.type,
+      meta: { arg: { slug: 'ghost' } },
+      payload: { skipAlert: true, error: 404 },
+    });
+
+    expect(state.bySlug.ghost?.hasMore).toBe(false);
+    expect(state.bySlug.ghost?.isLoading).toBe(false);
+    expect(state.bySlug.ghost?.notFound).toBe(true);
+  });
+
+  it('stops paginating on any other error, without flagging notFound', () => {
+    const state = epsilonCuratedTimelines(initial, {
+      type: expandEpsilonCuratedTimeline.rejected.type,
+      meta: { arg: { slug: 'flaky' } },
+      payload: undefined,
+    });
+
+    expect(state.bySlug.flaky?.hasMore).toBe(false);
+    expect(state.bySlug.flaky?.notFound).toBe(false);
+  });
 });

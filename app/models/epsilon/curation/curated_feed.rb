@@ -51,9 +51,11 @@ class Epsilon::Curation::CuratedFeed < ApplicationRecord
   end
 
   # A parent feed aggregates its children: anything published in a child
-  # shows up in the parent's timeline too.
+  # shows up in the parent's timeline too. Only currently-active children —
+  # a draft/archived/expired sub-feed (e.g. an event being prepared) must
+  # never leak its items into the published parent.
   def self_and_children_ids
-    [id, *children.ids]
+    [id, *children.select(&:currently_active?).map(&:id)]
   end
 
   # Localized name, falling back to English then the canonical `name`.

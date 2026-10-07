@@ -11,12 +11,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import { List as ImmutableList } from 'immutable';
+import { Redirect } from 'react-router-dom';
 
 import StatusList from 'mastodon/components/status_list';
 import { expandEpsilonCuratedTimeline, selectEpsilonCuratedTimeline } from 'mastodon/epsilon/store/curated_timelines_slice';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
-export const EpsilonCuratedTimeline = ({ slug, bindToDocument, scrollKeyPrefix = 'epsilon_curated_feed' }) => {
+export const EpsilonCuratedTimeline = ({ slug, bindToDocument, scrollKeyPrefix = 'epsilon_curated_feed', notFoundRedirect }) => {
   const dispatch = useAppDispatch();
   const timeline = useAppSelector((state) => selectEpsilonCuratedTimeline(state, slug));
   const statusIds = useMemo(() => ImmutableList(timeline?.statusIds ?? []), [timeline?.statusIds]);
@@ -28,6 +29,12 @@ export const EpsilonCuratedTimeline = ({ slug, bindToDocument, scrollKeyPrefix =
   const handleLoadMore = useCallback(() => {
     dispatch(expandEpsilonCuratedTimeline({ slug, loadMore: true }));
   }, [dispatch, slug]);
+
+  // Unknown feed slug (stale URL, renamed/deleted feed): leave the dead page
+  // instead of showing a misleading empty state.
+  if (timeline?.notFound && notFoundRedirect) {
+    return <Redirect to={notFoundRedirect} />;
+  }
 
   return (
     <StatusList
@@ -47,4 +54,5 @@ EpsilonCuratedTimeline.propTypes = {
   slug: PropTypes.string.isRequired,
   bindToDocument: PropTypes.bool,
   scrollKeyPrefix: PropTypes.string,
+  notFoundRedirect: PropTypes.string,
 };

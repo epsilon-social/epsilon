@@ -71,7 +71,9 @@ const EpsilonCuratedFeedPage = ({ params, multiColumn }) => {
         </div>
       )}
 
-      <EpsilonCuratedTimeline slug={slug} bindToDocument={!multiColumn} />
+      {/* Redirect only on an explicit unknown slug — never when showing the
+          default feed, else an unseeded instance would redirect in a loop. */}
+      <EpsilonCuratedTimeline slug={slug} bindToDocument={!multiColumn} notFoundRedirect={params?.slug ? '/discover' : undefined} />
 
       <Helmet>
         <title>{title}</title>

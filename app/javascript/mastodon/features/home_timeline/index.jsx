@@ -199,7 +199,7 @@ class HomeTimeline extends PureComponent {
         {!signedIn && <NotSignedInIndicator />}
 
         {signedIn && epsilonCuratedSlug && (
-          <EpsilonCuratedTimeline slug={epsilonCuratedSlug} bindToDocument={!multiColumn} scrollKeyPrefix='epsilon_home_curated' />
+          <EpsilonCuratedTimeline slug={epsilonCuratedSlug} bindToDocument={!multiColumn} scrollKeyPrefix='epsilon_home_curated' notFoundRedirect='/home' />
         )}
         {/* ========================================== */}
 

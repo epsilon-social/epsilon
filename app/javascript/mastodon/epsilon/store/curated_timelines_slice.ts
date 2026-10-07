@@ -10,6 +10,8 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
+import { AxiosError } from 'axios';
+
 import { importFetchedStatuses } from 'mastodon/actions/importer';
 import api, { getLinks } from 'mastodon/api';
 import type { ApiStatusJSON } from 'mastodon/api_types/statuses';
@@ -21,6 +23,8 @@ interface EpsilonCuratedTimeline {
   isLoading: boolean;
   hasMore: boolean;
   nextMaxId: string | null;
+  // Feed slug unknown to the server (404) — callers redirect away.
+  notFound: boolean;
 }
 
 interface EpsilonCuratedTimelinesState {
@@ -36,13 +40,14 @@ const emptyTimeline = (): EpsilonCuratedTimeline => ({
   isLoading: false,
   hasMore: true,
   nextMaxId: null,
+  notFound: false,
 });
 
 export const expandEpsilonCuratedTimeline = createAppAsyncThunk(
   'epsilon/curatedTimelines/expand',
   async (
     { slug, loadMore }: { slug: string; loadMore?: boolean },
-    { dispatch, getState },
+    { dispatch, getState, rejectWithValue },
   ) => {
     const timeline = getState().epsilonCuratedTimelines.bySlug[slug];
     const params: Record<string, string> = {};
@@ -51,27 +56,42 @@ export const expandEpsilonCuratedTimeline = createAppAsyncThunk(
       params.max_id = timeline.nextMaxId;
     }
 
-    const response = await api().get<ApiStatusJSON[]>(
-      `/api/v1/epsilon/curated_feeds/${slug}/statuses`,
-      { params },
-    );
+    try {
+      const response = await api().get<ApiStatusJSON[]>(
+        `/api/v1/epsilon/curated_feeds/${slug}/statuses`,
+        { params },
+      );
 
-    const next = getLinks(response).refs.find((link) => link.rel === 'next');
-    const nextMaxId = next
-      ? new URL(next.uri).searchParams.get('max_id')
-      : null;
+      const next = getLinks(response).refs.find((link) => link.rel === 'next');
+      const nextMaxId = next
+        ? new URL(next.uri).searchParams.get('max_id')
+        : null;
 
-    dispatch(importFetchedStatuses(response.data));
+      dispatch(importFetchedStatuses(response.data));
 
-    return {
-      statusIds: response.data.map((status) => status.id),
-      nextMaxId,
-      loadMore: !!loadMore,
-    };
+      return {
+        statusIds: response.data.map((status) => status.id),
+        nextMaxId,
+        loadMore: !!loadMore,
+      };
+    } catch (error) {
+      // The rejectValue shape is fixed app-wide; carry the HTTP status in
+      // `error` so the reducer can tell a missing feed (404) apart.
+      if (error instanceof AxiosError && error.response) {
+        return rejectWithValue({
+          skipAlert: true,
+          error: error.response.status,
+        });
+      }
+
+      throw error;
+    }
   },
   {
-    condition: ({ slug }, { getState }) =>
-      !getState().epsilonCuratedTimelines.bySlug[slug]?.isLoading,
+    condition: ({ slug }, { getState }) => {
+      const timeline = getState().epsilonCuratedTimelines.bySlug[slug];
+      return !timeline?.isLoading && !timeline?.notFound;
+    },
   },
 );
 
@@ -110,6 +130,10 @@ const epsilonCuratedTimelinesSlice = createSlice({
         const timeline = (state.bySlug[action.meta.arg.slug] ??=
           emptyTimeline());
         timeline.isLoading = false;
+        // Fuse: never keep paginating into an erroring endpoint — without
+        // this, StatusList retries "load more" in a tight 404/5xx loop.
+        timeline.hasMore = false;
+        timeline.notFound = action.payload?.error === 404;
       });
   },
 });
