@@ -1,0 +1,33 @@
+// Epsilon — curated feed pills on top of the home column.
+// The bar itself rides on the themed .account__section-headline pills (same
+// gradient active state as the Explore tabs, defined in layout.scss); this
+// partial only hosts home-specific spacing tweaks.
+
+.epsilon-home-pills {
+  margin-bottom: 0 !important;
+
+  // Space-around look with overflow-safe scrolling. Plain space-around clips
+  // the LEFT side of an overflowing flex container (unreachable by scroll),
+  // so: flex-start + auto inline margins on every pill. Auto margins soak up
+  // free space in the exact space-around proportions (half at the edges,
+  // full between pills) and collapse to 0 on overflow — the bar then scrolls
+  // from the start with every pill reachable.
+  justify-content: flex-start !important;
+  padding-inline: 4px !important;
+
+  a {
+    flex-shrink: 0;
+    margin: 0 auto 12px !important;
+  }
+}
+
+// Mobile /home only: the 20px breathing under the search bar normally comes
+// from either the .epsilon-mobile-search margin (pages without the home
+// filter — see layout.scss :not(:has(.epsilon-home-filter))) or, before the
+// pills existed, from the inline compose's margin-top. With the filter
+// present the pills glued to the top bar — reproduce the same 20px rhythm.
+@media (width <= 768px) {
+  .epsilon-home-top-bar:has(.epsilon-home-filter) + .epsilon-home-pills {
+    margin-top: 20px !important;
+  }
+}

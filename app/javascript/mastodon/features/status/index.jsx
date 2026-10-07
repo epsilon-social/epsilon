@@ -417,6 +417,13 @@ class Status extends ImmutablePureComponent {
     }));
   };
 
+  // ==========================================
+  // EPSILON : CURATED EDITORIAL FEEDS
+  handleEpsilonCuratedFeeds = (status) => {
+    this.props.dispatch(openModal({ modalType: 'EPSILON_CURATED_FEED_PICKER', modalProps: { statusId: status.get('id') } }));
+  };
+  // ==========================================
+
   handleUnmuteClick = account => {
     this.props.dispatch(unmuteAccount(account.get('id')));
   };
@@ -623,6 +630,7 @@ class Status extends ImmutablePureComponent {
                   multiColumn={multiColumn}
                 />
 
+                {/* EPSILON : CURATED EDITORIAL FEEDS — adds onEpsilonCuratedFeeds */}
                 <ActionBar
                   key={`action-bar-${status.get('id')}`}
                   status={status}
@@ -647,6 +655,7 @@ class Status extends ImmutablePureComponent {
                   onReport={this.handleReport}
                   onPin={this.handlePin}
                   onEmbed={this.handleEmbed}
+                  onEpsilonCuratedFeeds={this.handleEpsilonCuratedFeeds}
                 />
               </NavigationFocusTarget>
             </Hotkeys>

@@ -239,6 +239,39 @@ en:
         view_all_hashtags:
           one: See the only hashtag
           other: See all %{count} hashtags
+      curated_feeds:
+        create_button: Create feed
+        created: Curated feed created
+        delete: Delete
+        deleted: Curated feed deleted
+        description_label: Description (%{lang})
+        draft_count: Drafts
+        edit: Edit
+        edit_title: Edit curated feed
+        ends_at_label: Ends at (optional)
+        feed_name: Name
+        icon_label: Icon (optional)
+        name_label: Name (%{lang})
+        new_title: New curated feed
+        no_feeds: No curated feeds yet — run the seed task or create one.
+        no_parent: "— top-level feed"
+        parent_label: Parent feed
+        position_label: Position
+        protected: The Discovery feed cannot be deleted.
+        published_count: Published
+        slug: Slug
+        slug_hint: Lowercase letters, digits and dashes — used in the /discover URL.
+        slug_label: Slug (URL)
+        starts_at_label: Starts at (optional)
+        state: State
+        state_archived: Archived
+        state_draft: Draft
+        state_label: State
+        state_published: Published
+        studio_link: Open the curation studio (content selection happens there)
+        title: Curated feeds
+        updated: Curated feed updated
+        window: Time window
     account_actions:
       action: Perform action
       already_silenced: This account has already been limited.

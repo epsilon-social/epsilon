@@ -17,7 +17,8 @@ import StarBorderIcon from '@/material-icons/400-24px/heart.svg?react';
 import HeartBrokenIcon from '@/material-icons/400-24px/heart_broken-fill.svg?react';
 import { injectIntl } from '@/mastodon/components/intl';
 import { identityContextPropShape, withIdentity } from 'mastodon/identity_context';
-import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
+// EPSILON : CURATED EDITORIAL FEEDS — PERMISSION_MANAGE_TAXONOMIES added
+import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION, PERMISSION_MANAGE_TAXONOMIES } from 'mastodon/permissions';
 
 import { IconButton } from '../../../components/icon_button';
 import { Dropdown } from 'mastodon/components/dropdown_menu';
@@ -49,6 +50,8 @@ const messages = defineMessages({
   admin_account: { id: 'status.admin_account', defaultMessage: 'Open moderation interface for @{name}' },
   admin_status: { id: 'status.admin_status', defaultMessage: 'Open this post in the moderation interface' },
   admin_domain: { id: 'status.admin_domain', defaultMessage: 'Open moderation interface for {domain}' },
+  // EPSILON : CURATED EDITORIAL FEEDS
+  epsilonCuratedFeeds: { id: 'epsilon_curated.status_menu', defaultMessage: 'Curated feeds…' },
   copy: { id: 'status.copy', defaultMessage: 'Copy link to post' },
   blockDomain: { id: 'account.block_domain', defaultMessage: 'Block domain {domain}' },
   unblockDomain: { id: 'account.unblock_domain', defaultMessage: 'Unblock domain {domain}' },
@@ -95,8 +98,17 @@ class ActionBar extends PureComponent {
     onReport: PropTypes.func,
     onPin: PropTypes.func,
     onEmbed: PropTypes.func,
+    // EPSILON : CURATED EDITORIAL FEEDS
+    onEpsilonCuratedFeeds: PropTypes.func,
     intl: PropTypes.object.isRequired,
   };
+
+  // ==========================================
+  // EPSILON : CURATED EDITORIAL FEEDS
+  handleEpsilonCuratedFeedsClick = () => {
+    this.props.onEpsilonCuratedFeeds(this.props.status);
+  };
+  // ==========================================
 
   handleReplyClick = () => {
     this.props.onReply(this.props.status);
@@ -325,6 +337,17 @@ class ActionBar extends PureComponent {
           }
         }
       }
+
+      // ==========================================
+      // EPSILON : CURATED EDITORIAL FEEDS
+      // Staff shortcut: manage this post's presence in the curated feeds
+      // (picker modal). Public, non-reblog posts only; own posts included.
+      // ==========================================
+      if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
+        menu.push(null);
+        menu.push({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
+      }
+      // ==========================================
     }
 
     let replyIcon;

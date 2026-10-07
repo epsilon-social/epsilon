@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_07_164536) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -635,6 +635,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
     t.index ["slug"], name: "index_epsilon_badges_on_slug", unique: true
   end
 
+  create_table "epsilon_blocked_phone_numbers", force: :cascade do |t|
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.string "phone_number_hash", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_number_hash"], name: "index_epsilon_blocked_phone_numbers_on_phone_number_hash", unique: true
+  end
+
   create_table "epsilon_curated_feed_items", force: :cascade do |t|
     t.bigint "added_by_account_id"
     t.datetime "created_at", null: false
@@ -646,6 +654,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
     t.index ["added_by_account_id"], name: "index_epsilon_curated_feed_items_on_added_by_account_id"
     t.index ["curated_feed_id", "state", "position"], name: "idx_epsilon_curated_feed_items_timeline", order: { position: :desc }
     t.index ["curated_feed_id", "status_id"], name: "idx_epsilon_curated_feed_items_unique", unique: true
+    t.index ["state", "position", "curated_feed_id"], name: "idx_epsilon_curated_feed_items_global_timeline", order: { position: :desc }
     t.index ["status_id"], name: "index_epsilon_curated_feed_items_on_status_id"
   end
 
@@ -714,6 +723,53 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
     t.index ["acct"], name: "index_epsilon_moderation_events_on_acct_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["created_at"], name: "index_epsilon_moderation_events_on_created_at"
     t.index ["decision"], name: "index_epsilon_moderation_events_on_decision"
+  end
+
+  create_table "epsilon_phone_sms_events", force: :cascade do |t|
+    t.string "acct"
+    t.string "country_prefix"
+    t.datetime "created_at", null: false
+    t.integer "event", default: 0, null: false
+    t.inet "ip"
+    t.string "phone_number"
+    t.bigint "user_id"
+    t.index ["country_prefix"], name: "index_epsilon_phone_sms_events_on_country_prefix"
+    t.index ["created_at"], name: "index_epsilon_phone_sms_events_on_created_at"
+    t.index ["event"], name: "index_epsilon_phone_sms_events_on_event"
+    t.index ["phone_number"], name: "index_epsilon_phone_sms_events_on_phone_number"
+    t.index ["user_id"], name: "index_epsilon_phone_sms_events_on_user_id"
+  end
+
+  create_table "epsilon_phone_verifications", force: :cascade do |t|
+    t.datetime "admin_exempted_at"
+    t.string "country_prefix"
+    t.datetime "created_at", null: false
+    t.boolean "is_verified", default: false, null: false
+    t.string "phone_number"
+    t.string "unconfirmed_phone_number"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.string "verification_id", null: false
+    t.index ["country_prefix"], name: "index_epsilon_phone_verifications_on_country_prefix"
+    t.index ["phone_number"], name: "index_epsilon_phone_verifications_on_phone_number"
+    t.index ["user_id"], name: "index_epsilon_phone_verifications_on_user_id", unique: true
+  end
+
+  create_table "epsilon_signup_fingerprints", force: :cascade do |t|
+    t.string "accept_language"
+    t.datetime "created_at", null: false
+    t.jsonb "data", default: {}, null: false
+    t.string "device_token"
+    t.string "fingerprint_hash"
+    t.inet "ip"
+    t.string "timezone"
+    t.datetime "updated_at", null: false
+    t.string "user_agent"
+    t.bigint "user_id", null: false
+    t.boolean "webdriver", default: false, null: false
+    t.index ["device_token"], name: "index_epsilon_signup_fingerprints_on_device_token", where: "(device_token IS NOT NULL)"
+    t.index ["fingerprint_hash"], name: "index_epsilon_signup_fingerprints_on_fingerprint_hash", where: "(fingerprint_hash IS NOT NULL)"
+    t.index ["user_id"], name: "index_epsilon_signup_fingerprints_on_user_id", unique: true
   end
 
   create_table "fasp_backfill_requests", force: :cascade do |t|
@@ -1785,6 +1841,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_143127) do
   add_foreign_key "epsilon_curated_feeds", "epsilon_curated_feeds", column: "parent_id", on_delete: :cascade
   add_foreign_key "epsilon_live_questions", "accounts"
   add_foreign_key "epsilon_live_questions", "live_sessions"
+  add_foreign_key "epsilon_phone_verifications", "users"
   add_foreign_key "fasp_backfill_requests", "fasp_providers"
   add_foreign_key "fasp_debug_callbacks", "fasp_providers"
   add_foreign_key "fasp_follow_recommendations", "accounts", column: "recommended_account_id"

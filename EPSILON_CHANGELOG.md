@@ -5,6 +5,24 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-07
+
+### Added
+
+- **Fils d'actualité curés (« Découverte »)** : fils éditoriaux construits par l'équipe de modération — **rien n'est publié sans décision humaine**. Backend 100 % sidecar : 2 tables `epsilon_*`, **aucun hook sur `Status`** (nettoyage par FK cascade), une seule extension native (vacuum médias, justifiée ci-dessous).
+  - **Structure** : fils hiérarchiques à 1 niveau, **le parent agrège ses enfants** (publier dans un sous-fil remonte dans le parent, dédupliqué) ; fils événementiels prêts (états draft/published/archived + fenêtre `starts_at`/`ends_at`, expiration automatique sans scheduler). Seeds idempotents `epsilon:curated_feeds:seed` (`discover` + `world`, renomme les anciens slugs FR).
+  - **Ordre éditorial, non chronologique** : rang de curation sur **compteur global** (advisory lock Postgres) ; publier un lot l'empile en tête dans l'ordre composé ; curseur `max_id` = position. Deux re-tris chronologiques natifs contournés : le reducer `timelines` (fusion des pages par ids snowflake) → slice sidecar + `StatusList` direct avec tests de régression, et l'ORDER BY du default_scope de `Status` importé par `merge` → `reorder`.
+  - **Studio `/curation`** (SPA, staff `manage_taxonomies`) : recherche par compte (+ **import de l'outbox ActivityPub** d'un compte distant peu connu localement — miroir du service natif des posts épinglés, fetchs signés, cap 2 pages/20 posts), par hashtag, par URL (resolve) et par catégorie du fork ; boutons d'attribution par post et par fil ; **brouillon par fil persistant côté serveur** (survit au refresh, partagé entre curateurs) avec drag & drop (`@dnd-kit`), « Mélanger » (round-robin anti-blocs mono-source) et « Publier » (transaction + lock du fil) ; vignettes des médias (floutées si sensibles) et **visualiseur natif au clic**.
+  - **Menu « … » des posts** (staff, les 2 action bars, posts publics non-reblog) : modale à cases « Fils d'actu » — cocher = publié en tête en 2 clics, décocher = retiré (cas fake news).
+  - **Surfaces publiques** : page `/discover` (accessible déconnecté, indexable) ; **pilules en tête de la colonne home** (`/home/:slug`, style gradient des tabs d'Explore, réparties pleine largeur quand ça tient, scrollables sans clipping sinon) ; **fils vides jamais affichés** (zéro fil non vide → pas de barre ; `/discover` atterrit sur le premier fil non vide) ; `statuses_count` par fil dans l'API ; pas d'entrées de fils dans la sidebar (le staff y garde le lien Studio).
+  - **Médias pérennes** : les fils curés ressortent des posts plus vieux que la rétention du cache média → re-téléchargement des médias distants manquants **à la publication** + **exclusion du vacuum de rétention** (`Epsilon::CurationMediaVacuumExtension`, prepend) — fin des tempêtes 429 sur `/media_proxy` (throttle natif 30 req/30 min/IP) ; rattrapage : `epsilon:curated_feeds:redownload_media`.
+  - **Perf & accès** : index global `(state, position, fil)` créé en concurrently — l'union parent à 10 000 posts passe de 26 ms (tri complet) à 0,3 ms, pagination profonde constante ; cache HTTP 15 s pour les anonymes ; matrice d'accès vérifiée par requêtes réelles : anonyme 401 et non-staff 403 sur les 8 endpoints staff, scope `write` exigé pour les mutations, admin Haml 403 en session réelle, fils draft et brouillons jamais exposés publiquement, statuts non publics refusés même au staff.
+  - **Admin Haml** `/admin/epsilon/curated_feeds` : CRUD des fils (noms/descriptions FR+EN en JSONB), `discover` protégé contre la suppression. Docs : `docs/curated_feeds.md` (workflow, **compte curateur** — l'import outbox couvre l'historique, le follow couvre le flux continu). Reportés (backlog) : sources comptes×mots-clés, étiquettes/équilibre éditorial, onglet « Communauté » par hashtag, ingestion RSS, streaming.
+
+### Changed
+
+- **Filtre home déplacé sous le compose en desktop** : sur sa propre ligne, aligné à droite, dropdown ancré au bord droit (en top-bar il entrait en collision avec les pilules des fils curés) ; inchangé en mobile, à côté de la barre de recherche. Fichiers : `epsilon/components/epsilon_layout.jsx`, `styles/epsilon/layout.scss`.
+
 ## [0.3.28] - 2026-10-06
 
 ### Added
@@ -108,6 +126,7 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 - **Specs natives réalignées sur le fork (run RSpec global de 7704 exemples, premier depuis un moment)** : 7 assertions attendaient un `noscript` contenant « Mastodon » alors que la chaîne `noscript_html` dit « Epsilon » depuis UI v5 (21/09, PR #40) — `spec/system/{about,home,privacy,statuses,tags,terms_of_service}_spec.rb`. Et la spec CSP attendait le seul hash sha256 natif (`theme-selection.js`) alors que les deux scripts inline Epsilon (`epsilon-in-app-context.js`, `epsilon-locale-refresh.js`) en ajoutent chacun un à `script-src` — hashes désormais calculés dynamiquement via `InlineScriptManager` (suivront les futurs edits de ces fichiers) : `spec/requests/content_security_policy_spec.rb`. Aucun autre échec réel : le reste de la suite est vert.
 
 - **Catégorisation des posts locaux réparée (course avec l'attachement des hashtags)** : Les posts locaux n'étaient quasiment jamais catégorisés (7 sur 603 en prod sur 7 jours), donc absents des fils par catégorie — alors que le contenu distant y arrivait bien. Cause : le worker de catégorisation était enclenché par un `after_commit on: :create` sur `Status`, qui part **avant** que `PostStatusService` attache les hashtags (`postprocess_status!`) ; le worker lisait une association `tags` vide et classait le post « non classé », sans retry. Le chemin distant, lui, attache les tags dans la transaction de création (d'où l'asymétrie). Fix : le callback modèle est restreint aux statuts distants, et les posts locaux sont enclenchés après `process_hashtags_service` via `Epsilon::Categorization::PostStatusExtension` (prepend sur `PostStatusService`). Rattrapage des posts jamais catégorisés : `rake epsilon:categorization:backfill_local[30]` (fenêtre en jours). Fichiers : `app/models/concerns/epsilon/categorization/status_extension.rb`, `app/services/concerns/epsilon/categorization/post_status_extension.rb` (nouveau), `config/initializers/epsilon/extensions.rb`, `lib/tasks/epsilon/categorization.rake` (nouveau).
+  > > > > > > > production
 
 ## [0.3.21] - 2026-09-27
 

@@ -69,6 +69,10 @@ SimpleNavigation::Configuration.run do |navigation|
       s.item :epsilon_categories, safe_join([material_symbol('tile'), t('admin.epsilon.categorization.dashboard_title')]), admin_epsilon_categories_path, highlights_on: %r{/admin/epsilon/categories}, if: -> { current_user.can?(:manage_taxonomies) }
       # ==========================================
       # ==========================================
+      # EPSILON : CURATED EDITORIAL FEEDS
+      s.item :epsilon_curated_feeds, safe_join([material_symbol('breaking_news'), t('admin.epsilon.curated_feeds.title')]), admin_epsilon_curated_feeds_path, highlights_on: %r{/admin/epsilon/curated_feeds}, if: -> { current_user.can?(:manage_taxonomies) }
+      # ==========================================
+      # ==========================================
       # EPSILON : CERTIFIED ACCOUNTS / BADGES
       s.item :epsilon_badges, safe_join([material_symbol('license-fill'), t('admin.epsilon.badges.title')]), admin_epsilon_badges_path, highlights_on: %r{/admin/epsilon/badges}, if: -> { current_user.can?(:manage_users) }
       # ==========================================

@@ -239,6 +239,39 @@ fr:
         view_all_hashtags:
           one: Voir le seul hashtag
           other: Voir les %{count} hashtags
+      curated_feeds:
+        create_button: Créer le fil
+        created: Fil d'actu créé
+        delete: Supprimer
+        deleted: Fil d'actu supprimé
+        description_label: Description (%{lang})
+        draft_count: Brouillons
+        edit: Modifier
+        edit_title: Modifier le fil d'actu
+        ends_at_label: Fin (optionnel)
+        feed_name: Nom
+        icon_label: Icône (optionnel)
+        name_label: Nom (%{lang})
+        new_title: Nouveau fil d'actu
+        no_feeds: Aucun fil d'actu — lance la tâche de seed ou crées-en un.
+        no_parent: "— fil de premier niveau"
+        parent_label: Fil parent
+        position_label: Position
+        protected: Le fil Découverte ne peut pas être supprimé.
+        published_count: Publiés
+        slug: Slug
+        slug_hint: Minuscules, chiffres et tirets — utilisé dans l'URL /discover.
+        slug_label: Slug (URL)
+        starts_at_label: Début (optionnel)
+        state: État
+        state_archived: Archivé
+        state_draft: Brouillon
+        state_label: État
+        state_published: Publié
+        studio_link: Ouvrir le studio de curation (la sélection du contenu se fait là-bas)
+        title: Fils d'actu
+        updated: Fil d'actu mis à jour
+        window: Fenêtre
     account_actions:
       action: Effectuer l'action
       already_silenced: Ce compte est déjà limité.

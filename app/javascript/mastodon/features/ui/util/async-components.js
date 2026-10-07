@@ -293,3 +293,15 @@ export function EpsilonOnboardingCategories () {
   return import('../../epsilon/onboarding_categories');
 }
 // ==========================================
+
+// ==========================================
+// EPSILON : CURATED EDITORIAL FEEDS
+// ==========================================
+export function EpsilonCuratedFeed () {
+  return import('../../epsilon/curated_feed');
+}
+
+export function EpsilonCurationStudio () {
+  return import('../../epsilon/curation_studio');
+}
+// ==========================================

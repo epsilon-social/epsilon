@@ -1,0 +1,37 @@
+- content_for :page_title do
+  = t('admin.epsilon.curated_feeds.title')
+
+- content_for :heading_actions do
+  = link_to t('admin.epsilon.curated_feeds.new_title'), new_admin_epsilon_curated_feed_path, class: 'button'
+
+%p.muted-hint= link_to t('admin.epsilon.curated_feeds.studio_link'), '/curation', target: '_blank', rel: 'noopener'
+
+- if @feeds.any?
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.curated_feeds.feed_name')
+          %th= t('admin.epsilon.curated_feeds.slug')
+          %th= t('admin.epsilon.curated_feeds.state')
+          %th= t('admin.epsilon.curated_feeds.window')
+          %th= t('admin.epsilon.curated_feeds.published_count')
+          %th= t('admin.epsilon.curated_feeds.draft_count')
+          %th
+      %tbody
+        - @feeds.each do |feed|
+          %tr
+            %td
+              - if feed.parent_id.present?
+                ↳
+              = feed.display_name
+            %td= feed.slug
+            %td= t("admin.epsilon.curated_feeds.state_#{feed.state}")
+            %td= [feed.starts_at&.to_date, feed.ends_at&.to_date].compact.map { |date| l(date) }.join(' → ').presence || '—'
+            %td= @published_counts[feed.id].to_i
+            %td= @draft_counts[feed.id].to_i
+            %td
+              = table_link_to 'edit', t('admin.epsilon.curated_feeds.edit'), edit_admin_epsilon_curated_feed_path(feed)
+              = table_link_to 'trash', t('admin.epsilon.curated_feeds.delete'), admin_epsilon_curated_feed_path(feed), data: { method: :delete, confirm: t('admin.accounts.are_you_sure') }
+- else
+  %p.muted-hint= t('admin.epsilon.curated_feeds.no_feeds')

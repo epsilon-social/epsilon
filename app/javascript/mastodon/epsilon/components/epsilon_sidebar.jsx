@@ -38,6 +38,7 @@ import { useAppDispatch } from 'mastodon/store';
 import { useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 
 import { ColumnLink } from 'mastodon/features/ui/components/column_link';
+import { EpsilonCurationStudioLink } from './epsilon_curation_studio_link';
 import { useIdentity } from 'mastodon/identity_context';
 import { me } from 'mastodon/initial_state';
 import { LinkFooter} from 'mastodon/features/ui/components/link_footer';
@@ -277,6 +278,8 @@ const EpsilonSidebar = () => {
         {signedIn && showTrending && (
           <ColumnLink to='/explore/suggestions' icon='explore' iconComponent={TrendingUpIcon} text={intl.formatMessage(messages.explore)} className={getNavClass('/explore')}/>
         )}
+
+        {signedIn && <EpsilonCurationStudioLink getNavClass={getNavClass} />}
 
         {signedIn && (
           <>

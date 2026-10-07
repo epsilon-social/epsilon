@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 import { toggleNavigation } from 'mastodon/actions/navigation';
 import { EpsilonHomeFilter } from './epsilon_home_filter';
+import { EpsilonHomeFeedPills } from './epsilon_home_feed_pills';
 import EpsilonStoreBadges from './epsilon_store_badges';
 
 import { InlineFollowSuggestions } from 'mastodon/features/home_timeline/components/inline_follow_suggestions';
@@ -102,17 +103,34 @@ const EpsilonLayoutContent = ({ children }) => {
             {showSearchBar && <Search singleColumn />}
           </div>
 
+          {/* Mobile position — next to the search bar. Hidden on desktop
+              (see .epsilon-home-filter-row), where a top-bar filter made
+              the column jump between /home and other pages. */}
           {isHome && <EpsilonHomeFilter />}
         </div>
+
+        {/* Curated feed pills — very top of the home column, above the
+            inline compose. Active pill swaps the body via /home/:slug. */}
+        {signedIn && showCompose && <EpsilonHomeFeedPills />}
 
         {isHome && isInApp ? (
           <EpsilonPullToRefresh>
             {showInlineCompose && <ComposeFormContainer singleColumn />}
+            {isHome && (
+              <div className='epsilon-home-filter-row'>
+                <EpsilonHomeFilter />
+              </div>
+            )}
             {children}
           </EpsilonPullToRefresh>
         ) : (
           <>
             {showInlineCompose && <ComposeFormContainer singleColumn />}
+            {isHome && (
+              <div className='epsilon-home-filter-row'>
+                <EpsilonHomeFilter />
+              </div>
+            )}
             {children}
           </>
         )}

@@ -16,7 +16,9 @@ module Epsilon
 
         return if user_signed_in?
 
-        return unless request.path == '/home'
+        # /home and its curated-feed pills (/home/:slug) are member-only —
+        # guests land on /about (curated feeds stay reachable via /discover).
+        return unless request.path == '/home' || request.path.start_with?('/home/')
 
         redirect_to about_path
       end

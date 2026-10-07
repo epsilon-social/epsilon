@@ -295,6 +295,11 @@ Rails.application.routes.draw do
       end
       resources :account_badges, only: [:create, :destroy]
       # ==========================================
+
+      # ==========================================
+      # EPSILON : CURATED EDITORIAL FEEDS
+      resources :curated_feeds, except: [:show]
+      # ==========================================
     end
   end
   # ==========================================
@@ -319,6 +324,13 @@ Rails.application.routes.draw do
   # ==========================================
   # EPSILON : CATEGORIZATION SYSTEM
   get '/categories', to: 'home#index'
+  # ==========================================
+
+  # ==========================================
+  # EPSILON : CURATED EDITORIAL FEEDS
+  get '/discover(/:slug)', to: 'home#index'
+  get '/curation', to: 'home#index'
+  get '/home/:slug', to: 'home#index'
   # ==========================================
 
   get '/privacy-policy',   to: 'privacy#show', as: :privacy_policy

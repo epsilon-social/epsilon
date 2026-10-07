@@ -1,0 +1,42 @@
+= form_with url: url, method: method, scope: :curated_feed, local: true, class: 'simple_form' do |f|
+  - Epsilon::Curation::CuratedFeed::TRANSLATED_LOCALES.each do |locale|
+    .fields-group
+      = label_tag "curated_feed_name_translations_#{locale}", t('admin.epsilon.curated_feeds.name_label', lang: locale.upcase)
+      = text_field_tag "curated_feed[name_translations][#{locale}]", feed.name_translations[locale], id: "curated_feed_name_translations_#{locale}", required: locale == 'en'
+
+  - Epsilon::Curation::CuratedFeed::TRANSLATED_LOCALES.each do |locale|
+    .fields-group
+      = label_tag "curated_feed_description_translations_#{locale}", t('admin.epsilon.curated_feeds.description_label', lang: locale.upcase)
+      = text_area_tag "curated_feed[description_translations][#{locale}]", feed.description_translations[locale], id: "curated_feed_description_translations_#{locale}", rows: 2
+
+  .fields-group
+    = label_tag :curated_feed_slug, t('admin.epsilon.curated_feeds.slug_label')
+    = text_field_tag 'curated_feed[slug]', feed.slug, id: :curated_feed_slug
+    %span.hint= t('admin.epsilon.curated_feeds.slug_hint')
+
+  .fields-group
+    = label_tag :curated_feed_parent_id, t('admin.epsilon.curated_feeds.parent_label')
+    = select_tag 'curated_feed[parent_id]', options_for_select(parent_options.map { |option| [option.display_name, option.id] }, feed.parent_id), include_blank: t('admin.epsilon.curated_feeds.no_parent'), id: :curated_feed_parent_id
+
+  .fields-group
+    = label_tag :curated_feed_state, t('admin.epsilon.curated_feeds.state_label')
+    = select_tag 'curated_feed[state]', options_for_select(Epsilon::Curation::CuratedFeed.states.keys.map { |state| [t("admin.epsilon.curated_feeds.state_#{state}"), state] }, feed.state), id: :curated_feed_state
+
+  .fields-group
+    = label_tag :curated_feed_position, t('admin.epsilon.curated_feeds.position_label')
+    = number_field_tag 'curated_feed[position]', feed.position, id: :curated_feed_position, min: 0, step: 1
+
+  .fields-group
+    = label_tag :curated_feed_starts_at, t('admin.epsilon.curated_feeds.starts_at_label')
+    = datetime_local_field_tag 'curated_feed[starts_at]', feed.starts_at&.strftime('%Y-%m-%dT%H:%M'), id: :curated_feed_starts_at
+
+  .fields-group
+    = label_tag :curated_feed_ends_at, t('admin.epsilon.curated_feeds.ends_at_label')
+    = datetime_local_field_tag 'curated_feed[ends_at]', feed.ends_at&.strftime('%Y-%m-%dT%H:%M'), id: :curated_feed_ends_at
+
+  .fields-group
+    = label_tag :curated_feed_icon, t('admin.epsilon.curated_feeds.icon_label')
+    = text_field_tag 'curated_feed[icon]', feed.icon, id: :curated_feed_icon
+
+  .actions
+    = f.submit submit_label, class: 'button'

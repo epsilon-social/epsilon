@@ -18,7 +18,8 @@ import StarIcon from '@/material-icons/400-24px/heart-fill.svg?react';
 import StarBorderIcon from '@/material-icons/400-24px/heart.svg?react';
 import HeartBrokenIcon from '@/material-icons/400-24px/heart_broken-fill.svg?react';
 import { identityContextPropShape, withIdentity } from 'mastodon/identity_context';
-import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION } from 'mastodon/permissions';
+// EPSILON : CURATED EDITORIAL FEEDS — PERMISSION_MANAGE_TAXONOMIES added
+import { PERMISSION_MANAGE_USERS, PERMISSION_MANAGE_FEDERATION, PERMISSION_MANAGE_TAXONOMIES } from 'mastodon/permissions';
 import { WithRouterPropTypes } from 'mastodon/utils/react_router';
 
 import { Dropdown } from 'mastodon/components/dropdown_menu';
@@ -57,6 +58,8 @@ const messages = defineMessages({
   admin_account: { id: 'status.admin_account', defaultMessage: 'Open moderation interface for @{name}' },
   admin_status: { id: 'status.admin_status', defaultMessage: 'Open this post in the moderation interface' },
   admin_domain: { id: 'status.admin_domain', defaultMessage: 'Open moderation interface for {domain}' },
+  // EPSILON : CURATED EDITORIAL FEEDS
+  epsilonCuratedFeeds: { id: 'epsilon_curated.status_menu', defaultMessage: 'Curated feeds…' },
   copy: { id: 'status.copy', defaultMessage: 'Copy link to post' },
   blockDomain: { id: 'account.block_domain', defaultMessage: 'Block domain {domain}' },
   unblockDomain: { id: 'account.unblock_domain', defaultMessage: 'Unblock domain {domain}' },
@@ -103,6 +106,8 @@ class StatusActionBar extends ImmutablePureComponent {
     onMuteConversation: PropTypes.func,
     onPin: PropTypes.func,
     onBookmark: PropTypes.func,
+    // EPSILON : CURATED EDITORIAL FEEDS
+    onEpsilonCuratedFeeds: PropTypes.func,
     onFilter: PropTypes.func,
     onAddFilter: PropTypes.func,
     onInteractionModal: PropTypes.func,
@@ -247,6 +252,13 @@ class StatusActionBar extends ImmutablePureComponent {
     this.props.onEmbed(this.props.status);
   };
 
+  // ==========================================
+  // EPSILON : CURATED EDITORIAL FEEDS
+  handleEpsilonCuratedFeedsClick = () => {
+    this.props.onEpsilonCuratedFeeds(this.props.status);
+  };
+  // ==========================================
+
   handleReport = () => {
     this.props.onReport(this.props.status);
   };
@@ -380,6 +392,17 @@ class StatusActionBar extends ImmutablePureComponent {
           }
         }
       }
+
+      // ==========================================
+      // EPSILON : CURATED EDITORIAL FEEDS
+      // Staff shortcut: manage this post's presence in the curated feeds
+      // (picker modal). Public, non-reblog posts only; own posts included.
+      // ==========================================
+      if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
+        menu.push(null);
+        menu.push({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
+      }
+      // ==========================================
     }
 
     let replyIcon;

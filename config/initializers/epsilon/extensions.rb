@@ -43,4 +43,8 @@ Rails.application.config.to_prepare do
   PrecomputeFeedService.prepend(Epsilon::Categorization::PrecomputeFeedServiceExtension) if defined?(PrecomputeFeedService)
   UnmergeWorker.prepend(Epsilon::Categorization::UnmergeWorkerExtension) if defined?(UnmergeWorker)
   ActivityPub::DistributionWorker.prepend(Epsilon::ActivityPubDistributionWorkerExtension) if defined?(ActivityPub::DistributionWorker)
+
+  # Curated feeds: keep the media of published curated items cached (they
+  # outlive the remote-media retention period by design).
+  Vacuum::MediaAttachmentsVacuum.prepend(Epsilon::CurationMediaVacuumExtension) if defined?(Vacuum::MediaAttachmentsVacuum)
 end

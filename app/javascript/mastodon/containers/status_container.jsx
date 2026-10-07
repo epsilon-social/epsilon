@@ -108,6 +108,13 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
     }
   },
 
+  // ==========================================
+  // EPSILON : CURATED EDITORIAL FEEDS
+  onEpsilonCuratedFeeds (status) {
+    dispatch(openModal({ modalType: 'EPSILON_CURATED_FEED_PICKER', modalProps: { statusId: status.get('id') } }));
+  },
+  // ==========================================
+
   onEmbed (status) {
     dispatch(openModal({
       modalType: 'EMBED',

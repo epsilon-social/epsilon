@@ -99,6 +99,26 @@ namespace :api, format: false do
       # ==========================================
       post 'session_bridge', to: 'session_bridge#create'
       # ==========================================
+
+      # ==========================================
+      # EPSILON : CURATED EDITORIAL FEEDS
+      # ==========================================
+      scope module: :curation do
+        get 'curated_feeds', to: 'curated_feeds#index', as: :curated_feeds
+        get 'curated_feeds/:slug/statuses', to: 'curated_feeds#statuses', as: :curated_feed_statuses
+
+        scope path: :curation, as: :curation do
+          get 'drafts', to: 'items#drafts'
+          get 'memberships', to: 'items#memberships'
+          post 'items', to: 'items#create'
+          delete 'items/:id', to: 'items#destroy'
+          patch 'feeds/:id/reorder', to: 'items#reorder'
+          post 'feeds/:id/publish', to: 'items#publish'
+          get 'category_statuses', to: 'search#category_statuses'
+          post 'import_account', to: 'search#import_account'
+        end
+      end
+      # ==========================================
     end
 
     namespace :timelines do

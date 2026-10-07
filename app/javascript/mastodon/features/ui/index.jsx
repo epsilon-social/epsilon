@@ -88,7 +88,12 @@ import {
   // ==========================================
   // EPSILON : CATEGORY
   EpsilonCategorySettings,
-  EpsilonOnboardingCategories
+  EpsilonOnboardingCategories,
+  // ==========================================
+  // ==========================================
+  // EPSILON : CURATED EDITORIAL FEEDS
+  EpsilonCuratedFeed,
+  EpsilonCurationStudio
   // ==========================================
 } from './util/async-components';
 import { ColumnsContextProvider } from './util/columns_context';
@@ -225,7 +230,13 @@ class SwitchingColumnsArea extends PureComponent {
             {/* EPSILON : CATEGORIZATION SYSTEM            */}
             <WrappedRoute path='/categories' component={EpsilonCategorySettings} content={children} />
             {/* ========================================== */}
-            <WrappedRoute path={['/home', '/timelines/home']} component={HomeTimeline} content={children} />
+            {/* ========================================== */}
+            {/* EPSILON : CURATED EDITORIAL FEEDS          */}
+            <WrappedRoute path='/discover/:slug?' component={EpsilonCuratedFeed} content={children} />
+            <WrappedRoute path='/curation' component={EpsilonCurationStudio} content={children} />
+            {/* ========================================== */}
+            {/* EPSILON : CURATED EDITORIAL FEEDS — optional :epsilonCuratedSlug selects a home pill */}
+            <WrappedRoute path={['/home/:epsilonCuratedSlug?', '/timelines/home']} component={HomeTimeline} content={children} />
             <Redirect from='/timelines/public' to='/public' exact />
             <Redirect from='/timelines/public/local' to='/public/local' exact />
             <WrappedRoute path='/public' exact component={Firehose} componentParams={{ feedType: 'public' }} content={children} />

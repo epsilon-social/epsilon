@@ -32,6 +32,11 @@ import { AnnualReportTimeline } from '../annual_report/timeline';
 {/* ========================================== */}
 import { EpsilonHomeEmptyState } from './components/epsilon/home_empty_state';
 {/* ========================================== */}
+{/* ========================================== */}
+{/* EPSILON : CURATED EDITORIAL FEEDS          */}
+{/* ========================================== */}
+import { EpsilonCuratedTimeline } from 'mastodon/features/epsilon/curated_feed/embedded_timeline';
+{/* ========================================== */}
 
 const messages = defineMessages({
   title: { id: 'column.home', defaultMessage: 'Home' },
@@ -59,6 +64,8 @@ class HomeTimeline extends PureComponent {
     hasAnnouncements: PropTypes.bool,
     unreadAnnouncements: PropTypes.number,
     showAnnouncements: PropTypes.bool,
+    // EPSILON : CURATED EDITORIAL FEEDS — route params (/home/:epsilonCuratedSlug?)
+    params: PropTypes.object,
   };
 
   handlePin = () => {
@@ -131,6 +138,8 @@ class HomeTimeline extends PureComponent {
     const { intl, hasUnread, columnId, multiColumn, hasAnnouncements, unreadAnnouncements, showAnnouncements, criticalUpdatesPending } = this.props;
     const pinned = !!columnId;
     const { signedIn } = this.props.identity;
+    // EPSILON : CURATED EDITORIAL FEEDS — active pill from /home/:epsilonCuratedSlug?
+    const epsilonCuratedSlug = this.props.params?.epsilonCuratedSlug;
     const banners = [
       <CriticalUpdateBanner key='critical-update-banner' />,
       <AnnualReportTimeline key='annual-report' />
@@ -182,7 +191,19 @@ class HomeTimeline extends PureComponent {
           <ColumnSettings />
         </ColumnHeader>
 
-        {signedIn ? (
+        {/* ========================================== */}
+        {/* EPSILON : CURATED EDITORIAL FEEDS          */}
+        {/* An active pill (rendered by EpsilonLayout) */}
+        {/* swaps the body for that curated feed.      */}
+        {/* ========================================== */}
+        {!signedIn && <NotSignedInIndicator />}
+
+        {signedIn && epsilonCuratedSlug && (
+          <EpsilonCuratedTimeline slug={epsilonCuratedSlug} bindToDocument={!multiColumn} scrollKeyPrefix='epsilon_home_curated' />
+        )}
+        {/* ========================================== */}
+
+        {signedIn && !epsilonCuratedSlug && (
           <StatusListContainer
             prepend={banners}
             alwaysPrepend
@@ -197,7 +218,7 @@ class HomeTimeline extends PureComponent {
             /* ========================================== */
             bindToDocument={!multiColumn}
           />
-        ) : <NotSignedInIndicator />}
+        )}
 
         <Helmet>
           <title>{intl.formatMessage(messages.title)}</title>

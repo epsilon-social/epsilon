@@ -3710,6 +3710,43 @@ html.epsilon-in-app {
   }
 }
 
+// The home filter renders twice : in the top bar (mobile, next to the
+// search bar) and on its own row below the inline compose (desktop) —
+// each media range hides the other instance. A desktop top-bar filter
+// made the column jump between /home and other pages.
+.epsilon-home-filter-row {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 100;
+
+  // Own the gap below the row (next block = timeline / critical-update
+  // banner) instead of relying on the inner wrapper's margin, which other
+  // rules reset per breakpoint.
+  margin-bottom: 16px;
+
+  @media (width <= 768px) {
+    display: none;
+  }
+
+  .epsilon-home-filter {
+    margin-bottom: 0 !important;
+  }
+
+  // Right-aligned button : anchor the dropdown to its right edge, else
+  // the 240px panel overflows the column (base rule pins left: 0).
+  .epsilon-home-filter .epsilon-filter-dropdown {
+    left: auto !important;
+    right: 0 !important;
+  }
+}
+
+@media (width > 768px) {
+  .epsilon-home-top-bar .epsilon-home-filter {
+    display: none;
+  }
+}
+
 .epsilon-home-filter {
   position: relative;
   margin-bottom: 16px !important;
