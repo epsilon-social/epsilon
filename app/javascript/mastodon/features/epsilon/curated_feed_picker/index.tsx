@@ -1,8 +1,9 @@
 // Epsilon — add-to-curated-feed picker modal.
 //
-// Staff two-click flow from the status "…" menu: checking a feed publishes
-// the post on top of it right away; unchecking removes it (e.g. fake news
-// discovered after publication). Mirrors the native ListAdder modal.
+// Staff two-click flow from the status "…" menu: checking a feed queues the
+// post in its drafts (published later from the curation studio); unchecking
+// removes it (e.g. fake news discovered after publication). Mirrors the
+// native ListAdder modal.
 
 import { useCallback, useEffect, useId, useState } from 'react';
 
@@ -56,6 +57,15 @@ const FeedRow: React.FC<{
       <div className='lists__item__title'>
         <Icon id='newspaper' icon={BreakingNewsIcon} />
         <span>{categoryDisplayName(intl, feed)}</span>
+        {/* The FEED itself is not live yet (staff-only in the list). */}
+        {feed.state === 'draft' && (
+          <span className='epsilon-curated-feed-badge'>
+            <FormattedMessage
+              id='epsilon_curated.feed_state_badge'
+              defaultMessage='Draft'
+            />
+          </span>
+        )}
         {membership?.state === 'draft' && (
           <span className='epsilon-curated-picker__hint'>
             {intl.formatMessage(messages.draftHint)}
@@ -99,7 +109,7 @@ export const EpsilonCuratedFeedPicker: React.FC<{
   const handleToggle = useCallback(
     (feedId: string, checked: boolean) => {
       if (checked) {
-        apiCreateEpsilonCurationItem({ feedId, statusId, mode: 'publish' })
+        apiCreateEpsilonCurationItem({ feedId, statusId, mode: 'draft' })
           .then((item) => {
             setMemberships((current) => ({
               ...current,
@@ -155,7 +165,7 @@ export const EpsilonCuratedFeedPicker: React.FC<{
           <p className='epsilon-curated-picker__note'>
             <FormattedMessage
               id='epsilon_curated.picker.note'
-              defaultMessage='Checked feeds show this post immediately, on top.'
+              defaultMessage='Checking a feed adds this post to its drafts — publish from the curation studio.'
             />
           </p>
 

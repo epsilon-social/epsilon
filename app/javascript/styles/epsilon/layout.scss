@@ -322,6 +322,10 @@ body.theme-system {
   align-self: center !important;
 }
 
+.video-player {
+  margin-inline: auto !important;
+}
+
 // Floating video player (picture-in-picture) that follows the scroll. Natively
 // it has no z-index (slips under the sidebars/navbar, which go up to 1500) and
 // sits on --color-bg-primary (transparent in our light theme → see-through
@@ -417,6 +421,24 @@ body.theme-system {
 .modal-root__container {
   border-radius: var(--eps-radius) !important;
   overflow: hidden !important;
+}
+
+// Long ⋯ menus never taller than the viewport: the popper stays on screen
+// (preventOverflow altAxis — see the EPSILON block in dropdown_menu.tsx) and
+// the item list scrolls inside instead. dvh preferred: the mobile URL bar
+// eats real height. The native `--scrollable` variant keeps its own tighter
+// 300px cap (language pickers).
+// No overscroll-behavior here, on purpose: scroll chaining must reach the
+// page once the list is done (or does not overflow) — the page scrolls, the
+// virtualized status unmounts and the menu closes itself, which is the
+// expected "close on scroll" behavior. Browser scroll latching still keeps
+// the wheel on the inner list while it can scroll.
+.dropdown-menu__container__list:not(
+  .dropdown-menu__container__list--scrollable
+) {
+  max-height: calc(100vh - 88px);
+  max-height: calc(100dvh - 88px);
+  overflow-y: auto;
 }
 
 .modal-root__overlay {
@@ -2916,22 +2938,20 @@ body.theme-system {
   justify-content: center;
   gap: 8px;
   flex-shrink: 0;
-  padding: 10px 20px;
+
+  // Keep in sync with .epsilon-filter-btn (one compact size everywhere).
+  padding: 8px 16px;
   border: 1px solid var(--eps-brand-primary);
   border-radius: var(--eps-radius-pill);
   background: transparent;
   color: var(--eps-brand-primary);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
   transition:
     all 0.25s ease,
     transform 0.12s ease;
-
-  @media (width <= 768px) {
-    padding: 12px 20px;
-  }
 
   // Press feedback lives in the global EPSILON : PRESS FEEDBACK block
   // (reduced-motion aware); only the snappier transform timing is local.
@@ -3222,7 +3242,6 @@ body.theme-system {
   }
 
   .epsilon-layout__center #tabs-bar__portal .column-header,
-  .epsilon-home-top-bar,
   .account__section-headline,
   .explore__search-header {
     padding-inline: 8px !important;
@@ -3472,88 +3491,6 @@ html.epsilon-in-app {
 
 /* ========================================== */
 
-/* EPSILON : HOME TOP BAR (FLEX WRAPPER)      */
-
-/* ========================================== */
-.epsilon-home-top-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  z-index: 100;
-
-  @media (width <= 768px) {
-    justify-content: space-between;
-  }
-}
-
-/* ========================================== */
-
-/* EPSILON : MOBILE SEARCH BAR                */
-
-/* ========================================== */
-
-.epsilon-mobile-search {
-  display: none;
-  flex: 1;
-  margin: 0;
-
-  .search {
-    margin-bottom: 0 !important;
-  }
-
-  .search__input {
-    background: var(--eps-nav-hover) !important;
-    border: none !important;
-    border-radius: var(--eps-radius-pill) !important;
-    color: var(--eps-text-primary) !important;
-    padding: 12px 16px 12px 44px !important;
-
-    // 16px minimum : évite le zoom au focus iOS (était 0.9375rem = 15px).
-    font-size: 1rem !important;
-    font-weight: 500 !important;
-    transition: all var(--eps-dur-base) ease !important;
-    box-shadow: none !important;
-
-    &::placeholder {
-      color: var(--eps-text-secondary) !important;
-      opacity: 0.8;
-    }
-
-    &:focus {
-      background: var(--eps-surface) !important;
-      box-shadow: 0 0 0 2px var(--eps-brand-primary) !important;
-    }
-  }
-
-  .search__icon .fa-search,
-  .search__label .fa-search {
-    color: var(--eps-text-primary) !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    left: 16px !important;
-  }
-
-  @media (width <= 768px) {
-    display: block;
-  }
-}
-
-// EPSILON : respiration sous la barre de recherche — flux en direct (/public).
-// Sur /home, c'est le compose inline (.epsilon-compose, margin-top: 20px) qui
-// crée l'écart sous la barre ; /public n'a ni compose ni filtre home en dessous,
-// donc on reproduit le même 20px. Scopé via :has(.search) (barre non vide) et
-// :not(:has(.epsilon-home-filter)) → n'affecte ni /home ni /search|/explore
-// (où .epsilon-mobile-search est vide).
-@media (width <= 768px) {
-  .epsilon-home-top-bar:not(:has(.epsilon-home-filter))
-    .epsilon-mobile-search:has(.search) {
-    margin-bottom: 20px;
-  }
-}
-
-/* ========================================== */
-
 /* EPSILON : MOBILE BACKDROP (FOND GRISÉ)     */
 
 /* ========================================== */
@@ -3710,10 +3647,8 @@ html.epsilon-in-app {
   }
 }
 
-// The home filter renders twice : in the top bar (mobile, next to the
-// search bar) and on its own row below the inline compose (desktop) —
-// each media range hides the other instance. A desktop top-bar filter
-// made the column jump between /home and other pages.
+// The home filter renders once, on its own row below the inline compose —
+// all breakpoints (the mobile top bar is gone along with its search bar).
 .epsilon-home-filter-row {
   display: flex;
   justify-content: flex-end;
@@ -3725,10 +3660,6 @@ html.epsilon-in-app {
   // rules reset per breakpoint.
   margin-bottom: 16px;
 
-  @media (width <= 768px) {
-    display: none;
-  }
-
   .epsilon-home-filter {
     margin-bottom: 0 !important;
   }
@@ -3738,12 +3669,6 @@ html.epsilon-in-app {
   .epsilon-home-filter .epsilon-filter-dropdown {
     left: auto !important;
     right: 0 !important;
-  }
-}
-
-@media (width > 768px) {
-  .epsilon-home-top-bar .epsilon-home-filter {
-    display: none;
   }
 }
 
@@ -3762,10 +3687,15 @@ html.epsilon-in-app {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 20px !important;
+
+    // One compact size at every breakpoint — the old 12px mobile padding
+    // override made the button visibly bigger than on desktop. No 16px iOS
+    // floor needed here: that rule only ever applied to the (removed) search
+    // input, a button never triggers the focus zoom.
+    padding: 8px 16px !important;
     background: transparent;
     border-radius: var(--eps-radius-pill);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     color: var(--eps-brand-primary);
     cursor: pointer;
@@ -3774,10 +3704,6 @@ html.epsilon-in-app {
       transform 0.12s ease;
     flex-shrink: 0;
     border: 1px solid var(--eps-brand-primary);
-
-    @media (width <= 768px) {
-      padding: 12px 20px !important;
-    }
 
     @media (hover: hover) {
       &:hover {

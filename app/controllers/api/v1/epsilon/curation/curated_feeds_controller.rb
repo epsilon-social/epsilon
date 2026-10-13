@@ -9,7 +9,12 @@ module Api
 
       def index
         cache_if_unauthenticated!
-        feeds = ::Epsilon::Curation::CuratedFeed.currently_active.top_level.ordered.includes(:children)
+        # Staff curators also get draft / out-of-window feeds (badged in the
+        # UI), so they can fill and preview a feed before it goes live.
+        # Archived feeds stay hidden for everyone. Anonymous responses are the
+        # cached, active-only list — staff is always authenticated.
+        feeds = ::Epsilon::Curation::CuratedFeed.top_level.ordered.includes(:children)
+        feeds = staff_curator? ? feeds.where.not(state: :archived) : feeds.currently_active
         counts = ::Epsilon::Curation::FeedItem.published.group(:curated_feed_id).count
         render json: feeds.map { |feed| feed_payload(feed, counts, with_children: true) }
       end
@@ -26,7 +31,15 @@ module Api
       private
 
       def set_feed
-        @feed = ::Epsilon::Curation::CuratedFeed.currently_active.find_by!(slug: params[:slug])
+        # Staff bypass: preview the (published items of a) feed that is not
+        # live yet — everyone else 404s on a non-active slug.
+        scope = ::Epsilon::Curation::CuratedFeed.all
+        scope = scope.currently_active unless staff_curator?
+        @feed = scope.find_by!(slug: params[:slug])
+      end
+
+      def staff_curator?
+        current_user&.can?(:manage_taxonomies)
       end
 
       def feed_payload(feed, counts, with_children: false)
@@ -37,13 +50,21 @@ module Api
           name_translations: feed.name_translations,
           description_translations: feed.description_translations,
           icon: feed.icon,
+          # Lets the staff UI badge non-live feeds; regular users only ever
+          # receive currently-active (published) feeds anyway.
+          state: feed.state,
           starts_at: feed.starts_at,
           ends_at: feed.ends_at,
           # Published items only — lets public surfaces (pills, sidebar, tabs)
           # hide feeds that have nothing to show yet.
           statuses_count: counts.fetch(feed.id, 0),
         }
-        payload[:children] = feed.children.select(&:currently_active?).sort_by { |child| [child.position, child.id] }.map { |child| feed_payload(child, counts) } if with_children
+
+        if with_children
+          children = staff_curator? ? feed.children.reject(&:archived?) : feed.children.select(&:currently_active?)
+          payload[:children] = children.sort_by { |child| [child.position, child.id] }.map { |child| feed_payload(child, counts) }
+        end
+
         payload
       end
 

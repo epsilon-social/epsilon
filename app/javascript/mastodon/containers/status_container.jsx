@@ -44,6 +44,10 @@ import { setStatusQuotePolicy } from '../actions/statuses_typed';
 import { injectIntl } from '../components/intl';
 import Status from '../components/status';
 import { deleteModal } from '../initial_state';
+// ==========================================
+// EPSILON : CURATED EDITORIAL FEEDS
+import { removeStatusFromEpsilonCuratedFeed } from '../epsilon/store/curated_timelines_slice';
+// ==========================================
 import { makeGetStatus, makeGetPictureInPicture } from '../selectors';
 
 const makeMapStateToProps = () => {
@@ -112,6 +116,12 @@ const mapDispatchToProps = (dispatch, { contextType }) => ({
   // EPSILON : CURATED EDITORIAL FEEDS
   onEpsilonCuratedFeeds (status) {
     dispatch(openModal({ modalType: 'EPSILON_CURATED_FEED_PICKER', modalProps: { statusId: status.get('id') } }));
+  },
+
+  // One-click removal from the curated feed being browsed (slug comes from
+  // the curated timelines via statusProps).
+  onEpsilonCuratedRemove (status, slug) {
+    dispatch(removeStatusFromEpsilonCuratedFeed({ slug, statusId: status.get('id') }));
   },
   // ==========================================
 

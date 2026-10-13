@@ -67,10 +67,6 @@ const EpsilonLayoutContent = ({ children }) => {
     );
   const isHome = location.pathname === '/home';
 
-  const showSearchBar = ['/home', '/public'].some(path =>
-      location.pathname.startsWith(path)
-    );
-
   const showInlineCompose =
     showCompose && !isComposeOpen && !isReplyingOrQuoting;
 
@@ -98,19 +94,11 @@ const EpsilonLayoutContent = ({ children }) => {
       <EpsilonTopNavbar />
 
       <main className='epsilon-layout__center'>
-        <div className='epsilon-home-top-bar'>
-          <div className='epsilon-mobile-search'>
-            {showSearchBar && <Search singleColumn />}
-          </div>
-
-          {/* Mobile position — next to the search bar. Hidden on desktop
-              (see .epsilon-home-filter-row), where a top-bar filter made
-              the column jump between /home and other pages. */}
-          {isHome && <EpsilonHomeFilter />}
-        </div>
-
         {/* Curated feed pills — very top of the home column, above the
-            inline compose. Active pill swaps the body via /home/:slug. */}
+            inline compose. Active pill swaps the body via /home/:slug.
+            The filter renders once, in .epsilon-home-filter-row below the
+            compose (all breakpoints) — the mobile top bar is gone along
+            with its search bar. */}
         {signedIn && showCompose && <EpsilonHomeFeedPills />}
 
         {isHome && isInApp ? (

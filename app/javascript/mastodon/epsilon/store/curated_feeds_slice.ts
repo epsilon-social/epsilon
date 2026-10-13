@@ -20,6 +20,9 @@ export interface ApiEpsilonCuratedFeed {
   name_translations: Record<string, string>;
   description_translations: Record<string, string>;
   icon: string | null;
+  // Non-published feeds are only ever served to staff curators (badged in
+  // the UI as work-in-progress feeds).
+  state: 'draft' | 'published' | 'archived';
   starts_at: string | null;
   ends_at: string | null;
   statuses_count: number;

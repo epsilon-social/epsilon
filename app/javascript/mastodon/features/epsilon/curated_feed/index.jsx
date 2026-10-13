@@ -11,7 +11,7 @@
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef } from 'react';
 
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import { Helmet } from '@unhead/react/helmet';
 import { NavLink } from 'react-router-dom';
@@ -65,7 +65,15 @@ const EpsilonCuratedFeedPage = ({ params, multiColumn }) => {
         <div className='account__section-headline'>
           {feeds.map((feed) => (
             <NavLink key={feed.id} exact to={feed.slug === EPSILON_DEFAULT_CURATED_SLUG ? '/discover' : `/discover/${feed.slug}`}>
-              <div>{categoryDisplayName(intl, feed)}</div>
+              <div>
+                {categoryDisplayName(intl, feed)}
+                {/* Non-live feed: the API only serves it to staff curators. */}
+                {feed.state === 'draft' && (
+                  <span className='epsilon-curated-feed-badge'>
+                    <FormattedMessage id='epsilon_curated.feed_state_badge' defaultMessage='Draft' />
+                  </span>
+                )}
+              </div>
             </NavLink>
           ))}
         </div>

@@ -9,7 +9,7 @@
 
 import { useEffect } from 'react';
 
-import { defineMessages, useIntl } from 'react-intl';
+import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import { NavLink } from 'react-router-dom';
 
@@ -45,6 +45,12 @@ export const EpsilonHomeFeedPills = () => {
       {feeds.map((feed) => (
         <NavLink key={feed.id} exact to={`/home/${feed.slug}`}>
           {categoryDisplayName(intl, feed)}
+          {/* Non-live feed: the API only serves it to staff curators. */}
+          {feed.state === 'draft' && (
+            <span className='epsilon-curated-feed-badge'>
+              <FormattedMessage id='epsilon_curated.feed_state_badge' defaultMessage='Draft' />
+            </span>
+          )}
         </NavLink>
       ))}
     </div>

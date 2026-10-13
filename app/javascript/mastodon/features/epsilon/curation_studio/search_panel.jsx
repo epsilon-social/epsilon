@@ -14,6 +14,7 @@ import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 
+import { importFetchedStatuses } from 'mastodon/actions/importer';
 import { Button } from 'mastodon/components/button';
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
 import {
@@ -142,6 +143,10 @@ const SearchPanel = () => {
 
   const showStatuses = useCallback(
     (list, { append = false, more } = {}) => {
+      // Normalize into the Redux store first: the result cards render the
+      // native StatusContainer, which resolves statuses by id from the store.
+      dispatch(importFetchedStatuses(list));
+
       setStatuses((current) => {
         const next = append ? [...current, ...list] : list;
         refreshMemberships(next);
@@ -149,7 +154,7 @@ const SearchPanel = () => {
       });
       setHasMore(more ?? list.length >= 20);
     },
-    [refreshMemberships],
+    [dispatch, refreshMemberships],
   );
 
   const loadAccountStatuses = useCallback(

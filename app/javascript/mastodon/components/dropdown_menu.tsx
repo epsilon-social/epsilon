@@ -324,7 +324,30 @@ interface DropdownProps<Item extends object | null = MenuItem> {
   onItemClick?: ItemClickFn<Item>;
 }
 
-const popperConfig = { strategy: 'fixed' } as UsePopperOptions;
+// ==========================================
+// EPSILON : DROPDOWN VIEWPORT FIT
+// Long ⋯ menus (post / profile) could render partly off-screen, and since
+// the menu closes as soon as the page scrolls, the last items were
+// unreachable on short viewports. preventOverflow with altAxis + no tether
+// keeps the popper fully on screen (it may cover its anchor instead of
+// overflowing) — paired with the max-height + inner scroll cap in
+// styles/epsilon/layout.scss. react-overlays merges these options with its
+// own modifiers (flip, offset, arrow) by name.
+// ==========================================
+const popperConfig = {
+  strategy: 'fixed',
+  modifiers: [
+    {
+      name: 'preventOverflow',
+      options: {
+        padding: 12,
+        altAxis: true,
+        tether: false,
+      },
+    },
+  ],
+} as UsePopperOptions;
+// ==========================================
 
 export const Dropdown = <Item extends object | null = MenuItem>({
   children,

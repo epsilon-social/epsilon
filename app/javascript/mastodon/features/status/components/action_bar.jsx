@@ -340,12 +340,14 @@ class ActionBar extends PureComponent {
 
       // ==========================================
       // EPSILON : CURATED EDITORIAL FEEDS
-      // Staff shortcut: manage this post's presence in the curated feeds
-      // (picker modal). Public, non-reblog posts only; own posts included.
+      // Staff shortcut, pinned at the TOP of the menu (daily curation tool):
+      // manage this post's presence in the curated feeds (picker modal —
+      // queue into feed drafts). Public, non-reblog posts only; own posts
+      // included.
       // ==========================================
       if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
-        menu.push(null);
-        menu.push({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
+        menu.unshift(null);
+        menu.unshift({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
       }
       // ==========================================
     }

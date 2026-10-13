@@ -30,6 +30,10 @@ export const EpsilonCuratedTimeline = ({ slug, bindToDocument, scrollKeyPrefix =
     dispatch(expandEpsilonCuratedTimeline({ slug, loadMore: true }));
   }, [dispatch, slug]);
 
+  // Forwarded to every status: the ⋯ menu swaps its "Curated feeds…" picker
+  // entry for a one-click "Remove from this feed" (staff only).
+  const statusProps = useMemo(() => ({ epsilonCuratedSlug: slug }), [slug]);
+
   // Unknown feed slug (stale URL, renamed/deleted feed): leave the dead page
   // instead of showing a misleading empty state.
   if (timeline?.notFound && notFoundRedirect) {
@@ -43,6 +47,7 @@ export const EpsilonCuratedTimeline = ({ slug, bindToDocument, scrollKeyPrefix =
       hasMore={timeline?.hasMore ?? true}
       onLoadMore={handleLoadMore}
       trackScroll
+      statusProps={statusProps}
       scrollKey={`${scrollKeyPrefix}-${slug}`}
       emptyMessage={<FormattedMessage id='epsilon_curated.empty' defaultMessage='Nothing here yet. Posts selected by our editorial team will appear here soon.' />}
       bindToDocument={bindToDocument}

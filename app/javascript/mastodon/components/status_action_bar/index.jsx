@@ -60,6 +60,7 @@ const messages = defineMessages({
   admin_domain: { id: 'status.admin_domain', defaultMessage: 'Open moderation interface for {domain}' },
   // EPSILON : CURATED EDITORIAL FEEDS
   epsilonCuratedFeeds: { id: 'epsilon_curated.status_menu', defaultMessage: 'Curated feeds…' },
+  epsilonCuratedRemove: { id: 'epsilon_curated.status_menu_remove', defaultMessage: 'Remove from this feed' },
   copy: { id: 'status.copy', defaultMessage: 'Copy link to post' },
   blockDomain: { id: 'account.block_domain', defaultMessage: 'Block domain {domain}' },
   unblockDomain: { id: 'account.unblock_domain', defaultMessage: 'Unblock domain {domain}' },
@@ -108,6 +109,8 @@ class StatusActionBar extends ImmutablePureComponent {
     onBookmark: PropTypes.func,
     // EPSILON : CURATED EDITORIAL FEEDS
     onEpsilonCuratedFeeds: PropTypes.func,
+    onEpsilonCuratedRemove: PropTypes.func,
+    epsilonCuratedSlug: PropTypes.string,
     onFilter: PropTypes.func,
     onAddFilter: PropTypes.func,
     onInteractionModal: PropTypes.func,
@@ -254,6 +257,10 @@ class StatusActionBar extends ImmutablePureComponent {
 
   // ==========================================
   // EPSILON : CURATED EDITORIAL FEEDS
+  handleEpsilonCuratedRemoveClick = () => {
+    this.props.onEpsilonCuratedRemove(this.props.status, this.props.epsilonCuratedSlug);
+  };
+
   handleEpsilonCuratedFeedsClick = () => {
     this.props.onEpsilonCuratedFeeds(this.props.status);
   };
@@ -395,12 +402,20 @@ class StatusActionBar extends ImmutablePureComponent {
 
       // ==========================================
       // EPSILON : CURATED EDITORIAL FEEDS
-      // Staff shortcut: manage this post's presence in the curated feeds
-      // (picker modal). Public, non-reblog posts only; own posts included.
+      // Staff shortcut, pinned at the TOP of the menu (daily curation tool).
+      // While browsing a curated feed (epsilonCuratedSlug set by the curated
+      // timelines), the entry removes the post from THAT feed in one click;
+      // everywhere else it opens the picker modal (queue into feed drafts).
+      // Public, non-reblog posts only; own posts included.
       // ==========================================
-      if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
-        menu.push(null);
-        menu.push({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
+      if ((permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
+        if (this.props.epsilonCuratedSlug && this.props.onEpsilonCuratedRemove) {
+          menu.unshift(null);
+          menu.unshift({ text: intl.formatMessage(messages.epsilonCuratedRemove), action: this.handleEpsilonCuratedRemoveClick, dangerous: true });
+        } else if (this.props.onEpsilonCuratedFeeds) {
+          menu.unshift(null);
+          menu.unshift({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
+        }
       }
       // ==========================================
     }

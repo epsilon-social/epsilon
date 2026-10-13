@@ -21,13 +21,10 @@
   }
 }
 
-// Mobile /home only: the 20px breathing under the search bar normally comes
-// from either the .epsilon-mobile-search margin (pages without the home
-// filter — see layout.scss :not(:has(.epsilon-home-filter))) or, before the
-// pills existed, from the inline compose's margin-top. With the filter
-// present the pills glued to the top bar — reproduce the same 20px rhythm.
+// Mobile: the pills are now the first block of the home column (the top bar
+// and its search are gone) — keep the 20px breathing room above them.
 @media (width <= 768px) {
-  .epsilon-home-top-bar:has(.epsilon-home-filter) + .epsilon-home-pills {
+  .epsilon-home-pills {
     margin-top: 20px !important;
   }
 }

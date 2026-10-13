@@ -249,6 +249,11 @@ const DraftBoard = () => {
             onClick={handleFeedTabClick}
           >
             {categoryDisplayName(intl, feed)}
+            {feed.state === 'draft' && (
+              <span className='epsilon-curated-feed-badge'>
+                <FormattedMessage id='epsilon_curated.feed_state_badge' defaultMessage='Draft' />
+              </span>
+            )}
           </button>
         ))}
       </div>

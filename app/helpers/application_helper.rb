@@ -275,13 +275,19 @@ module ApplicationHelper
     I18n.t 'user_mailer.welcome.hashtags_recent_count', people: number_with_delimiter(people), count: people
   end
 
+  # ==========================================
+  # EPSILON : EMAIL REBRANDING
+  # Welcome email store links (HTML + text) point to the Epsilon apps
+  # instead of the upstream Mastodon ones.
+  # ==========================================
   def app_store_url_ios
-    'https://apps.apple.com/app/mastodon-for-iphone-and-ipad/id1571998974'
+    'https://apps.apple.com/app/epsilon-social/id6804720532'
   end
 
   def app_store_url_android
-    'https://play.google.com/store/apps/details?id=org.joinmastodon.android'
+    'https://play.google.com/store/apps/details?id=social.epsilon.app'
   end
+  # ==========================================
 
   def within_authorization_flow?
     session[:user_return_to].present? && Rails.application.routes.recognize_path(session[:user_return_to])[:controller] == 'oauth/authorizations'
