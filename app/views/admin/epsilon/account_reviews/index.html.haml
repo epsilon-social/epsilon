@@ -1,0 +1,111 @@
+- content_for :page_title do
+  = t('admin.epsilon.account_reviews.title')
+
+.epsilon-account-reviews__counts
+  - Epsilon::AccountReview.statuses.each_key do |status|
+    %span{ class: "epsilon-account-review__badge epsilon-account-review__badge--#{status}" }
+      = t("admin.epsilon.account_reviews.statuses.#{status}")
+      = @status_counts.fetch(status, 0)
+
+.epsilon-account-reviews__analysis
+  = form_with url: request_analysis_admin_epsilon_account_reviews_path do
+    %button.button= t('admin.epsilon.account_reviews.analysis.request')
+  - if @analysis_requested_at.present?
+    - if @analysis_requested_at < 30.minutes.ago
+      %p.hint.epsilon-account-reviews__analysis-stale= t('admin.epsilon.account_reviews.analysis.stale', time: l(@analysis_requested_at))
+    - else
+      %p.hint= t('admin.epsilon.account_reviews.analysis.pending', time: l(@analysis_requested_at))
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.account_reviews.settings.title')
+
+- @settings.each do |setting|
+  = form_with url: admin_epsilon_review_setting_path(setting), method: :put, scope: :epsilon_review_setting, class: 'simple_form' do |form|
+    .fields-group
+      .input.with_block_label
+        %label= setting.key
+        = form.text_area :value, value: setting.value, rows: 8
+    .actions
+      %button.button= t('generic.save_changes')
+      = link_to t('admin.epsilon.account_reviews.settings.delete'), admin_epsilon_review_setting_path(setting), class: 'button button--dangerous', data: { method: :delete, confirm: t('admin.reports.are_you_sure') }
+
+= form_with url: admin_epsilon_review_settings_path, scope: :epsilon_review_setting, class: 'simple_form' do |form|
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = form.text_field :key, placeholder: t('admin.epsilon.account_reviews.settings.key')
+    .fields-row__column.fields-row__column-6.fields-group
+      = form.text_area :value, rows: 2, placeholder: t('admin.epsilon.account_reviews.settings.value')
+  .actions
+    %button.button= t('admin.epsilon.account_reviews.settings.add')
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.account_reviews.entries.title')
+
+= form_with url: admin_epsilon_review_list_entries_path, scope: :epsilon_review_list_entry, class: 'simple_form' do |form|
+  .fields-row
+    .fields-row__column.fields-row__column-6.fields-group
+      = form.text_field :kind, placeholder: t('admin.epsilon.account_reviews.entries.kind')
+    .fields-row__column.fields-row__column-6.fields-group
+      = form.text_field :value, placeholder: t('admin.epsilon.account_reviews.entries.value')
+  .actions
+    %button.button= t('admin.epsilon.account_reviews.entries.add')
+
+- if @list_entries.empty?
+  %p.muted-hint= t('admin.epsilon.account_reviews.empty')
+- else
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.account_reviews.entries.kind')
+          %th= t('admin.epsilon.account_reviews.entries.value')
+          %th= t('admin.epsilon.account_reviews.entries.status')
+          %th= t('admin.epsilon.account_reviews.entries.hits')
+          %th
+      %tbody
+        - @list_entries.each do |entry|
+          %tr
+            %td= entry.kind
+            %td{ title: entry.payload.presence&.to_json }= entry.value
+            %td= t("admin.epsilon.account_reviews.entries.statuses.#{entry.status}")
+            %td= entry.hits
+            %td
+              - if entry.candidate?
+                = link_to t('admin.epsilon.account_reviews.entries.confirm'), admin_epsilon_review_list_entry_path(entry), data: { method: :put }
+              = link_to t('admin.epsilon.account_reviews.settings.delete'), admin_epsilon_review_list_entry_path(entry), data: { method: :delete, confirm: t('admin.reports.are_you_sure') }
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.account_reviews.reports.title')
+
+- report_runs = @runs.select { |run| run.stats['report'].present? }
+- if report_runs.empty?
+  %p.muted-hint= t('admin.epsilon.account_reviews.empty')
+- else
+  - report_runs.each do |run|
+    .epsilon-account-reviews__report
+      %strong= l(run.finished_at || run.created_at)
+      %p.epsilon-account-reviews__report-text= run.stats['report']
+
+%hr.spacer/
+
+%h4= t('admin.epsilon.account_reviews.runs.title')
+
+- if @runs.empty?
+  %p.muted-hint= t('admin.epsilon.account_reviews.empty')
+- else
+  .table-wrapper
+    %table.table
+      %thead
+        %tr
+          %th= t('admin.epsilon.account_reviews.runs.started')
+          %th= t('admin.epsilon.account_reviews.runs.finished')
+          %th= t('admin.epsilon.account_reviews.runs.stats')
+      %tbody
+        - @runs.each do |run|
+          %tr
+            %td= run.started_at.present? ? l(run.started_at) : '-'
+            %td= run.finished_at.present? ? l(run.finished_at) : '-'
+            %td= run.stats.except('report').map { |key, value| "#{key}: #{value.is_a?(Enumerable) ? value.to_a.join(', ') : value}" }.join(' · ')

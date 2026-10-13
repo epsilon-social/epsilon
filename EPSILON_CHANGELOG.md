@@ -5,6 +5,20 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-13-07
+
+### Added
+
+- **Revue des inscriptions (`/admin/accounts`)** : colonne de statut de revue par compte local — badge coloré **purement indicatif** (En attente / Validé / À revoir / Rejeté), en lecture seule : n'altère jamais le compte, les actions natives restent la seule voie d'approbation/rejet. Le survol de la cellule révèle dans une bulle (pattern `attr(data-*)` existant) la raison d'inscription et les détails de revue (rendu générique clé→valeur depuis un JSONB). Page `/admin/epsilon/account_reviews` (compteurs par statut, réglages texte libres clé/valeur, listes avec confirmation d'entrées candidates, historique d'exécutions, panneau Rapports par run, bouton « Lancer une analyse » qui pose un simple horodatage en base consommé par l'outillage — inoffensif si rien ne tourne derrière, avec avertissement visible si la demande n'est pas traitée sous 30 min) + entrée sidebar Modération (icône `person_alert`). 4 tables sidecar `epsilon_account_reviews` / `epsilon_review_{list_entries,settings,runs}` (contenu géré en base, aucun seed). Sidecar : modèles `epsilon/{account_review,review_list_entry,review_setting,review_run}.rb`, contrôleurs `admin/epsilon/{account_reviews,review_settings,review_list_entries}_controller.rb`, `policies/epsilon_account_review_policy.rb`, `concerns/epsilon/account_reviews_admin_extension.rb`, `styles/epsilon/admin_account_reviews.scss` ; core balisé : `admin/accounts/_account.html.haml`, `config/navigation.rb`, `config/routes.rb`, `config/initializers/epsilon/extensions.rb` ; i18n `admin.epsilon.account_reviews.*` (`en.yml`/`fr.yml`).
+
+- **Filtre « Revue » dans `/admin/accounts`** : select dans la barre de filtres pour n'afficher que les comptes d'un statut de revue donné (En attente / Validé / Rejeté / À revoir / Surveillance / Sans revue — « Surveillance » = compte approuvé au comportement post-validation anormal, signalé par l'outillage), combinable avec les filtres natifs, conservé par la pagination et le batch. Clé `epsilon_review_status` ajoutée à `AccountFilter::KEYS` (balisé), scope dans `Epsilon::AccountFilterExtension`, select balisé dans `admin/accounts/index.html.haml`, helper d'options, i18n `filter_title`/`statuses.none`.
+- **Copie des comptes cochés dans `/admin/accounts`** : bouton « Copier la sélection » dans la barre d'actions batch — copie dans le presse-papier une ligne propre par compte coché (acct, email, IP d'inscription, état, raison — séparées par tabulations, collable tel quel dans un tableur). 100 % côté navigateur (aucun endpoint), fallback `execCommand` pour les webviews sans API clipboard, retour visuel « Copié (N) ». Sidecar : `entrypoints/epsilon/admin_copy_accounts.ts`, helper `epsilon_account_copy_line` ; core balisé : `admin/accounts/index.html.haml` (bouton), `_account.html.haml` (attribut data), `entrypoints/admin.tsx` (import) ; i18n `admin.epsilon.accounts.{copy,copied,copy_none}`.
+
+### Changed
+
+- **Filtre « Actifs » de `/admin/accounts` affiné** : le natif n'excluait que les suspendus, les comptes en attente d'approbation ou d'e-mail non confirmé apparaissaient donc comme actifs ; ils sont maintenant exclus (ils gardent leur filtre « En attente » dédié), comptes distants non affectés. `models/concerns/epsilon/account_filter_extension.rb` (extension sidecar existante, `status_scope`).
+- **Colonne « Raison » retirée de `/admin/accounts`** (ajoutée en 0.3.28) : la raison d'inscription est désormais affichée dans la bulle de survol de la colonne de revue (fusionnée avec les autres infos) ; le pavé natif sous la ligne pour les comptes en attente est inchangé. `admin/accounts/_account.html.haml`, `styles/epsilon/admin_accounts.scss` (tooltip repointé), clé i18n `admin.epsilon.accounts.signup_reason` supprimée.
+
 ## [0.4.0] - 2026-10-07
 
 ### Added

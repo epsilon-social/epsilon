@@ -1,12 +1,12 @@
-td.epsilon-signup-reason {
+td.epsilon-account-review {
   position: relative;
 
-  &[data-reason] {
+  &[data-infos] {
     cursor: help;
   }
 
-  &[data-reason]:hover::after {
-    content: attr(data-reason);
+  &[data-infos]:hover::after {
+    content: attr(data-infos);
     position: absolute;
     top: calc(100% - 10px);
     inset-inline-end: 16px;
@@ -26,7 +26,7 @@ td.epsilon-signup-reason {
   }
 }
 
-.batch-table__row:has(td.epsilon-signup-reason[data-reason]:hover)
+.batch-table__row:has(td.epsilon-account-review[data-infos]:hover)
   .batch-table__row__content {
   overflow: visible;
 }

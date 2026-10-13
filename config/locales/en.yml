@@ -29,12 +29,60 @@ en:
     self_follow_error: Following your own account is not allowed
   admin:
     epsilon:
+      account_reviews:
+        analysis:
+          pending: Request saved at %{time}, waiting for the next pass
+          request: Run an analysis
+          requested: Analysis request saved
+          stale: The request from %{time} has not been picked up yet — check that the review tooling is running on the server
+        empty: Nothing here yet
+        entries:
+          add: Add entry
+          confirm: Confirm
+          deleted: Entry removed
+          hits: Hits
+          kind: Kind
+          saved: Entry saved
+          status: Status
+          statuses:
+            candidate: Candidate
+            confirmed: Confirmed
+          title: Lists
+          value: Value
+        filter_title: Review
+        infos: Details
+        reason: Reason
+        reports:
+          title: Reports
+        runs:
+          finished: Finished
+          started: Started
+          stats: Details
+          title: Runs
+        settings:
+          add: Add setting
+          delete: Delete
+          deleted: Setting removed
+          key: Key
+          saved: Setting saved
+          title: Settings
+          value: Value
+        statuses:
+          kept: Validated
+          none: Not reviewed
+          pending: Pending
+          rejected: Rejected
+          review: To review
+          watch: Watch
+        title: Signup review
       accounts:
+        copied: Copied
+        copy: Copy selection
+        copy_none: Nothing selected
         order:
           most_followers: Most followers
           most_following: Most following
           most_statuses: Most posts
-        signup_reason: Reason
       ai_moderation:
         title: AI Moderation Settings
         updated: AI moderation settings successfully updated

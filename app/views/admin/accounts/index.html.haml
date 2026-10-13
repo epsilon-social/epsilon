@@ -15,6 +15,13 @@
         = form.select :status,
                       options_for_select(admin_accounts_moderation_options, params[:status]),
                       prompt: I18n.t('generic.all')
+    -# EPSILON : SIGNUP REVIEW FILTER
+    .filter-subset.filter-subset--with-select
+      %strong= t('admin.epsilon.account_reviews.filter_title')
+      .input.select.optional
+        = form.select :epsilon_review_status,
+                      options_for_select(epsilon_review_status_filter_options, params[:epsilon_review_status]),
+                      prompt: I18n.t('generic.all')
     .filter-subset.filter-subset--with-select
       %strong= t('admin.accounts.role')
       .input.select.optional
@@ -79,6 +86,11 @@
                    data: { confirm: t('admin.reports.are_you_sure') },
                    name: :suspend,
                    type: :submit
+
+        -# EPSILON : COPY SELECTED ACCOUNTS
+        %button.table-action-link{ type: 'button', data: { epsilon_copy_button: true, copied_label: t('admin.epsilon.accounts.copied'), empty_label: t('admin.epsilon.accounts.copy_none') } }
+          = material_symbol('content_copy')
+          %span{ data: { epsilon_copy_label: true } }= t('admin.epsilon.accounts.copy')
     - if @accounts.total_count > @accounts.size
       .batch-table__select-all
         .not-selected.active

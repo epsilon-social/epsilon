@@ -9,6 +9,10 @@ import ready from '../mastodon/ready';
 // EPSILON : CATEGORIZATION SYSTEM
 import './epsilon/admin_hashtag_categories';
 // ==========================================
+// ==========================================
+// EPSILON : SIGNUP REVIEW
+import './epsilon/admin_copy_accounts';
+// ==========================================
 
 const setAnnouncementEndsAttributes = (target: HTMLInputElement) => {
   const valid = target.value && target.validity.valid;

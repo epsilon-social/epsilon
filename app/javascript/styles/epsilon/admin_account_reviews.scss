@@ -1,0 +1,79 @@
+.epsilon-account-review__badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+
+  &--pending {
+    background: rgb(140 140 140 / 18%);
+    color: var(--color-text-primary);
+  }
+
+  &--kept {
+    background: rgb(64 160 96 / 18%);
+    color: rgb(42 130 74);
+  }
+
+  &--rejected {
+    background: rgb(200 60 60 / 18%);
+    color: rgb(180 52 52);
+  }
+
+  &--review {
+    background: rgb(220 150 40 / 18%);
+    color: rgb(178 116 24);
+  }
+
+  &--watch {
+    background: rgb(90 110 220 / 18%);
+    color: rgb(72 88 180);
+  }
+}
+
+.epsilon-account-review__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.epsilon-account-review__chip {
+  display: inline-flex;
+  gap: 4px;
+  align-items: baseline;
+  padding: 2px 8px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 9999px;
+  font-size: 12px;
+}
+
+.epsilon-account-reviews__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.epsilon-account-reviews__analysis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.epsilon-account-reviews__analysis-stale {
+  color: rgb(180 52 52);
+}
+
+.epsilon-account-reviews__report {
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+}
+
+.epsilon-account-reviews__report-text {
+  margin-top: 6px;
+  white-space: pre-wrap;
+}

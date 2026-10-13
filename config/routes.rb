@@ -300,6 +300,17 @@ Rails.application.routes.draw do
       # EPSILON : CURATED EDITORIAL FEEDS
       resources :curated_feeds, except: [:show]
       # ==========================================
+
+      # ==========================================
+      # EPSILON : SIGNUP REVIEW
+      resources :account_reviews, only: [:index] do
+        collection do
+          post :request_analysis
+        end
+      end
+      resources :review_settings, only: [:create, :update, :destroy]
+      resources :review_list_entries, only: [:create, :update, :destroy]
+      # ==========================================
     end
   end
   # ==========================================

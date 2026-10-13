@@ -63,6 +63,10 @@ SimpleNavigation::Configuration.run do |navigation|
       # ==========================================
       s.item :appeals, safe_join([material_symbol('feedback'), t('admin.disputes.appeals.title')]), admin_disputes_appeals_path, highlights_on: %r{/admin/disputes/appeals}, if: -> { current_user.can?(:manage_appeals) }
       s.item :accounts, safe_join([material_symbol('groups'), t('admin.accounts.title')]), admin_accounts_path(origin: 'local'), highlights_on: %r{/admin/accounts|admin/account_moderation_notes|/admin/pending_accounts|/admin/users}, if: -> { current_user.can?(:manage_users) }
+      # ==========================================
+      # EPSILON : SIGNUP REVIEW
+      s.item :epsilon_account_reviews, safe_join([material_symbol('person_alert'), t('admin.epsilon.account_reviews.title')]), admin_epsilon_account_reviews_path, highlights_on: %r{/admin/epsilon/account_reviews}, if: -> { current_user.can?(:manage_users) }
+      # ==========================================
       s.item :tags, safe_join([material_symbol('tag'), t('admin.tags.title')]), admin_tags_path, highlights_on: %r{/admin/tags}, if: -> { current_user.can?(:manage_taxonomies) }
       # ==========================================
       # EPSILON : CATEGORIZATION SYSTEM

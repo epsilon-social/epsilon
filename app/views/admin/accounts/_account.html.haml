@@ -39,14 +39,22 @@
                 \-
               %br/
               %samp.ellipsized-ip= relevant_account_ip(account, params[:ip])
-          -# EPSILON : ADMIN ACCOUNTS SIGNUP REASON COLUMN
-          - signup_reason = account.user&.invite_request&.text.presence
-          %td.accounts-table__count.optional.epsilon-signup-reason{ data: { reason: signup_reason } }
-            - if signup_reason
-              = material_symbol('check', class: 'active')
+          -# EPSILON : SIGNUP REVIEW COLUMN
+          - epsilon_review = epsilon_account_reviews[account.id]
+          - epsilon_infos = epsilon_review_infos(account, epsilon_review)
+          %td.accounts-table__count.epsilon-account-review{ data: { infos: epsilon_infos.presence&.join("\n"), epsilon_copy: epsilon_account_copy_line(account) } }
+            - if epsilon_review.present?
+              %span{ class: "epsilon-account-review__badge epsilon-account-review__badge--#{epsilon_review.status}" }= t("admin.epsilon.account_reviews.statuses.#{epsilon_review.status}")
             - else
               \-
-            %small= t('admin.epsilon.accounts.signup_reason')
+            - if epsilon_infos.any?
+              %small= t('admin.epsilon.account_reviews.infos')
     - if !account.unavailable? && account.user_pending? && account.user&.invite_request&.text.present?
       .batch-table__row__content__quote
         %p= account.user&.invite_request&.text
+    -# EPSILON : SIGNUP REVIEW DETAILS
+    - if epsilon_review.present? && epsilon_review.payload.present?
+      .batch-table__row__content__quote.epsilon-account-review__details
+        - epsilon_review.payload.each do |key, value|
+          %span.epsilon-account-review__chip{ title: key }
+            = value.is_a?(Enumerable) ? value.to_a.join(', ') : value.to_s

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_07_164536) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_153847) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -570,6 +570,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_164536) do
     t.index ["epsilon_badge_id"], name: "index_epsilon_account_badges_on_epsilon_badge_id"
   end
 
+  create_table "epsilon_account_reviews", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "decided_at"
+    t.bigint "decided_by_account_id"
+    t.jsonb "payload", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_epsilon_account_reviews_on_account_id", unique: true
+    t.index ["status"], name: "index_epsilon_account_reviews_on_status"
+  end
+
   create_table "epsilon_ai_metadata", force: :cascade do |t|
     t.jsonb "categories_raw", default: {}, null: false
     t.datetime "created_at", null: false
@@ -753,6 +765,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_164536) do
     t.index ["country_prefix"], name: "index_epsilon_phone_verifications_on_country_prefix"
     t.index ["phone_number"], name: "index_epsilon_phone_verifications_on_phone_number"
     t.index ["user_id"], name: "index_epsilon_phone_verifications_on_user_id", unique: true
+  end
+
+  create_table "epsilon_review_list_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "hits", default: 0, null: false
+    t.string "kind", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "value", null: false
+    t.index ["kind", "value"], name: "index_epsilon_review_list_entries_on_kind_and_value", unique: true
+  end
+
+  create_table "epsilon_review_runs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "finished_at"
+    t.datetime "started_at"
+    t.jsonb "stats", default: {}, null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "epsilon_review_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.text "value"
+    t.index ["key"], name: "index_epsilon_review_settings_on_key", unique: true
   end
 
   create_table "epsilon_signup_fingerprints", force: :cascade do |t|
@@ -1832,6 +1871,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_164536) do
   add_foreign_key "email_domain_blocks", "email_domain_blocks", column: "parent_id", on_delete: :cascade
   add_foreign_key "email_subscriptions", "accounts", on_delete: :cascade
   add_foreign_key "epsilon_account_badges", "epsilon_badges"
+  add_foreign_key "epsilon_account_reviews", "accounts", column: "decided_by_account_id", on_delete: :nullify
+  add_foreign_key "epsilon_account_reviews", "accounts", on_delete: :cascade
   add_foreign_key "epsilon_ai_metadata", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_ai_status_moderations", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_badge_pending_grants", "epsilon_badges"

@@ -29,12 +29,60 @@ fr:
     self_follow_error: Suivre votre propre compte n'est pas autorisé
   admin:
     epsilon:
+      account_reviews:
+        analysis:
+          pending: Demande enregistrée à %{time}, en attente du prochain passage
+          request: Lancer une analyse
+          requested: Demande d'analyse enregistrée
+          stale: La demande de %{time} n'a pas encore été traitée — vérifier que l'outil de revue tourne côté serveur
+        empty: Rien ici pour le moment
+        entries:
+          add: Ajouter une entrée
+          confirm: Confirmer
+          deleted: Entrée supprimée
+          hits: Occurrences
+          kind: Type
+          saved: Entrée enregistrée
+          status: Statut
+          statuses:
+            candidate: Candidat
+            confirmed: Confirmé
+          title: Listes
+          value: Valeur
+        filter_title: Revue
+        infos: Infos
+        reason: Raison
+        reports:
+          title: Rapports
+        runs:
+          finished: Terminé
+          started: Démarré
+          stats: Détails
+          title: Exécutions
+        settings:
+          add: Ajouter un réglage
+          delete: Supprimer
+          deleted: Réglage supprimé
+          key: Clé
+          saved: Réglage enregistré
+          title: Réglages
+          value: Valeur
+        statuses:
+          kept: Validé
+          none: Sans revue
+          pending: En attente
+          rejected: Rejeté
+          review: À revoir
+          watch: Surveillance
+        title: Revue des inscriptions
       accounts:
+        copied: Copié
+        copy: Copier la sélection
+        copy_none: Aucun compte coché
         order:
           most_followers: Plus d’abonnés
           most_following: Plus d’abonnements
           most_statuses: Plus de messages
-        signup_reason: Raison
       ai_moderation:
         title: Paramètres de Modération IA
         updated: Paramètres de modération IA mis à jour avec succès

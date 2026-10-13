@@ -16,6 +16,8 @@ Rails.application.config.to_prepare do
 
   AccountFilter.prepend(Epsilon::AccountFilterExtension) if defined?(AccountFilter)
 
+  Admin::AccountsController.prepend(Epsilon::AccountReviewsAdminExtension) if defined?(Admin::AccountsController)
+
   DateOfBirthInput.prepend(Epsilon::DateOfBirthInputExtension) if defined?(DateOfBirthInput)
 
   if defined?(AccountSearchService)

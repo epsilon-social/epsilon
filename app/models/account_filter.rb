@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class AccountFilter
+  # ==========================================
+  # EPSILON : SIGNUP REVIEW (epsilon_review_status key, scope handled in
+  # Epsilon::AccountFilterExtension)
+  # ==========================================
   KEYS = %i(
     origin
     status
@@ -11,6 +15,7 @@ class AccountFilter
     email
     ip
     invited_by
+    epsilon_review_status
     order
   ).freeze
 
