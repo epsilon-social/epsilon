@@ -17,33 +17,6 @@
     width: auto;
   }
 
-  &__link--soon {
-    position: relative;
-    cursor: default;
-    user-select: none;
-
-    .epsilon-store-badges__img {
-      opacity: 0.45;
-      filter: grayscale(1);
-    }
-  }
-
-  &__soon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 4px 10px;
-    border-radius: 9999px;
-    border: 1px solid var(--eps-border);
-    background: var(--eps-surface);
-    color: var(--eps-text-primary);
-    font-size: 11px;
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
   &__img--on-light {
     display: var(--eps-display-on-light, block);
   }

@@ -678,7 +678,6 @@
   "epsilon.status_follow.requested": "Demande d’abonnement en attente",
   "epsilon.status_follow.unfollow": "Ne plus suivre {name}",
   "epsilon.store_badges.app_store": "Télécharger dans l'App Store",
-  "epsilon.store_badges.coming_soon": "Bientôt disponible",
   "epsilon.store_badges.google_play": "Disponible sur Google Play",
   "epsilon.about.tagline": "Le réseau social européen, souverain et conçu pour vous respecter.",
   "epsilon.about.intro": "Epsilon est un réseau social conçu en Europe. Pas d'algorithme manipulateur, pas de pièges à attention, pas de revente de données. Juste des gens, des conversations et les sujets que vous choisissez.",

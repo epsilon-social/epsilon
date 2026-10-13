@@ -16,16 +16,10 @@ const messages = defineMessages({
     id: 'epsilon.store_badges.google_play',
     defaultMessage: 'Get it on Google Play',
   },
-  comingSoon: {
-    id: 'epsilon.store_badges.coming_soon',
-    defaultMessage: 'Coming soon',
-  },
 });
 
 const APP_STORE_URL = 'https://apps.apple.com/app/epsilon-social/id6804720532';
-const GOOGLE_PLAY_URL = '';
-
-const GOOGLE_PLAY_AVAILABLE = false;
+const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=social.epsilon.app';
 
 const EpsilonStoreBadges = () => {
   const intl = useIntl();
@@ -59,31 +53,18 @@ const EpsilonStoreBadges = () => {
         />
       </a>
 
-      {GOOGLE_PLAY_AVAILABLE ? (
-        <a
-          href={GOOGLE_PLAY_URL}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='epsilon-store-badges__link'
-        >
-          <img
-            src={googlePlay}
-            alt={intl.formatMessage(messages.googlePlay)}
-            className='epsilon-store-badges__img'
-          />
-        </a>
-      ) : (
-        <div className='epsilon-store-badges__link epsilon-store-badges__link--soon'>
-          <img
-            src={googlePlay}
-            alt={intl.formatMessage(messages.googlePlay)}
-            className='epsilon-store-badges__img'
-          />
-          <span className='epsilon-store-badges__soon'>
-            {intl.formatMessage(messages.comingSoon)}
-          </span>
-        </div>
-      )}
+      <a
+        href={GOOGLE_PLAY_URL}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='epsilon-store-badges__link'
+      >
+        <img
+          src={googlePlay}
+          alt={intl.formatMessage(messages.googlePlay)}
+          className='epsilon-store-badges__img'
+        />
+      </a>
     </div>
   );
 };

@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Badge Google Play activé** (sortie de l'app Android) : le badge grisé « Bientôt disponible » devient un vrai lien vers le Play Store (`social.epsilon.app`) ; état « soon » supprimé (JSX, styles, clé i18n `coming_soon` retirée de `en.json`/`fr.json`). Fichiers : `epsilon/components/epsilon_store_badges.jsx`, `styles/epsilon/store_badges.scss`.
+
 ## [0.5.0] - 2026-13-07
 
 ### Added

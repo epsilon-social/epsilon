@@ -726,7 +726,6 @@
   "epsilon.status_stack.collapse": "Hide grouped posts",
   "epsilon.status_stack.expand": "{count, plural, one {Show 1 more post} other {Show # more posts}}",
   "epsilon.store_badges.app_store": "Download on the App Store",
-  "epsilon.store_badges.coming_soon": "Coming soon",
   "epsilon.store_badges.google_play": "Get it on Google Play",
   "epsilon.widgets.follow": "Follow",
   "epsilon.widgets.relevance.desc": "Choose the topics you'd like to see more prominently in your feed.",
