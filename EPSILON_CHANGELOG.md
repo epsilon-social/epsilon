@@ -5,6 +5,23 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-13-07
+
+### Added
+
+- **Piles : auteurs locaux inclus** : le groupement anti-spam de la home s'applique désormais aussi aux comptes locaux (jamais aux posts de l'utilisateur connecté ni aux reblogs). Sidecar : `epsilon/selectors/status_stacks.js`.
+- **Admin — comptes : pagination en haut du tableau** en plus de celle du bas, plus besoin de scroller toute la page pour changer de page (`admin/accounts/index.html.haml`).
+
+### Changed
+
+- **Onglet actif en gras** sur toutes les barres d'onglets (pilules home, Tendances, Recherche, Notifications) : l'onglet courant se repère au premier coup d'œil (`styles/epsilon/layout.scss`).
+- **Pilules home sur mobile** : collées en haut de la colonne comme en desktop, et regroupées au centre avec un espacement resserré (`styles/epsilon/epsilon_home_pills.scss`).
+
+### Fixed
+
+- **Téléportations du scroll pendant la pagination de la home** : charger des pages plus anciennes pouvait replier des posts au-dessus du viewport (3ᵉ post d'un bucket arrivant en page suivante) ou faire migrer une pile vers le bas (membres plus anciens du même bucket), déplaçant brutalement le contenu sous le lecteur. Deux parades : ancrage de scroll manuel dans `scrollable_list` (balisé — le premier post simple visible est épinglé à l'écran à chaque mise à jour de la liste ; no-op quand l'ancrage natif Chrome a déjà compensé, indispensable dans la coque iOS qui n'en a pas) ; et gel du slot d'affichage des piles (`status_stacks.js` — une pile affichée garde sa position et ne fait que grossir quand des membres plus anciens chargent). Vérifié par scroll automatisé sur un scénario piégé aux frontières de pages : zéro incident visuel.
+- **Numéro de page invisible dans l'admin** : la page courante s'affichait en disque noir sans numéro (token de fond remappé par le thème) ; le numéro est de nouveau lisible, en clair comme en sombre (`styles/epsilon/layout.scss`).
+
 ### Fixed
 
 - **Annonces invisibles depuis la refonte UI** : le panneau natif vivait dans le header de la colonne home — supprimé par la refonte — derrière un toggle porte-voix devenu inaccessible ; remplacé par une carte Epsilon repliable au-dessus du fil : barre brand pleine (titre uppercase centré, compteur de non-lues, date de la dernière annonce), repli persisté en localStorage avec ré-ouverture auto à la publication d'une nouvelle annonce, filigrane porte-voix centré, contenu sur teinte bleu pâle, pills de réactions restylées (emoji centré, fini le rectangle violet) . Montage 100 % sidecar depuis `EpsilonLayout` : aucun fichier core modifié (le chemin natif — toggle + panneau dans le header — reste dormant derrière le header masqué). Fichiers : `features/epsilon/announcements/index.jsx`, `epsilon/components/epsilon_layout.jsx`, `styles/epsilon/components/announcements.scss`, `styles/epsilon/layout.scss` (token `--eps-text-on-brand`).
@@ -80,7 +97,7 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ### Added
 
-- **Piles anti-spam dans la home** : un auteur distant qui publie 3 posts ou plus dans la même heure d'horloge (fenêtres fixes 12h–13h, 13h–14h…) est replié en une « pile » à la position de son post le plus ancien (cartes empilées + bouton « Voir les N autres posts », dépli inline) — un compte prolifique n'occupe plus qu'un slot visible par heure. Groupement purement client (aucune donnée perdue, Redis intouché), home uniquement, comptes locaux et reblogs exclus, désactivable via le bouton Filtres (« Grouper les posts »). En complément, le backfill d'abonnement à une catégorie est plafonné à 3 posts par auteur. Le load-more au scroll est doublé d'un auto-remplissage (`scrollable_list`, balisé) : quand le repli (piles ou filtres home) rend le contenu plus court que le viewport, les pages suivantes se chargent seules jusqu'à remplir l'écran. Perf mesurée : sélecteur 0,5 ms sur une feed pleine (800 items), dépli d'une pile de 50 posts en ~185 ms à 60 fps. Au repli, la vue revient sur la pile (no-op si déjà visible) au lieu de laisser l'utilisateur échoué plus bas dans le fil. Sidecar : `epsilon/selectors/status_stacks.js` (+ tests), `epsilon/components/status_stack.jsx`, `styles/epsilon/components/status_stack.scss` ; core balisé : `features/ui/containers/status_list_container.js`, `components/status_list.jsx` ; backend : `workers/epsilon/categorization/subscribe_backfill_worker.rb` ; i18n `epsilon.status_stack.*`, `epsilon.home.filter.stacks`.
+- **Piles anti-spam dans la home** : un auteur distant qui publie 3 posts ou plus dans la même heure d'horloge (fenêtres fixes 12h–13h, 13h–14h…) est replié en une « pile » à la position de son post le plus ancien (cartes empilées + bouton « Voir les N autres posts », dépli inline) — un compte prolifique n'occupe plus qu'un slot visible par heure. Groupement purement client (aucune donnée perdue, Redis intouché), home uniquement, s'applique aux auteurs distants comme locaux (jamais aux posts de l'utilisateur lui-même ni aux reblogs), désactivable via le bouton Filtres (« Grouper les posts »). En complément, le backfill d'abonnement à une catégorie est plafonné à 3 posts par auteur. Le load-more au scroll est doublé d'un auto-remplissage (`scrollable_list`, balisé) : quand le repli (piles ou filtres home) rend le contenu plus court que le viewport, les pages suivantes se chargent seules jusqu'à remplir l'écran. Perf mesurée : sélecteur 0,5 ms sur une feed pleine (800 items), dépli d'une pile de 50 posts en ~185 ms à 60 fps. Au repli, la vue revient sur la pile (no-op si déjà visible) au lieu de laisser l'utilisateur échoué plus bas dans le fil. Sidecar : `epsilon/selectors/status_stacks.js` (+ tests), `epsilon/components/status_stack.jsx`, `styles/epsilon/components/status_stack.scss` ; core balisé : `features/ui/containers/status_list_container.js`, `components/status_list.jsx` ; backend : `workers/epsilon/categorization/subscribe_backfill_worker.rb` ; i18n `epsilon.status_stack.*`, `epsilon.home.filter.stacks`.
 
 ### Changed
 

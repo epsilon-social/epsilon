@@ -2909,7 +2909,7 @@ body.theme-system {
   /* État Actif */
   &.active,
   &--active {
-    font-weight: 500 !important;
+    font-weight: 800 !important;
     color: #16171a !important;
     background: linear-gradient(90deg, #ccdbff 0%, #a6c4ff 100%) !important;
   }
@@ -3993,6 +3993,10 @@ html.epsilon-in-app {
   border-radius: var(--eps-radius-sm) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 25%) !important;
   overflow: hidden !important;
+}
+
+.pagination .current {
+  color: var(--eps-surface-solid) !important;
 }
 
 .dropdown-menu {

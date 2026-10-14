@@ -6,12 +6,11 @@
 .epsilon-home-pills {
   margin-bottom: 0 !important;
 
-  // Space-around look with overflow-safe scrolling. Plain space-around clips
-  // the LEFT side of an overflowing flex container (unreachable by scroll),
-  // so: flex-start + auto inline margins on every pill. Auto margins soak up
-  // free space in the exact space-around proportions (half at the edges,
-  // full between pills) and collapse to 0 on overflow — the bar then scrolls
-  // from the start with every pill reachable.
+  // Space-around look with overflow-safe scrolling. Plain space-around
+  // clips the LEFT side of an overflowing flex container (unreachable by
+  // scroll), so: flex-start + auto inline margins on every pill. They
+  // soak up free space in space-around proportions and collapse to 0 on
+  // overflow — the bar then scrolls with every pill reachable.
   justify-content: flex-start !important;
   padding-inline: 4px !important;
 
@@ -21,10 +20,20 @@
   }
 }
 
-// Mobile: the pills are now the first block of the home column (the top bar
-// and its search are gone) — keep the 20px breathing room above them.
 @media (width <= 768px) {
   .epsilon-home-pills {
-    margin-top: 20px !important;
+    gap: 8px;
+
+    a {
+      margin: 0 0 12px !important;
+
+      &:first-child {
+        margin-inline-start: auto !important;
+      }
+
+      &:last-child {
+        margin-inline-end: auto !important;
+      }
+    }
   }
 }

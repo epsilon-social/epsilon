@@ -2,18 +2,18 @@ import { fromJS, List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
 import {
   collapseIntoStacks,
+  resetStackDisplayMemory,
   stackAnchorId,
   STACK_MIN_SIZE,
   STACK_WINDOW_MS,
 } from '../status_stacks';
 
+beforeEach(resetStackDisplayMemory);
+
 const BASE_TIME = Date.parse('2026-01-01T12:00:00.000Z');
 
-const accounts = fromJS({
-  remote1: { acct: 'spammer@remote.example' },
-  remote2: { acct: 'other@remote.example' },
-  local1: { acct: 'alice' },
-});
+// The logged-in user's account id, passed as ownAccountId
+const ME = 'me1';
 
 // Builds a status map entry; minutes is the offset from BASE_TIME.
 const status = (accountId, minutes, extra = {}) =>
@@ -37,7 +37,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'b', 'c']);
 
-    expect(collapseIntoStacks(ids, statuses, accounts)).toBe(ids);
+    expect(collapseIntoStacks(ids, statuses, ME)).toBe(ids);
   });
 
   test('folds posts of a prolific remote author into a stack at the oldest slot', () => {
@@ -49,7 +49,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'x', 'b', 'c']);
 
-    const result = collapseIntoStacks(ids, statuses, accounts);
+    const result = collapseIntoStacks(ids, statuses, ME);
 
     expect(result.toJS()).toEqual(['x', ['a', 'b', 'c']]);
   });
@@ -69,7 +69,7 @@ describe('collapseIntoStacks', () => {
     const ids = timeline(['a', 'b', 'c']);
 
     // 2 + 1 posts: no bucket reaches the threshold
-    expect(collapseIntoStacks(ids, statuses, accounts)).toBe(ids);
+    expect(collapseIntoStacks(ids, statuses, ME)).toBe(ids);
   });
 
   test('stacks each hour bucket independently', () => {
@@ -82,7 +82,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'b', 'c', 'd', 'e']);
 
-    const result = collapseIntoStacks(ids, statuses, accounts);
+    const result = collapseIntoStacks(ids, statuses, ME);
 
     // d and e are in the 13:00-14:00 bucket and only two: they stay unfolded.
     expect(result.toJS()).toEqual(['e', 'd', ['a', 'b', 'c']]);
@@ -95,12 +95,12 @@ describe('collapseIntoStacks', () => {
       d: status('remote1', 30),
       x: status('remote2', 25),
     };
-    const firstPage = collapseIntoStacks(timeline(['b', 'c', 'd', 'x']), fromJS({}).merge(base), accounts);
+    const firstPage = collapseIntoStacks(timeline(['b', 'c', 'd', 'x']), fromJS({}).merge(base), ME);
 
     // An OLDER post (a) of the same bucket arrives via pagination: existing
-    // members keep their membership, the stack only extends downwards.
+    // members keep their membership, the stack only grows.
     const statuses = fromJS({}).merge(base, { a: status('remote1', 5) });
-    const secondPage = collapseIntoStacks(timeline(['a', 'b', 'c', 'd', 'x']), statuses, accounts);
+    const secondPage = collapseIntoStacks(timeline(['a', 'b', 'c', 'd', 'x']), statuses, ME);
 
     expect(firstPage.toJS()).toEqual(['x', ['b', 'c', 'd']]);
     expect(secondPage.toJS()).toEqual(['x', ['a', 'b', 'c', 'd']]);
@@ -108,7 +108,27 @@ describe('collapseIntoStacks', () => {
     expect(firstPage.last().last()).toBe(secondPage.last().last());
   });
 
-  test('never stacks local authors', () => {
+  test('a displayed stack keeps its slot when older bucket members load', () => {
+    const base = {
+      b: status('remote1', 10),
+      c: status('remote1', 20),
+      d: status('remote1', 30),
+      f: status('remote2', 8),
+    };
+    const firstPage = collapseIntoStacks(timeline(['f', 'b', 'c', 'd']), fromJS({}).merge(base), ME);
+
+    // Stack displayed at b's slot (oldest loaded), above the older filler f
+    expect(firstPage.toJS()).toEqual([['b', 'c', 'd'], 'f']);
+
+    // An older member (a, minute 5) loads below f: the stack must NOT
+    // migrate below f — it stays at its remembered slot and absorbs a.
+    const statuses = fromJS({}).merge(base, { a: status('remote1', 5) });
+    const secondPage = collapseIntoStacks(timeline(['a', 'f', 'b', 'c', 'd']), statuses, ME);
+
+    expect(secondPage.toJS()).toEqual([['a', 'b', 'c', 'd'], 'f']);
+  });
+
+  test('stacks local authors too', () => {
     const statuses = ImmutableMap({
       a: status('local1', 0),
       b: status('local1', 10),
@@ -116,7 +136,20 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'b', 'c']);
 
-    expect(collapseIntoStacks(ids, statuses, accounts)).toBe(ids);
+    const result = collapseIntoStacks(ids, statuses, ME);
+
+    expect(result.toJS()).toEqual([['a', 'b', 'c']]);
+  });
+
+  test('never folds the logged-in user own posts', () => {
+    const statuses = ImmutableMap({
+      a: status(ME, 0),
+      b: status(ME, 10),
+      c: status(ME, 20),
+    });
+    const ids = timeline(['a', 'b', 'c']);
+
+    expect(collapseIntoStacks(ids, statuses, ME)).toBe(ids);
   });
 
   test('ignores reblogs', () => {
@@ -127,7 +160,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'b', 'c']);
 
-    expect(collapseIntoStacks(ids, statuses, accounts)).toBe(ids);
+    expect(collapseIntoStacks(ids, statuses, ME)).toBe(ids);
   });
 
   test('ignores statuses with an unparsable created_at', () => {
@@ -138,7 +171,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a', 'b', 'c']);
 
-    expect(collapseIntoStacks(ids, statuses, accounts)).toBe(ids);
+    expect(collapseIntoStacks(ids, statuses, ME)).toBe(ids);
   });
 
   test('keeps non-status markers in place', () => {
@@ -149,7 +182,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = ImmutableList(['c', 'b', null, 'inline-follow-suggestions', 'a']);
 
-    const result = collapseIntoStacks(ids, statuses, accounts);
+    const result = collapseIntoStacks(ids, statuses, ME);
 
     expect(result.toJS()).toEqual([null, 'inline-follow-suggestions', ['a', 'b', 'c']]);
   });
@@ -165,7 +198,7 @@ describe('collapseIntoStacks', () => {
     });
     const ids = timeline(['a1', 'b1', 'a2', 'b2', 'a3', 'b3']);
 
-    const result = collapseIntoStacks(ids, statuses, accounts);
+    const result = collapseIntoStacks(ids, statuses, ME);
 
     expect(result.toJS()).toEqual([
       ['b1', 'b2', 'b3'],

@@ -30,10 +30,9 @@ const makeGetStatusIds = (pending = false) => createSelector([
   // ==========================================
   // EPSILON : STATUS STACKS
   // ==========================================
-  (state)           => state.get('accounts'),
   (state, { type }) => type,
   // ==========================================
-], (columnSettings, statusIds, statuses, accounts, type) => {
+], (columnSettings, statusIds, statuses, type) => {
   const filteredStatusIds = statusIds.filter(id => {
     if (isNonStatusId(id)) return true;
 
@@ -58,13 +57,13 @@ const makeGetStatusIds = (pending = false) => createSelector([
 
   // ==========================================
   // EPSILON : STATUS STACKS
-  // Collapse prolific remote authors into stacks (home timeline only;
-  // pending items stay flat so the "new posts" counter remains exact).
+  // Collapse prolific authors into stacks (home timeline only; pending
+  // items stay flat so the "new posts" counter remains exact).
   // ==========================================
   const stacksEnabled = columnSettings.getIn(['epsilon', 'stacks'], true);
 
   if (!pending && type === 'home' && stacksEnabled) {
-    return collapseIntoStacks(filteredStatusIds, statuses, accounts);
+    return collapseIntoStacks(filteredStatusIds, statuses, me);
   }
   // ==========================================
 

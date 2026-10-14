@@ -1,14 +1,15 @@
 // Temporary micro-benchmark for collapseIntoStacks — worst case: a full
 // feed (FeedManager::MAX_ITEMS = 800) with several prolific authors.
-import { fromJS, List as ImmutableList, Map as ImmutableMap } from 'immutable';
+import { List as ImmutableList, Map as ImmutableMap } from 'immutable';
 
-import { collapseIntoStacks } from '../status_stacks';
+import { collapseIntoStacks, resetStackDisplayMemory } from '../status_stacks';
+
+beforeEach(resetStackDisplayMemory);
 
 const BASE_TIME = Date.parse('2026-01-01T00:00:00.000Z');
 
 const buildState = (totalItems, spammyAuthors, postsPerSpammer) => {
   let statuses = ImmutableMap();
-  let accounts = ImmutableMap();
   const ids = [];
   let minute = 0;
   let serial = 0;
@@ -25,33 +26,29 @@ const buildState = (totalItems, spammyAuthors, postsPerSpammer) => {
   };
 
   for (let a = 0; a < spammyAuthors; a++) {
-    const accountId = `spam${a}`;
-    accounts = accounts.set(accountId, fromJS({ acct: `spam${a}@remote.example` }));
-    for (let p = 0; p < postsPerSpammer; p++) addStatus(accountId);
+    for (let p = 0; p < postsPerSpammer; p++) addStatus(`spam${a}`);
   }
 
   let n = 0;
   while (ids.length < totalItems) {
-    const accountId = `norm${n++}`;
-    accounts = accounts.set(accountId, fromJS({ acct: `norm${n}@remote.example` }));
-    addStatus(accountId);
+    addStatus(`norm${n++}`);
   }
 
-  return { statusIds: ImmutableList(ids).reverse(), statuses, accounts };
+  return { statusIds: ImmutableList(ids).reverse(), statuses };
 };
 
 describe('collapseIntoStacks performance', () => {
   test('800-item feed, 10 authors x 50 posts', () => {
-    const { statusIds, statuses, accounts } = buildState(800, 10, 50);
+    const { statusIds, statuses } = buildState(800, 10, 50);
 
     // Warmup
-    collapseIntoStacks(statusIds, statuses, accounts);
+    collapseIntoStacks(statusIds, statuses, 'me1');
 
     const runs = 200;
     const start = performance.now();
     let result;
     for (let i = 0; i < runs; i++) {
-      result = collapseIntoStacks(statusIds, statuses, accounts);
+      result = collapseIntoStacks(statusIds, statuses, 'me1');
     }
     const avg = (performance.now() - start) / runs;
 
@@ -64,14 +61,14 @@ describe('collapseIntoStacks performance', () => {
   });
 
   test('40-item feed (typical initial load)', () => {
-    const { statusIds, statuses, accounts } = buildState(40, 1, 20);
+    const { statusIds, statuses } = buildState(40, 1, 20);
 
-    collapseIntoStacks(statusIds, statuses, accounts);
+    collapseIntoStacks(statusIds, statuses, 'me1');
 
     const runs = 500;
     const start = performance.now();
     for (let i = 0; i < runs; i++) {
-      collapseIntoStacks(statusIds, statuses, accounts);
+      collapseIntoStacks(statusIds, statuses, 'me1');
     }
     const avg = (performance.now() - start) / runs;
 

@@ -15,7 +15,7 @@ export const STACK_MIN_SIZE = 3;
 // into the timeline list (LoadGap keys/params, load-more fallback).
 export const stackAnchorId = (item) => (ImmutableList.isList(item) ? item.first() : item);
 
-const collectCandidates = (statusIds, statuses, accounts) => {
+const collectCandidates = (statusIds, statuses, ownAccountId) => {
   const byAuthor = new Map();
 
   statusIds.forEach((id) => {
@@ -33,10 +33,9 @@ const collectCandidates = (statusIds, statuses, accounts) => {
     }
 
     const accountId = status.get('account');
-    const acct = accounts.getIn([accountId, 'acct'], '');
 
-    // Local authors (no domain part) are never stacked.
-    if (!acct.includes('@')) {
+    // Never fold the user's own posts.
+    if (ownAccountId && accountId === ownAccountId) {
       return;
     }
 
@@ -58,11 +57,21 @@ const collectCandidates = (statusIds, statuses, accounts) => {
   return byAuthor;
 };
 
+// Remembers, per author and clock bucket, which timeline slot the stack
+// was first displayed at. Pagination loads ever older bucket members; the
+// natural slot (oldest loaded member) would keep migrating down the list,
+// visibly re-seating a stack the user may be looking at. Once seen, a
+// stack keeps its slot and only grows. Resets on full page load.
+const displaySlotByGroup = new Map();
+
+// Test-only helper: clears the display-slot memory between test cases.
+export const resetStackDisplayMemory = () => displaySlotByGroup.clear();
+
 const buildStacks = (byAuthor) => {
-  const stackByAnchor = new Map();
+  const stackBySlot = new Map();
   const hidden = new Set();
 
-  byAuthor.forEach((posts) => {
+  byAuthor.forEach((posts, accountId) => {
     const buckets = new Map();
 
     posts.forEach((post) => {
@@ -76,29 +85,40 @@ const buildStacks = (byAuthor) => {
       }
     });
 
-    // At most one visible slot per author per clock hour: the oldest post
-    // of the bucket keeps its place, the rest fold into it.
-    buckets.forEach((group) => {
+    // At most one visible slot per author per clock hour: the stack sits
+    // at its remembered slot (or the oldest loaded member's slot the
+    // first time), every other member folds into it.
+    buckets.forEach((group, bucket) => {
       if (group.length < STACK_MIN_SIZE) {
         return;
       }
 
       group.sort((a, b) => a.time - b.time);
 
-      stackByAnchor.set(group[0].id, ImmutableList(group.map((post) => post.id)));
+      const groupKey = `${accountId}:${bucket}`;
+      const remembered = displaySlotByGroup.get(groupKey);
+      const slotId = remembered && group.some((post) => post.id === remembered) ? remembered : group[0].id;
 
-      group.slice(1).forEach((post) => hidden.add(post.id));
+      displaySlotByGroup.set(groupKey, slotId);
+      stackBySlot.set(slotId, ImmutableList(group.map((post) => post.id)));
+
+      group.forEach((post) => {
+        if (post.id !== slotId) {
+          hidden.add(post.id);
+        }
+      });
     });
   });
 
-  return { stackByAnchor, hidden };
+  return { stackBySlot, hidden };
 };
 
 /**
- * Collapses prolific remote authors into "stacks": when an author has
+ * Collapses prolific authors into "stacks": when an author has
  * STACK_MIN_SIZE or more posts within the same clock-aligned one-hour
  * bucket, only the oldest (the anchor) keeps its slot in the timeline and
- * the rest are folded into it.
+ * the rest are folded into it. The logged-in user's own posts and reblogs
+ * are never folded.
  *
  * Input and output are ImmutableLists in timeline order (newest first).
  * Each output item is either a status id, a non-status marker, or an
@@ -106,20 +126,20 @@ const buildStacks = (byAuthor) => {
  * order representing a stack. Pure function of its arguments.
  * @param {import('immutable').List} statusIds - filtered timeline ids
  * @param {import('immutable').Map} statuses - state.get('statuses')
- * @param {import('immutable').Map} accounts - state.get('accounts')
+ * @param {string|null} ownAccountId - the logged-in user's account id
  * @returns {import('immutable').List}
  */
-export const collapseIntoStacks = (statusIds, statuses, accounts) => {
-  const byAuthor = collectCandidates(statusIds, statuses, accounts);
-  const { stackByAnchor, hidden } = buildStacks(byAuthor);
+export const collapseIntoStacks = (statusIds, statuses, ownAccountId) => {
+  const byAuthor = collectCandidates(statusIds, statuses, ownAccountId);
+  const { stackBySlot, hidden } = buildStacks(byAuthor);
 
   // Fast path: nothing to fold, keep the input reference so pure
   // components skip re-rendering.
-  if (stackByAnchor.size === 0) {
+  if (stackBySlot.size === 0) {
     return statusIds;
   }
 
   return statusIds
     .filterNot((id) => hidden.has(id))
-    .map((id) => stackByAnchor.get(id) ?? id);
+    .map((id) => stackBySlot.get(id) ?? id);
 };

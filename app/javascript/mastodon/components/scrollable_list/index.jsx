@@ -205,14 +205,29 @@ class ScrollableList extends PureComponent {
      filters collapse most of a page. Keep fetching until the screen is
      filled or the timeline is exhausted. */
   /* ========================================== */
+  epsilonLastFillAttempt = null;
+
   maybeFillViewport = throttle(() => {
     if (!this.node || !this.props.onLoadMore || !this.props.hasMore || this.props.isLoading) {
       return;
     }
 
-    if (this.getScrollHeight() <= this.getClientHeight() + 400) {
-      this.props.onLoadMore();
+    if (this.getScrollHeight() > this.getClientHeight() + 400) {
+      return;
     }
+
+    // Back off when the previous attempt did not grow the list (failed or
+    // empty fetch): on a flaky connection this would otherwise hammer the
+    // API in a tight retry loop. One retry per grace period is enough.
+    const childrenCount = Children.count(this.props.children);
+    const lastAttempt = this.epsilonLastFillAttempt;
+
+    if (lastAttempt && lastAttempt.count === childrenCount && Date.now() - lastAttempt.time < 10000) {
+      return;
+    }
+
+    this.epsilonLastFillAttempt = { count: childrenCount, time: Date.now() };
+    this.props.onLoadMore();
   }, 500, {
     trailing: true,
   });
@@ -250,18 +265,100 @@ class ScrollableList extends PureComponent {
       this.getFirstChildKey(prevProps) !== this.getFirstChildKey(this.props);
     const pendingChanged = (prevProps.numPending > 0) !== (this.props.numPending > 0);
 
+    /* ========================================== */
+    /* EPSILON : STATUS STACKS                    */
+    /* Capture the topmost visible articles so the update handler can keep
+       them anchored on screen (manual scroll anchoring). */
+    /* ========================================== */
+    const anchors = this.epsilonCaptureScrollAnchors();
+
     if (pendingChanged || someItemInserted && (this.getScrollTop() > 0 || this.mouseMovedRecently || this.props.preventScroll)) {
-      return this.getScrollHeight() - this.getScrollTop();
+      return { height: this.getScrollHeight() - this.getScrollTop(), anchors };
     } else {
+      return anchors ? { height: null, anchors } : null;
+    }
+    /* ========================================== */
+  }
+
+  /* ========================================== */
+  /* EPSILON : STATUS STACKS                    */
+  /* Manual scroll anchoring. Paginating can reshape content ABOVE the
+     viewport (posts folding into a stack, a stack's anchor migrating into
+     the newly loaded page): the browser keeps a numeric scrollTop while
+     the height above changes, teleporting the reader. Chrome's native
+     anchoring absorbs some of it, but iOS WebKit (the app shell) has
+     none, and native anchoring bails when the anchor node is remounted.
+     Measuring AFTER layout makes this a no-op wherever the browser
+     already compensated. */
+  /* ========================================== */
+  epsilonCaptureScrollAnchors = () => {
+    if (!this.node || this.getScrollTop() <= 0) {
       return null;
     }
-  }
+
+    const viewTop = this.props.bindToDocument ? 0 : this.node.getBoundingClientRect().top;
+    const articles = this.node.querySelectorAll('article[data-id]');
+    const anchors = [];
+    const stackAnchors = [];
+
+    for (const article of articles) {
+      const rect = article.getBoundingClientRect();
+
+      // First few articles whose bottom edge is below the top of the view:
+      // several candidates, in case the first ones get folded away. Plain
+      // statuses are preferred — a stack can itself migrate down the list
+      // (older bucket members loading), and pinning it would drag the
+      // viewport along with it.
+      if (rect.bottom > viewTop + 1) {
+        const id = article.getAttribute('data-id');
+
+        (id.startsWith('epsilon-stack:') ? stackAnchors : anchors).push({ id, top: rect.top });
+
+        if (anchors.length >= 5) {
+          break;
+        }
+      }
+    }
+
+    anchors.push(...stackAnchors);
+
+    return anchors.length > 0 ? anchors : null;
+  };
+
+  epsilonRestoreScrollAnchors = (anchors) => {
+    for (const anchor of anchors) {
+      const article = this.node?.querySelector(`article[data-id="${CSS.escape(anchor.id)}"]`);
+
+      if (article) {
+        const delta = article.getBoundingClientRect().top - anchor.top;
+
+        if (Math.abs(delta) > 1) {
+          this.setScrollTop(this.getScrollTop() + delta);
+        }
+
+        return true;
+      }
+    }
+
+    return false;
+  };
+  /* ========================================== */
 
   componentDidUpdate (prevProps, prevState, snapshot) {
     // Reset the scroll position when a new child comes in in order not to
     // jerk the scrollbar around if you're already scrolled down the page.
     if (snapshot !== null) {
-      this.setScrollTop(this.getScrollHeight() - snapshot);
+      /* ========================================== */
+      /* EPSILON : STATUS STACKS                    */
+      /* Prefer anchor-based restore; fall back to the native height-based
+         compensation (prepend case) when no anchor survived the update. */
+      /* ========================================== */
+      const restored = snapshot.anchors ? this.epsilonRestoreScrollAnchors(snapshot.anchors) : false;
+
+      if (!restored && snapshot.height !== null) {
+        this.setScrollTop(this.getScrollHeight() - snapshot.height);
+      }
+      /* ========================================== */
     }
 
     /* ========================================== */
