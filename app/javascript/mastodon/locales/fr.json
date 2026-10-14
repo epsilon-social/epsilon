@@ -672,6 +672,7 @@
   "empty_column.public": "Il n’y a rien ici ! Écrivez quelque chose publiquement, ou bien suivez manuellement des personnes d’autres serveurs pour remplir le fil public",
   "epsilon.about.title": "À propos",
   "epsilon.about.illustrations_credit": "Illustrations par {storyset}",
+  "epsilon.announcements.title": "Annonces",
   "epsilon.badges.granted_on": "Obtenu le {date}",
   "epsilon.firehose.title": "Flux Epsilon",
   "epsilon.status_follow.follow": "Suivre {name}",

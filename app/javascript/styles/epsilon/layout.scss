@@ -56,6 +56,7 @@ $eps-navbar-height: 56px;
   --eps-nav-active-bg: rgba(93, 149, 255, 10%);
   --eps-nav-active-text: #fff;
   --eps-brand-primary: #4571ff;
+  --eps-text-on-brand: #fff;
   --eps-radius: 24px;
   --eps-radius-pill: 9999px;
   --eps-btn-primary-bg: #111;
@@ -115,6 +116,10 @@ $eps-navbar-height: 56px;
   --eps-nav-active-bg: #000;
   --eps-nav-active-text: #fff;
   --eps-brand-primary: #84c3ff;
+
+  // Dark text on the light-blue dark-theme brand (same choice as the active
+  // filter pills), white would lack contrast.
+  --eps-text-on-brand: #16171a;
   --eps-compose-border: rgba(255, 255, 255, 8%);
   --eps-box-shadow: rgba(0, 0, 0, 35%) 0px 8px 13px;
   --eps-shadow-card:

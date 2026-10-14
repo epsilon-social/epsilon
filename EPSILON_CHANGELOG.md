@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **Annonces invisibles depuis la refonte UI** : le panneau natif vivait dans le header de la colonne home — supprimé par la refonte — derrière un toggle porte-voix devenu inaccessible ; remplacé par une carte Epsilon repliable au-dessus du fil : barre brand pleine (titre uppercase centré, compteur de non-lues, date de la dernière annonce), repli persisté en localStorage avec ré-ouverture auto à la publication d'une nouvelle annonce, filigrane porte-voix centré, contenu sur teinte bleu pâle, pills de réactions restylées (emoji centré, fini le rectangle violet) . Montage 100 % sidecar depuis `EpsilonLayout` : aucun fichier core modifié (le chemin natif — toggle + panneau dans le header — reste dormant derrière le header masqué). Fichiers : `features/epsilon/announcements/index.jsx`, `epsilon/components/epsilon_layout.jsx`, `styles/epsilon/components/announcements.scss`, `styles/epsilon/layout.scss` (token `--eps-text-on-brand`).
+
 ## [0.6.0] - 2026-13-07
 
 ### Changed

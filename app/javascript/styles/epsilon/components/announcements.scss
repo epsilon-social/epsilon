@@ -1,0 +1,233 @@
+// Collapsible announcements card on Home, mounted by EpsilonLayout above the
+// feed (features/epsilon/announcements) and wrapping the native <Announcements>
+// panel. The card keeps no overflow clip of its own — the sliding carousel is
+// already clipped by the native `overflow: hidden` on the inner
+// `.announcements` node, and a clip on the blurred root would kill
+// backdrop-filter in iOS WKWebView.
+.epsilon-announcements {
+  position: relative;
+  margin: 8px 0 16px;
+  border: 1px solid var(--eps-brand-primary);
+  border-radius: var(--eps-radius-md);
+  background: var(--eps-surface);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: background-color 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.epsilon-announcements--collapsed {
+  background: var(--eps-brand-primary);
+}
+
+.epsilon-announcements::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: calc(var(--eps-radius-md) - 1px);
+  background: var(--color-bg-brand-soft);
+  opacity: 0;
+  transition: opacity 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+}
+
+.epsilon-announcements:not(.epsilon-announcements--collapsed)::before {
+  opacity: 1;
+}
+
+.epsilon-announcements__content {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.32s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.epsilon-announcements--collapsed .epsilon-announcements__content {
+  grid-template-rows: 0fr;
+}
+
+.epsilon-announcements__content-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+// Giant bullhorn watermark ("rubber stamp" effect): oversized, slightly
+// rotated, in a very light brand blue, anchored to the bottom of the panel
+// body. The body keeps its natural height while the card animates (the grid
+// clip edge is what moves), so the stamp is strictly immobile — it gets
+// revealed/covered by the clip, like the rest of the content. Clips on inner
+// layers only — the blurred card root must stay clip-free (iOS WKWebView).
+.epsilon-announcements__body {
+  position: relative;
+}
+
+.epsilon-announcements__watermark {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  .icon {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    width: 170px;
+    height: 170px;
+    transform: translateX(-50%) rotate(-12deg);
+    color: var(--eps-brand-primary);
+    opacity: 0.08;
+  }
+}
+
+// Keep the bar and content above the pale blue ::before overlay.
+.epsilon-announcements__bar,
+.epsilon-announcements__content {
+  position: relative;
+  z-index: 1;
+}
+
+// The title bar is a filled brand pill, fully rounded in both states (inner
+// radius = card radius minus the 1px border).
+.epsilon-announcements__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-radius: calc(var(--eps-radius-md) - 1px);
+  background: var(--eps-brand-primary);
+  color: var(--eps-text-on-brand);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+}
+
+.epsilon-announcements__icon {
+  width: 20px;
+  height: 20px;
+}
+
+.epsilon-announcements__title {
+  flex: 1 1 auto;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.epsilon-announcements__badge {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: var(--eps-radius-pill);
+  background: var(--eps-text-on-brand);
+  color: var(--eps-brand-primary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+.epsilon-announcements__date {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.epsilon-announcements__chevron {
+  width: 20px;
+  height: 20px;
+  opacity: 0.9;
+}
+
+// The pale blue backdrop is painted by the card's ::before overlay — keep the
+// native panel transparent so the tint doesn't stack twice.
+.epsilon-announcements .announcements__root {
+  background: transparent;
+}
+
+.epsilon-announcements .announcements {
+  // Native reserves 124px for the mascot; we hide it, so take the full width.
+  width: 100%;
+}
+
+.epsilon-announcements .announcements__mastodon {
+  display: none;
+}
+
+// The bar already shows the announcement date — drop the per-slide date range
+// inside the open panel.
+.epsilon-announcements .announcements__range {
+  display: none;
+}
+
+// Reaction pills: the native look is a sharp rectangle (3px radius) with the
+// upstream brand-purple border/hover and an emoji box that sits off-center.
+// Rebuild them as Epsilon pills with flex-centered content.
+.epsilon-announcements .reactions-bar {
+  gap: 6px;
+  margin-top: 12px;
+  margin-inline-start: 0;
+}
+
+.epsilon-announcements .reactions-bar__item {
+  min-height: 28px;
+  margin: 0;
+  padding: 2px 10px;
+  gap: 6px;
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius-pill);
+  background: transparent;
+  color: var(--eps-text-secondary);
+
+  @media (hover: hover) {
+    &:hover,
+    &:focus {
+      border-color: var(--eps-border-hover);
+      background: var(--eps-surface-hover);
+      color: var(--eps-text-primary);
+    }
+  }
+
+  &.active {
+    border-color: var(--eps-brand-primary);
+    background: var(--color-bg-brand-soft);
+    color: var(--eps-brand-primary);
+  }
+}
+
+.epsilon-announcements .reactions-bar__item__emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.epsilon-announcements .reactions-bar__item__count {
+  margin-inline-start: 0;
+}
+
+// The "+" (add reaction) button becomes a round ghost pill matching the
+// reaction pills' height.
+.epsilon-announcements .reactions-bar .emoji-picker-dropdown {
+  margin: 0;
+}
+
+.epsilon-announcements .reactions-bar .emoji-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius-pill);
+  color: var(--eps-text-secondary);
+
+  @media (hover: hover) {
+    &:hover {
+      border-color: var(--eps-border-hover);
+      background: var(--eps-surface-hover);
+      color: var(--eps-text-primary);
+    }
+  }
+}

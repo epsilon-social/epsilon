@@ -15,6 +15,7 @@ import EpsilonStoreBadges from './epsilon_store_badges';
 
 import { InlineFollowSuggestions } from 'mastodon/features/home_timeline/components/inline_follow_suggestions';
 import { useIdentity } from 'mastodon/identity_context';
+import { EpsilonAnnouncements } from 'mastodon/features/epsilon/announcements';
 import EpsilonCategorySuggestions from 'mastodon/features/epsilon/category_suggestions';
 import { EpsilonComposeProvider, useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 import { EpsilonImagePeek } from 'mastodon/features/epsilon/image_peek';
@@ -101,6 +102,11 @@ const EpsilonLayoutContent = ({ children }) => {
             with its search bar. */}
         {signedIn && showCompose && <EpsilonHomeFeedPills />}
 
+        {/* Announcements card: fully sidecar mount. The native panel lives in
+            the home column header (hidden by our layout) behind the bullhorn
+            toggle — that native path stays dormant; the card renders here
+            instead, above the feed. Items are fetched by the native
+            HomeTimeline mount; the card renders null while there are none. */}
         {isHome && isInApp ? (
           <EpsilonPullToRefresh>
             {showInlineCompose && <ComposeFormContainer singleColumn />}
@@ -109,6 +115,7 @@ const EpsilonLayoutContent = ({ children }) => {
                 <EpsilonHomeFilter />
               </div>
             )}
+            {showCompose && <EpsilonAnnouncements />}
             {children}
           </EpsilonPullToRefresh>
         ) : (
@@ -119,6 +126,7 @@ const EpsilonLayoutContent = ({ children }) => {
                 <EpsilonHomeFilter />
               </div>
             )}
+            {showCompose && <EpsilonAnnouncements />}
             {children}
           </>
         )}
