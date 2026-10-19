@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Double-tap sur l'onglet Accueil (coque iOS) : refresh du fil sans reload** : la coque dispatch un `CustomEvent` `epsilon:refresh-home` dans la WebView Home au lieu d'un `webView.reload()` (écran blanc, état SPA perdu). Côté web : retour sur `/home` si la webview a navigué ailleurs, scroll vers le haut, puis refresh du fil — via le spinner du pull-to-refresh quand il est monté (relais cancelable `epsilon:ptr-refresh`, garde anti double-fire), fetch direct sinon. Variante postMessage acceptée sur le canal natif existant, gaté connecté. Fichiers : `features/epsilon/native_bridge/index.tsx`, `features/epsilon/pull_to_refresh/index.jsx`.
+
 ## [0.6.1] - 2026-13-07
 
 ### Added

@@ -135,6 +135,27 @@ export const EpsilonPullToRefresh = ({ children }) => {
     window.setTimeout(() => setWillChange(false), 360);
   }, [animateTo, setWillChange]);
 
+  // Remote trigger (Home tab double-tap relayed by the native bridge) : the
+  // bridge emits a cancelable 'epsilon:ptr-refresh'; consuming it means we own
+  // the refresh — same spinner + fetch as the pull gesture, without the pull.
+  useEffect(() => {
+    const onRemoteRefresh = (e) => {
+      e.preventDefault();
+
+      if (refreshingRef.current || pullingRef.current) {
+        return;
+      }
+
+      setWillChange(true);
+      triggerRefresh();
+    };
+
+    window.addEventListener('epsilon:ptr-refresh', onRemoteRefresh);
+    return () => {
+      window.removeEventListener('epsilon:ptr-refresh', onRemoteRefresh);
+    };
+  }, [triggerRefresh, setWillChange]);
+
   useEffect(() => {
     const overlayOpen = () =>
       !!document.querySelector('.modal-root__overlay, .epsilon-compose-overlay');

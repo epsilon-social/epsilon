@@ -1,6 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+
+import { useHistory } from 'react-router-dom';
 
 import { openNavigation } from 'mastodon/actions/navigation';
+import { expandHomeTimeline } from 'mastodon/actions/timelines';
 import { useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 import { useIdentity } from 'mastodon/identity_context';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
@@ -60,12 +63,54 @@ const useOverlayEmitter = (source: string, visible: boolean): void => {
 
 export const EpsilonNativeBridge: React.FC = () => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
   const { signedIn } = useIdentity();
   // Reuse the exact entry point the "New Post" buttons use (sidebar + top
   // navbar): the home-made compose overlay lives in a React context, not a
   // Redux modal. The bridge is mounted inside EpsilonComposeProvider, so the
   // hook resolves here.
   const { openCompose } = useEpsilonCompose();
+
+  // ── Native -> web: Home tab double-tap = scroll to top + refresh ──────────
+  // The shell runs `window.dispatchEvent(new CustomEvent('epsilon:refresh-home'))`
+  // in the active Home WebView instead of webView.reload(), so we keep the SPA
+  // state and avoid the white screen.
+  const refreshHome = useCallback(() => {
+    if (!signedIn) {
+      return;
+    }
+
+    // The webview may have navigated away from the feed (post detail, profile,
+    // curated feed): a Home double-tap first goes back to the root of the tab.
+    if (history.location.pathname !== '/home') {
+      history.push('/home');
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Hand the fetch over to the pull-to-refresh wrapper when it is mounted
+    // (in-app, on /home), so the double-tap shows the same spinner as the pull
+    // gesture. If nobody consumes the event (just navigated, wrapper not
+    // mounted yet), fetch directly — no spinner, but the feed still updates.
+    const handledByPullToRefresh = !window.dispatchEvent(
+      new CustomEvent('epsilon:ptr-refresh', { cancelable: true }),
+    );
+
+    if (!handledByPullToRefresh) {
+      void dispatch(expandHomeTimeline());
+    }
+  }, [dispatch, history, signedIn]);
+
+  useEffect(() => {
+    const handleRefreshHome = () => {
+      refreshHome();
+    };
+
+    window.addEventListener('epsilon:refresh-home', handleRefreshHome);
+    return () => {
+      window.removeEventListener('epsilon:refresh-home', handleRefreshHome);
+    };
+  }, [refreshHome]);
 
   // ── Native -> web: open the sidebar / compose on demand ──────────────────
   useEffect(() => {
@@ -115,6 +160,10 @@ export const EpsilonNativeBridge: React.FC = () => {
             openCompose();
           });
         }
+      } else if (message.type === 'epsilon:refresh-home') {
+        // Same action as the CustomEvent above, in case the native side ships
+        // it through its existing postMessage channel instead.
+        refreshHome();
       }
     };
 
@@ -122,7 +171,7 @@ export const EpsilonNativeBridge: React.FC = () => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [dispatch, openCompose, signedIn]);
+  }, [dispatch, openCompose, signedIn, refreshHome]);
 
   // ── Page teardown: balance the overlay signals ───────────────────────────
   // A full-page navigation (e.g. to a Rails /settings/* page) tears down the SPA
