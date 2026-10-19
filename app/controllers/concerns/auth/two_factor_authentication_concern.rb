@@ -83,6 +83,13 @@ module Auth::TwoFactorAuthenticationConcern
   def prompt_for_two_factor(user)
     register_attempt_in_session(user)
 
+    # ==========================================
+    # EPSILON : OAUTH CALLBACK IN WEBVIEW (2FA)
+    # ==========================================
+    csp = current_content_security_policy
+    csp.form_action(false)
+    request.content_security_policy = csp
+
     @webauthn_enabled = user.webauthn_enabled?
     @scheme_type      = if user.webauthn_enabled? && user_params[:otp_attempt].blank?
                           'webauthn'

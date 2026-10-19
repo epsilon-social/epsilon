@@ -9,6 +9,12 @@ class Auth::ConfirmationsController < Devise::ConfirmationsController
   before_action :redirect_confirmed_user, if: :signed_in_confirmed_user?
 
   before_action :extend_csp_for_captcha!, only: [:show, :confirm_captcha]
+  # ==========================================
+  # EPSILON : OAUTH CALLBACK IN WEBVIEW (email confirmation → app)
+  # Must run after extend_csp_for_captcha! (to preserve the captcha provider
+  # sources) and before require_captcha_if_needed! (which renders and halts).
+  # ==========================================
+  before_action :relax_form_action_for_app_return!, only: [:show, :confirm_captcha], if: :redirect_to_app?
   before_action :require_captcha_if_needed!, only: [:show]
 
   skip_before_action :check_self_destruct!
@@ -48,6 +54,23 @@ class Auth::ConfirmationsController < Devise::ConfirmationsController
 
   def require_captcha_if_needed!
     render :captcha if captcha_required?
+  end
+
+  # ==========================================
+  # EPSILON : OAUTH CALLBACK IN WEBVIEW (email confirmation → app)
+  # Future-proofing: for a `created_by_application` account, the captcha page's
+  # POST redirects to the app's custom scheme (confirmation_redirect_uri), which
+  # the default `form-action 'self'` blocks in WebKit — the same trap fixed on the
+  # 2FA page. Drop form-action only for the app-return flow. No-op today: the
+  # mobile app registers via the web form, so created_by_application is nil and no
+  # `redirect_to_app` link is ever generated (see user_mailer confirmation views).
+  # ==========================================
+  def relax_form_action_for_app_return!
+    return if request.content_security_policy.blank?
+
+    csp = current_content_security_policy
+    csp.form_action(false)
+    request.content_security_policy = csp
   end
 
   def set_confirmation_user!
