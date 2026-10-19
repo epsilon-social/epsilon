@@ -5,12 +5,15 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-19
+
 ### Added
 
 - **Double-tap sur l'onglet Accueil (coque iOS) : refresh du fil sans reload** : la coque dispatch un `CustomEvent` `epsilon:refresh-home` dans la WebView Home au lieu d'un `webView.reload()` (écran blanc, état SPA perdu). Côté web : retour sur `/home` si la webview a navigué ailleurs, scroll vers le haut, puis refresh du fil — via le spinner du pull-to-refresh quand il est monté (relais cancelable `epsilon:ptr-refresh`, garde anti double-fire), fetch direct sinon. Variante postMessage acceptée sur le canal natif existant, gaté connecté. Fichiers : `features/epsilon/native_bridge/index.tsx`, `features/epsilon/pull_to_refresh/index.jsx`.
 
 ### Fixed
 
+- **Comptes validés introuvables dans la recherche** : approuver (ou confirmer) un utilisateur ne ré-indexait jamais son compte dans Elasticsearch — seuls `Account`/`AccountStat` déclenchent l'indexation nativement — donc un inscrit validé à la main restait invisible dans la recherche jusqu'à sa première activité ou un `tootctl search deploy`. Sidecar : `concerns/epsilon/user_search_index_extension.rb` (trou upstream). Spec : `spec/search/models/concerns/epsilon/user_search_index_extension_spec.rb`.
 - **Connexion 2FA bloquée dans l'app iOS** : après saisie du code TOTP, la redirection vers le callback OAuth (`epsilonapp://oauth/callback`) était annulée par WebKit et la WebView restait figée sur la page du code. Cause : la CSP par défaut `form-action 'self'`, que WebKit applique sur toute la chaîne de redirection d'une soumission de formulaire ; l'upstream ne relâche `form-action` que sur la page login (`:new`) et la page authorize, pas sur la page 2FA — rendue par `sessions#create`, où le macro `content_security_policy only:` ne s'exécute jamais (le `render` du `prepend_before_action` halte la chaîne de filtres avant). Correctif : `form-action` retiré directement dans `prompt_for_two_factor`. Même relâchement posé en préventif sur la page captcha de confirmation pour le cas app-return (`redirect_to_app` + `created_by_application`), inactif aujourd'hui (inscription via formulaire web). Fichiers core balisés : `concerns/auth/two_factor_authentication_concern.rb`, `auth/confirmations_controller.rb`. Spec : `spec/requests/auth/epsilon_webview_oauth_csp_spec.rb`.
 
 ## [0.6.1] - 2026-13-07

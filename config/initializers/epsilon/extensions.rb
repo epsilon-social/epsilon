@@ -11,6 +11,7 @@ Rails.application.config.to_prepare do
   REST::AccountSerializer.include(Epsilon::AccountSerializerExtension) if defined?(REST::AccountSerializer)
 
   User.include(Epsilon::UserBadgeExtension) if defined?(User)
+  User.include(Epsilon::UserSearchIndexExtension) if defined?(User)
 
   Account.include(Epsilon::UsernameNormalizationExtension) if defined?(Account)
 
