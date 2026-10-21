@@ -5,6 +5,15 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Cap de distribution des catégories : 3 posts par auteur et par heure** — l'injection chez les abonnés de catégories s'arrête au 3ᵉ post de l'heure d'un même auteur (compteur Redis expirant) : spammer n'achète plus aucune visibilité (1 carte par heure quoi qu'il poste), les pages de refresh restent diverses, et une vague de spam cesse de générer un job de distribution par abonné et par post. Followers, profil, hashtags et Flux Epsilon non concernés. Aligné sur les buckets horaires des piles. (`workers/epsilon/categorization/categorize_status_worker.rb` + specs)
+
+### Fixed
+
+- **Posts média qui clignotent en bas de fil** : l'observer de visibilité du scroll document n'avait aucune marge de pré-rendu (contrairement aux colonnes à scroller interne) — le dernier post visible se démontait/remontait à la moindre ré-évaluation, faisant flasher les images un quart de seconde ; même marge de 3 écrans appliquée (`components/scrollable_list`, balisé).
+- **Haut de fil instable avec les piles** : un post déjà affiché pouvait se replier rétroactivement quand son auteur atteignait le seuil dans l'heure (premières cartes qui disparaissent, sauts non compensés en haut de fil) ; le repli ne s'applique plus qu'aux posts jamais rendus — ce qui est à l'écran n'en bouge plus, le spam nouveau se replie sous l'ancre déjà visible (`epsilon/selectors/status_stacks.js`).
+
 ## [0.7.0] - 2026-10-19
 
 ### Added

@@ -57,15 +57,22 @@ const collectCandidates = (statusIds, statuses, ownAccountId) => {
   return byAuthor;
 };
 
-// Remembers, per author and clock bucket, which timeline slot the stack
-// was first displayed at. Pagination loads ever older bucket members; the
-// natural slot (oldest loaded member) would keep migrating down the list,
-// visibly re-seating a stack the user may be looking at. Once seen, a
-// stack keeps its slot and only grows. Resets on full page load.
+// Session memory implementing "fold on entry only" — what the user has
+// seen on screen is never taken away from them:
+// - displaySlotByGroup: per author and clock bucket, the timeline slot the
+//   stack is anchored at. Fixed once chosen, so a stack never re-seats.
+// - stickyFlatIds: posts that have been rendered flat (below threshold at
+//   the time). They stay flat for the whole session even if their author
+//   later crosses the threshold — only never-rendered posts fold.
+// Both reset on full page load: a fresh session folds everything cleanly.
 const displaySlotByGroup = new Map();
+const stickyFlatIds = new Set();
 
-// Test-only helper: clears the display-slot memory between test cases.
-export const resetStackDisplayMemory = () => displaySlotByGroup.clear();
+// Test-only helper: clears the fold-on-entry memory between test cases.
+export const resetStackDisplayMemory = () => {
+  displaySlotByGroup.clear();
+  stickyFlatIds.clear();
+};
 
 const buildStacks = (byAuthor) => {
   const stackBySlot = new Map();
@@ -85,28 +92,41 @@ const buildStacks = (byAuthor) => {
       }
     });
 
-    // At most one visible slot per author per clock hour: the stack sits
-    // at its remembered slot (or the oldest loaded member's slot the
-    // first time), every other member folds into it.
     buckets.forEach((group, bucket) => {
-      if (group.length < STACK_MIN_SIZE) {
-        return;
-      }
-
       group.sort((a, b) => a.time - b.time);
 
       const groupKey = `${accountId}:${bucket}`;
       const remembered = displaySlotByGroup.get(groupKey);
-      const slotId = remembered && group.some((post) => post.id === remembered) ? remembered : group[0].id;
+      const memberIds = group.map((post) => post.id);
 
-      displaySlotByGroup.set(groupKey, slotId);
-      stackBySlot.set(slotId, ImmutableList(group.map((post) => post.id)));
+      // Below threshold and no stack yet: everything renders flat and is
+      // locked flat for the session.
+      if (group.length < STACK_MIN_SIZE && !remembered) {
+        memberIds.forEach((id) => stickyFlatIds.add(id));
+        return;
+      }
 
-      group.forEach((post) => {
-        if (post.id !== slotId) {
-          hidden.add(post.id);
-        }
-      });
+      // Anchor: the remembered slot if still loaded; otherwise the oldest
+      // member already on screen (it owns a stable slot); otherwise the
+      // oldest member.
+      const anchorId = (remembered && memberIds.includes(remembered) && remembered) ||
+        memberIds.find((id) => stickyFlatIds.has(id)) ||
+        memberIds[0];
+
+      // Fold only members that have never been rendered; sticky-flat
+      // siblings keep their place on screen.
+      const folded = memberIds.filter((id) => id !== anchorId && !stickyFlatIds.has(id));
+
+      if (folded.length === 0) {
+        // Nothing foldable (all members already on screen): no stack
+        // chrome, the anchor stays a plain flat post.
+        stickyFlatIds.add(anchorId);
+        return;
+      }
+
+      displaySlotByGroup.set(groupKey, anchorId);
+      stackBySlot.set(anchorId, ImmutableList([anchorId, ...folded]));
+      folded.forEach((id) => hidden.add(id));
     });
   });
 
@@ -116,14 +136,15 @@ const buildStacks = (byAuthor) => {
 /**
  * Collapses prolific authors into "stacks": when an author has
  * STACK_MIN_SIZE or more posts within the same clock-aligned one-hour
- * bucket, only the oldest (the anchor) keeps its slot in the timeline and
- * the rest are folded into it. The logged-in user's own posts and reblogs
- * are never folded.
+ * bucket, one anchor keeps a slot in the timeline and the others fold
+ * into it — but only on entry: a post that has already been rendered
+ * flat is never folded afterwards (what the user saw stays). The
+ * logged-in user's own posts and reblogs are never folded.
  *
  * Input and output are ImmutableLists in timeline order (newest first).
  * Each output item is either a status id, a non-status marker, or an
- * ImmutableList([anchorId, ...hiddenIds]) in ascending chronological
- * order representing a stack. Pure function of its arguments.
+ * ImmutableList([anchorId, ...foldedIds ascending]) representing a stack
+ * (the anchor is shown, the rest are hidden behind the expand button).
  * @param {import('immutable').List} statusIds - filtered timeline ids
  * @param {import('immutable').Map} statuses - state.get('statuses')
  * @param {string|null} ownAccountId - the logged-in user's account id

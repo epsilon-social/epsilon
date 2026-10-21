@@ -89,12 +89,11 @@ export default class StatusList extends ImmutablePureComponent {
         if (ImmutableList.isList(statusId)) {
           return (
             <EpsilonStatusStack
-              /* Key on the NEWEST member: it is loaded first (backward
-                 pagination), so the key stays stable while older members
-                 join the stack — the anchor id does not. A changing first
-                 child key would also misfire ScrollableList's prepend
-                 scroll compensation. */
-              key={`epsilon-stack:${statusId.last()}`}
+              /* Key on the ANCHOR: it is frozen once the stack is first
+                 displayed (fold-on-entry memory), so the key survives both
+                 older members loading via pagination and new spam folding
+                 in live — no remount, no flicker of the visible card. */
+              key={`epsilon-stack:${statusId.first()}`}
               statusIds={statusId}
               contextType={timelineId}
               scrollKey={this.props.scrollKey}

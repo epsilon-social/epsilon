@@ -98,14 +98,39 @@ describe('collapseIntoStacks', () => {
     const firstPage = collapseIntoStacks(timeline(['b', 'c', 'd', 'x']), fromJS({}).merge(base), ME);
 
     // An OLDER post (a) of the same bucket arrives via pagination: existing
-    // members keep their membership, the stack only grows.
+    // members keep their membership, the stack only grows (anchor first,
+    // then folded members in chronological order).
     const statuses = fromJS({}).merge(base, { a: status('remote1', 5) });
     const secondPage = collapseIntoStacks(timeline(['a', 'b', 'c', 'd', 'x']), statuses, ME);
 
     expect(firstPage.toJS()).toEqual(['x', ['b', 'c', 'd']]);
-    expect(secondPage.toJS()).toEqual(['x', ['a', 'b', 'c', 'd']]);
+    expect(secondPage.toJS()).toEqual(['x', ['b', 'a', 'c', 'd']]);
     // The newest member (stable React key) is unchanged
     expect(firstPage.last().last()).toBe(secondPage.last().last());
+  });
+
+  test('never folds a post that was already rendered flat (fold on entry only)', () => {
+    const base = {
+      a: status('remote1', 0),
+      b: status('remote1', 10),
+    };
+
+    // First render: two posts, below threshold -> flat (and locked flat)
+    const firstIds = timeline(['a', 'b']);
+    expect(collapseIntoStacks(firstIds, fromJS({}).merge(base), ME)).toBe(firstIds);
+
+    // The 3rd post of the bucket arrives: only IT folds — under the oldest
+    // already-visible post (which becomes the anchor); b stays flat.
+    const withC = fromJS({}).merge(base, { c: status('remote1', 20) });
+    const second = collapseIntoStacks(timeline(['a', 'b', 'c']), withC, ME);
+
+    expect(second.toJS()).toEqual(['b', ['a', 'c']]);
+
+    // More spam keeps folding into the same anchor; b still never folds.
+    const withD = fromJS({}).merge(base, { c: status('remote1', 20), d: status('remote1', 30) });
+    const third = collapseIntoStacks(timeline(['a', 'b', 'c', 'd']), withD, ME);
+
+    expect(third.toJS()).toEqual(['b', ['a', 'c', 'd']]);
   });
 
   test('a displayed stack keeps its slot when older bucket members load', () => {
@@ -125,7 +150,7 @@ describe('collapseIntoStacks', () => {
     const statuses = fromJS({}).merge(base, { a: status('remote1', 5) });
     const secondPage = collapseIntoStacks(timeline(['a', 'f', 'b', 'c', 'd']), statuses, ME);
 
-    expect(secondPage.toJS()).toEqual([['a', 'b', 'c', 'd'], 'f']);
+    expect(secondPage.toJS()).toEqual([['b', 'a', 'c', 'd'], 'f']);
   });
 
   test('stacks local authors too', () => {

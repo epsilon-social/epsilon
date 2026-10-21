@@ -93,5 +93,51 @@ RSpec.describe Epsilon::Categorization::CategorizeStatusWorker do
         expect(FeedInsertWorker).to_not have_received(:push_bulk)
       end
     end
+
+    describe 'hourly distribution cap' do
+      let(:author) { Fabricate(:account) }
+      let(:subscriber) { Fabricate(:account) }
+
+      def author_tagged_status
+        status = Fabricate(:status, account: author, text: 'A neutral post')
+        status.tags << Tag.find_or_create_by_names('science').first
+        status
+      end
+
+      before do
+        Fabricate(:epsilon_hashtag_mapping, category_master: category, hashtag: 'science')
+        Fabricate(:epsilon_category_subscription, account: subscriber, category_master: category)
+        allow(FeedInsertWorker).to receive(:push_bulk)
+      end
+
+      it 'distributes only the first posts of the clock hour' do
+        statuses = Array.new(4) { author_tagged_status }
+
+        statuses.each { |status| described_class.new.perform(status.id) }
+
+        expect(FeedInsertWorker).to have_received(:push_bulk).exactly(described_class::MAX_HOURLY_DISTRIBUTIONS).times
+      end
+
+      it 'still categorizes posts beyond the cap' do
+        statuses = Array.new(described_class::MAX_HOURLY_DISTRIBUTIONS + 1) { author_tagged_status }
+
+        statuses.each { |status| described_class.new.perform(status.id) }
+
+        over_cap = statuses.last
+        expect(Epsilon::Categorization::LocalPostCategorization.find_by(status_id: over_cap.id, category_master_id: category.id)).to be_present
+      end
+
+      it 'counts the cap per author' do
+        other_author = Fabricate(:account)
+
+        described_class::MAX_HOURLY_DISTRIBUTIONS.times { described_class.new.perform(author_tagged_status.id) }
+
+        other_status = Fabricate(:status, account: other_author, text: 'A neutral post')
+        other_status.tags << Tag.find_or_create_by_names('science').first
+        described_class.new.perform(other_status.id)
+
+        expect(FeedInsertWorker).to have_received(:push_bulk).exactly(described_class::MAX_HOURLY_DISTRIBUTIONS + 1).times
+      end
+    end
   end
 end

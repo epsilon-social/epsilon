@@ -392,8 +392,17 @@ class ScrollableList extends PureComponent {
       rootMargin: '300% 0px',
     };
 
+    /* ========================================== */
+    /* EPSILON : STATUS STACKS                    */
+    /* Upstream connects the document-scrolling case with NO rootMargin:
+       articles un-render the moment they leave the viewport, so the
+       bottom-most post flickers (media unmounts/remounts) on every
+       boundary re-evaluation — scroll, batch insert, anchor adjustment.
+       Same 3-viewport pre-render margin as the element-scroller case. */
+    /* ========================================== */
     this.intersectionObserverWrapper
-      .connect(this.props.bindToDocument ? {} : nodeOptions);
+      .connect(this.props.bindToDocument ? { rootMargin: '300% 0px' } : nodeOptions);
+    /* ========================================== */
   }
 
   detachIntersectionObserver () {

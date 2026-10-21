@@ -2,6 +2,7 @@
 
 class Epsilon::Categorization::CategorizeStatusWorker
   include Sidekiq::Worker
+  include Redisable
 
   sidekiq_options queue: 'default', retry: 3
 
@@ -12,6 +13,16 @@ class Epsilon::Categorization::CategorizeStatusWorker
   CONFIDENCE_THRESHOLD = 50
 
   DISTRIBUTION_BATCH_SIZE = 1_000
+
+  # At most this many posts per author and clock hour are distributed to
+  # category subscribers. Category injection is the platform recommending
+  # content: a prolific author gets a constant, small share of it no matter
+  # how much they post (posting more buys nothing), subscribers' refresh
+  # pages stay diverse, and a spam wave stops fanning out N_subscribers
+  # jobs per post. Followers are unaffected (native fan-out, full firehose
+  # on the author's profile). Aligned with the client stacks' clock-hour
+  # buckets. The backfill has its own per-author cap.
+  MAX_HOURLY_DISTRIBUTIONS = 3
 
   def perform(status_id)
     status = Status.find_by(id: status_id)
@@ -140,12 +151,24 @@ class Epsilon::Categorization::CategorizeStatusWorker
   def distribute_to_subscribers(status, category_ids)
     category_ids = Array(category_ids).uniq
     return if category_ids.empty?
+    return if hourly_distribution_cap_reached?(status)
 
     subscriber_account_ids(status, category_ids).each_slice(DISTRIBUTION_BATCH_SIZE) do |account_ids|
       FeedInsertWorker.push_bulk(account_ids) do |account_id|
         [status.id, account_id, 'home']
       end
     end
+  end
+
+  # First MAX_HOURLY_DISTRIBUTIONS posts of the clock hour win; the rest
+  # stay categorized (profile, followers, backfill) but are not injected.
+  def hourly_distribution_cap_reached?(status)
+    bucket = Time.now.utc.to_i / 3600
+    key = "epsilon:categorization:distributed:#{status.account_id}:#{bucket}"
+    count = redis.incr(key)
+    redis.expire(key, 2.hours.to_i) if count == 1
+
+    count > MAX_HOURLY_DISTRIBUTIONS
   end
 
   def subscriber_account_ids(status, category_ids)
