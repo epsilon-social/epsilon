@@ -29,7 +29,7 @@ const messages = defineMessages({
 const EpsilonCurationStudio = ({ multiColumn }) => {
   const intl = useIntl();
   const { signedIn, permissions } = useIdentity();
-  const [tab, setTab] = useState('search');
+  const [tab, setTab] = useState('drafts');
 
   const handleSearchTab = useCallback(() => setTab('search'), []);
   const handleDraftsTab = useCallback(() => setTab('drafts'), []);
@@ -56,11 +56,11 @@ const EpsilonCurationStudio = ({ multiColumn }) => {
       />
 
       <div className='epsilon-curation__tabs'>
-        <button type='button' className={classNames('epsilon-curation__tab', { active: tab === 'search' })} onClick={handleSearchTab}>
-          <FormattedMessage id='epsilon_curated.studio.tab_search' defaultMessage='Search' />
-        </button>
         <button type='button' className={classNames('epsilon-curation__tab', { active: tab === 'drafts' })} onClick={handleDraftsTab}>
           <FormattedMessage id='epsilon_curated.studio.tab_drafts' defaultMessage='Drafts' />
+        </button>
+        <button type='button' className={classNames('epsilon-curation__tab', { active: tab === 'search' })} onClick={handleSearchTab}>
+          <FormattedMessage id='epsilon_curated.studio.tab_search' defaultMessage='Search' />
         </button>
       </div>
 

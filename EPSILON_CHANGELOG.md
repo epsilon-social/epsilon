@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-10-21
+
+### Changed
+
+- **Studio de curation : ouverture directe sur l'onglet Brouillons** (au lieu de Recherche), placé en première position — c'est l'écran de travail quotidien. Fichier : `features/epsilon/curation_studio/index.jsx`.
+
 ## [0.8.0] - 2026-10-21
 
 ### Added
