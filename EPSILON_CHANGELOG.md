@@ -5,12 +5,24 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-21
+
 ### Added
 
+- **Refonte sidebar des pages paramètres/admin (desktop)** : navigation à 1 clic — tous les groupes rendus d'avance (`render_navigation(expand_all: true)`, fini le double reload « Modération → scroll → Comptes ») ; groupes repliables côté client (row header+chevron unifiée, animation interruptible, état en localStorage, groupe actif forcé ouvert) ; champ « Rechercher un réglage » (filtre instantané, insensible aux accents) ; sections Paramètres / Administration + zone utilitaire ; habillage Epsilon (carte `--eps-surface`, pills, item actif brand + dot) ; hauteur naturelle sans clamp (toute la nav visible sur les pages longues, sticky seulement quand elle tient à l'écran). Fichiers : `layouts/admin.html.haml` (balisé), `entrypoints/epsilon/admin_nav.ts`, `styles/epsilon/admin_settings.scss`, `entrypoints/admin.tsx` (balisé), locales `en.yml`/`fr.yml` (`admin.epsilon.settings_nav`).
+- **Paramètres/admin mobile : barre fixe + sheet** : top bar frosted avec le titre de la page courante + burger ; le menu devient une sheet plein écran frosted (liste complète groupée, item actif auto-scrollé au centre, filtre épinglé, safe-areas) avec ouverture/fermeture animées symétriques et interruptibles (toggle natif intercepté, zéro modif de `public.tsx`). Même fichiers que ci-dessus.
+- **Comptes bloqués / masqués / domaines bloqués de retour** : entrées ajoutées au menu « Plus » de la sidebar SPA (`/mutes`, `/blocks`, `/domain_blocks`) — orphelines depuis la suppression du menu ⋯ du profil par la refonte ; clés i18n natives réutilisées. Fichier : `epsilon/components/epsilon_sidebar.jsx`.
 - **Cap de distribution des catégories : 3 posts par auteur et par heure** — l'injection chez les abonnés de catégories s'arrête au 3ᵉ post de l'heure d'un même auteur (compteur Redis expirant) : spammer n'achète plus aucune visibilité (1 carte par heure quoi qu'il poste), les pages de refresh restent diverses, et une vague de spam cesse de générer un job de distribution par abonné et par post. Followers, profil, hashtags et Flux Epsilon non concernés. Aligné sur les buckets horaires des piles. (`workers/epsilon/categorization/categorize_status_worker.rb` + specs)
+
+### Changed
+
+- **Bouton Filtres de la home aligné à gauche** ; au passage le dropdown est repositionné par Popper (`placement='bottom-start'` + offset dans `epsilon_home_filter.jsx`) au lieu des `top/left !important` CSS qui le faisaient déborder (dézoom de la page sur mobile). Fichiers : `epsilon/components/epsilon_home_filter.jsx`, `styles/epsilon/layout.scss`.
 
 ### Fixed
 
+- **Menu burger paramètres/admin inutilisable sur iOS** : le scroll partait sur la page derrière (iOS ignore `overflow: hidden` sur le body) et le bas du menu — dont Se déconnecter — était inatteignable ; verrou `position: fixed` au scroll courant + restauration à la fermeture, hauteur en `dvh` (suit la barre d'outils dynamique) et padding bas safe-area. Fichier : `entrypoints/epsilon/admin_nav.ts`, `styles/epsilon/admin_settings.scss`.
+- **Première carte des suggestions de comptes désalignée dans le fil** : le padding natif 16px du rail décalait la première carte par rapport aux posts ; `padding-inline: 0` sur le rail, widget de la sidebar droite intact (`styles/epsilon/layout.scss`).
+- **Notifications : cartes à géométrie variable** : les types non groupés (mention, quote, update, « vient de publier », sondage) n'étaient pas cardés — `.notification-ungrouped` ajouté au bloc carte ; l'ombre de carte de fil restait accrochée au statut interne (rectangle blanc plat) — `box-shadow: none` au reset ; likes/boosts en triple boîte — wrapper natif `__main__status` neutralisé, une seule carte imbriquée par embed (quote/favori/boost : surface + bordure + r16 + padding). Audit mené sur les 17 types de notifications. Fichier : `styles/epsilon/layout.scss`.
 - **Posts média qui clignotent en bas de fil** : l'observer de visibilité du scroll document n'avait aucune marge de pré-rendu (contrairement aux colonnes à scroller interne) — le dernier post visible se démontait/remontait à la moindre ré-évaluation, faisant flasher les images un quart de seconde ; même marge de 3 écrans appliquée (`components/scrollable_list`, balisé).
 - **Haut de fil instable avec les piles** : un post déjà affiché pouvait se replier rétroactivement quand son auteur atteignait le seuil dans l'heure (premières cartes qui disparaissent, sauts non compensés en haut de fil) ; le repli ne s'applique plus qu'aux posts jamais rendus — ce qui est à l'écran n'en bouge plus, le spam nouveau se replie sous l'ancre déjà visible (`epsilon/selectors/status_stacks.js`).
 

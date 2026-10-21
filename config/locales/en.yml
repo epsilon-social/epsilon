@@ -320,6 +320,12 @@ en:
         title: Curated feeds
         updated: Curated feed updated
         window: Time window
+      settings_nav:
+        no_results: No matching pages
+        search: Search settings
+        section_administration: Administration
+        section_settings: Settings
+        toggle_section: Show or hide this section
     account_actions:
       action: Perform action
       already_silenced: This account has already been limited.

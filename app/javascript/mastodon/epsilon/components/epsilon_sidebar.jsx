@@ -4,8 +4,14 @@ import { defineMessages, useIntl } from 'react-intl';
 import AddIcon from '@/material-icons/400-24px/add.svg?react';
 import EditSquareIcon from '@/material-icons/400-24px/edit_square.svg?react';
 import AlternateEmailIcon from '@/material-icons/400-24px/alternate_email.svg?react';
+import BlockActiveIcon from '@/material-icons/400-24px/block-fill.svg?react';
+import BlockIcon from '@/material-icons/400-24px/block.svg?react';
 import BookmarksActiveIcon from '@/material-icons/400-24px/bookmarks-fill.svg?react';
 import BookmarksIcon from '@/material-icons/400-24px/bookmarks.svg?react';
+import DomainDisabledActiveIcon from '@/material-icons/400-24px/domain_disabled-fill.svg?react';
+import DomainDisabledIcon from '@/material-icons/400-24px/domain_disabled.svg?react';
+import VolumeOffActiveIcon from '@/material-icons/400-24px/volume_off-fill.svg?react';
+import VolumeOffIcon from '@/material-icons/400-24px/volume_off.svg?react';
 import CollectionsActiveIcon from '@/material-icons/400-24px/category-fill.svg?react';
 import CollectionsIcon from '@/material-icons/400-24px/category.svg?react';
 import HomeIcon from '@/material-icons/400-24px/home.svg?react';
@@ -83,6 +89,9 @@ const messages = defineMessages({
   about: { id: 'navigation_bar.about', defaultMessage: 'About' },
   lists: { id: 'navigation_bar.lists', defaultMessage: 'Lists' },
   collections: { id: 'navigation_bar.collections', defaultMessage: 'Collections' },
+  blocks: { id: 'navigation_bar.blocks', defaultMessage: 'Blocked users' },
+  mutes: { id: 'navigation_bar.mutes', defaultMessage: 'Muted users' },
+  domainBlocks: { id: 'navigation_bar.domain_blocks', defaultMessage: 'Blocked domains' },
   followRequests: { id: 'navigation_bar.follow_requests', defaultMessage: 'Follow requests', },
   categories: { id: 'epsilon_cat.column_settings.categories', defaultMessage: 'Categories' },
   compose: { id: 'tabs_bar.publish', defaultMessage: 'New Post' },
@@ -325,6 +334,9 @@ const EpsilonSidebar = () => {
                   text={intl.formatMessage(messages.collections)}
                   className={getNavClass(`/@${account?.acct}/collections`)}
                 />
+                <ColumnLink to='/mutes' icon='volume-off' iconComponent={VolumeOffIcon} activeIconComponent={VolumeOffActiveIcon} text={intl.formatMessage(messages.mutes)} className={getNavClass('/mutes')} />
+                <ColumnLink to='/blocks' icon='ban' iconComponent={BlockIcon} activeIconComponent={BlockActiveIcon} text={intl.formatMessage(messages.blocks)} className={getNavClass('/blocks')} />
+                <ColumnLink to='/domain_blocks' icon='minus-circle' iconComponent={DomainDisabledIcon} activeIconComponent={DomainDisabledActiveIcon} text={intl.formatMessage(messages.domainBlocks)} className={getNavClass('/domain_blocks')} />
               </div>
             </div>
           </>

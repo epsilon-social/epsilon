@@ -23,8 +23,18 @@
               = material_symbol 'menu'
               = material_symbol 'close'
 
+          -# EPSILON : SETTINGS NAV
+          - epsilon_settings_nav_labels = { section_settings: t('admin.epsilon.settings_nav.section_settings'),
+                                            section_administration: t('admin.epsilon.settings_nav.section_administration'),
+                                            no_results: t('admin.epsilon.settings_nav.no_results'),
+                                            toggle_section: t('admin.epsilon.settings_nav.toggle_section') }
+          .epsilon-settings-nav__filter{ data: epsilon_settings_nav_labels }
+            = material_symbol 'search'
+            %input.epsilon-settings-nav__filter-input{ type: 'search', autocomplete: 'off', placeholder: t('admin.epsilon.settings_nav.search'), 'aria-label': t('admin.epsilon.settings_nav.search') }
+
           %nav
-            = render_navigation
+            -# EPSILON : SETTINGS NAV — expand_all renders every group up-front (1 click = 1 destination)
+            = render_navigation(expand_all: true)
 
     %main.content-wrapper#content
       .content

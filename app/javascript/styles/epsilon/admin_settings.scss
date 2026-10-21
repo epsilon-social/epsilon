@@ -1,0 +1,403 @@
+// Epsilon shell for the server-rendered settings/admin pages
+// (app/views/layouts/admin.html.haml). Desktop sidebar restyle: floating
+// surface card, pill nav items, collapsible groups and quick filter
+// (behavior in entrypoints/epsilon/admin_nav.ts). The mobile overlay
+// (< 890px) keeps the native layout for now — next iteration.
+
+$no-columns-breakpoint: 890px;
+
+.admin-wrapper {
+  // Quick filter (injected in the layout, above the nav).
+  .epsilon-settings-nav__filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    background: var(--eps-surface);
+    border: 1px solid var(--eps-border);
+    border-radius: var(--eps-radius-pill);
+    color: var(--eps-text-secondary);
+
+    &:focus-within {
+      border-color: var(--eps-border-hover);
+      color: var(--eps-text-primary);
+    }
+
+    .icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      margin: 0;
+    }
+  }
+
+  .epsilon-settings-nav__filter-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    padding: 0;
+    background: none;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--eps-text-primary);
+
+    &::placeholder {
+      color: var(--eps-text-secondary);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &::-webkit-search-cancel-button {
+      appearance: none;
+    }
+  }
+
+  .sidebar ul {
+    // Base rows: links and group headers share the same pill geometry.
+    a,
+    .epsilon-settings-nav__group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-sizing: border-box;
+      margin: 1px 0;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--eps-text-secondary);
+      text-decoration: none;
+      border-radius: var(--eps-radius-pill);
+      transition:
+        background-color 150ms ease,
+        color 150ms ease;
+
+      .icon {
+        width: 18px;
+        height: 18px;
+        flex: 0 0 auto;
+        margin: 0;
+      }
+    }
+
+    .epsilon-settings-nav__group-header {
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+
+    @media (hover: hover) {
+      a:not(.epsilon-settings-nav__group-header):hover {
+        color: var(--eps-text-primary);
+        background: var(--eps-nav-hover);
+      }
+    }
+
+    // Press feedback on pointer-down, instant.
+    a:not(.epsilon-settings-nav__group-header):active {
+      transform: scale(0.98);
+    }
+
+    // Current page: tinted pill + brand dot, mirroring the SPA sidebar.
+    .simple-navigation-active-leaf > a {
+      position: relative;
+      color: var(--eps-brand-primary);
+      background: var(--eps-nav-active-bg);
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset-inline-end: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--eps-brand-primary);
+      }
+    }
+  }
+
+  // Collapsible groups: header + chevron share a flex row (built by
+  // admin_nav.ts). The row is the single control — one pill, one hover,
+  // one press for the whole thing.
+  .epsilon-settings-nav__group-row {
+    display: flex;
+    align-items: center;
+    margin: 1px 0;
+    cursor: pointer;
+    border-radius: var(--eps-radius-pill);
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+
+    > .epsilon-settings-nav__group-header {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--eps-nav-hover);
+
+        > .epsilon-settings-nav__group-header,
+        > .epsilon-settings-nav__toggle {
+          color: var(--eps-text-primary);
+        }
+      }
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .epsilon-settings-nav__toggle {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    margin-inline-end: 8px;
+    border: 0;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    color: var(--eps-text-secondary);
+    border-radius: var(--eps-radius-pill);
+
+    &::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-inline-end: 2px solid currentcolor;
+      border-bottom: 2px solid currentcolor;
+      transform: rotate(45deg);
+      margin-top: -3px;
+      transition: transform 250ms cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    &[aria-expanded='false']::before {
+      transform: rotate(-45deg);
+      margin-top: 0;
+      margin-inline-start: -3px;
+    }
+  }
+
+  // Specificity must beat the native `.sidebar ul ul` rules.
+  .sidebar ul ul.epsilon-settings-nav__submenu {
+    overflow: hidden;
+    margin: 0;
+    margin-inline-start: 23px;
+    padding-inline-start: 8px;
+    border-inline-start: 1px solid var(--eps-border);
+
+    a {
+      padding: 8px 12px;
+      font-weight: 500;
+    }
+  }
+
+  // Zone labels, divider and empty state (injected by admin_nav.ts).
+  .epsilon-settings-nav__section {
+    padding: 18px 14px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--eps-text-secondary);
+  }
+
+  .epsilon-settings-nav__divider {
+    height: 1px;
+    margin: 10px 14px;
+    background: var(--eps-border);
+  }
+
+  .epsilon-settings-nav__empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--eps-text-secondary);
+  }
+
+  .sidebar ul .epsilon-settings-nav__utility a {
+    font-weight: 500;
+  }
+
+  // Desktop geometry: sticky column with its own scroll, nav as a floating
+  // Epsilon surface card.
+  @media (width >= 890px) {
+    // Natural height, no clamp: on long pages the whole expanded nav is
+    // visible and scrolls with the document. When the sidebar fits the
+    // viewport, admin_nav.ts adds the sticky class to keep it at hand.
+    .sidebar {
+      align-self: flex-start;
+      box-sizing: border-box;
+      padding: 20px 12px 24px;
+
+      &.epsilon-settings-nav--sticky {
+        position: sticky;
+        top: 0;
+      }
+    }
+
+    .sidebar .logo {
+      width: 56px;
+      height: 56px;
+      margin: 4px auto 20px;
+    }
+
+    .sidebar > nav {
+      box-sizing: border-box;
+      padding: 12px;
+      background: var(--eps-surface);
+      border: 1px solid var(--eps-border);
+      border-radius: var(--eps-radius);
+      box-shadow: var(--eps-box-shadow);
+    }
+
+    // Root list only — submenus must keep overflow: hidden so the
+    // expand/collapse height animation clips their items.
+    .sidebar nav > ul {
+      overflow: visible;
+      margin-bottom: 0;
+    }
+  }
+
+  // Mobile: fixed frosted top bar (current page title + burger) and a
+  // full-height frosted sheet holding the complete nav + quick filter.
+  @media (width < 890px) {
+    .sidebar-wrapper {
+      overflow: visible;
+    }
+
+    // Spacer: the toggle bar is fixed, reserve its in-flow height.
+    .sidebar {
+      height: 56px;
+    }
+
+    .sidebar__toggle {
+      position: fixed;
+      top: 0;
+      inset-inline: 0;
+      z-index: 12;
+      box-sizing: border-box;
+      height: calc(56px + env(safe-area-inset-top));
+      padding-top: env(safe-area-inset-top);
+      align-items: center;
+      background: var(--eps-surface);
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--eps-border);
+
+      &__logo {
+        display: none;
+      }
+
+      &__icon {
+        order: -1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        margin: 0;
+        margin-inline-start: 10px;
+        color: var(--eps-text-primary);
+        border-radius: var(--eps-radius-pill);
+
+        .icon {
+          width: 28px;
+          height: 28px;
+        }
+
+        &:active {
+          background: var(--eps-nav-hover);
+          transform: scale(0.92);
+        }
+      }
+    }
+
+    .epsilon-settings-nav__current {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding-inline-start: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--eps-text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // The sheet: full nav under the bar, frosted over the page content.
+    // Sized with dvh so the bottom edge tracks the *visible* viewport (iOS
+    // dynamic toolbar, shell chrome) — `bottom: 0` alone can leave the last
+    // items buried under browser UI. Bottom padding clears the home
+    // indicator in the mobile shells (env() is live there).
+    .sidebar > nav > ul.visible {
+      box-sizing: border-box;
+      top: calc(56px + env(safe-area-inset-top));
+      bottom: 0;
+      height: auto;
+      padding: 72px 12px calc(48px + env(safe-area-inset-bottom));
+      background: var(--eps-surface);
+      -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      overscroll-behavior: contain;
+
+      @supports (height: 100dvh) {
+        bottom: auto;
+        height: calc(100dvh - 56px - env(safe-area-inset-top));
+      }
+    }
+
+    // Quick filter pinned under the bar while the sheet is open.
+    .epsilon-settings-nav__filter {
+      display: none;
+    }
+
+    .sidebar:has(> nav > ul.visible) .epsilon-settings-nav__filter {
+      display: flex;
+      position: fixed;
+      z-index: 11;
+      top: calc(64px + env(safe-area-inset-top));
+      inset-inline: 12px;
+      margin: 0;
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+    }
+
+    // 16px floor prevents the iOS focus auto-zoom.
+    .epsilon-settings-nav__filter-input {
+      font-size: 16px;
+    }
+
+    // Comfortable touch rows.
+    .sidebar ul a,
+    .sidebar ul .epsilon-settings-nav__group-header {
+      padding-block: 12px;
+      font-size: 15px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar ul a,
+    .epsilon-settings-nav__group-row,
+    .epsilon-settings-nav__toggle::before {
+      transition: none;
+    }
+
+    .sidebar ul a:active,
+    .epsilon-settings-nav__group-row:active {
+      transform: none;
+    }
+  }
+}

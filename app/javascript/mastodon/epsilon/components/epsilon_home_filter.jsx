@@ -51,7 +51,8 @@ export const EpsilonHomeFilter = () => {
       <Overlay
         show={open}
         target={buttonRef}
-        placement='bottom-end'
+        placement='bottom-start'
+        popperConfig={{ modifiers: [{ name: 'offset', options: { offset: [0, 10] } }] }}
         rootClose
         onHide={handleHide}
         container={containerRef}

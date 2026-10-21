@@ -320,6 +320,12 @@ fr:
         title: Fils d'actu
         updated: Fil d'actu mis à jour
         window: Fenêtre
+      settings_nav:
+        no_results: Aucune page trouvée
+        search: Rechercher un réglage
+        section_administration: Administration
+        section_settings: Paramètres
+        toggle_section: Afficher ou masquer cette section
     account_actions:
       action: Effectuer l'action
       already_silenced: Ce compte est déjà limité.

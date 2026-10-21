@@ -13,6 +13,10 @@ import './epsilon/admin_hashtag_categories';
 // EPSILON : SIGNUP REVIEW
 import './epsilon/admin_copy_accounts';
 // ==========================================
+// ==========================================
+// EPSILON : SETTINGS NAV
+import './epsilon/admin_nav';
+// ==========================================
 
 const setAnnouncementEndsAttributes = (target: HTMLInputElement) => {
   const valid = target.value && target.validity.valid;

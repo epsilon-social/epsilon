@@ -1008,6 +1008,7 @@ body.theme-system {
     }
 
     .notification-group,
+    .notification-ungrouped,
     .conversation {
       box-sizing: border-box;
       margin: 0 !important;
@@ -1034,8 +1035,27 @@ body.theme-system {
         border: none !important;
         border-radius: 0 !important;
         background: transparent !important;
+        box-shadow: none !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
+      }
+
+      .notification-group__main__status {
+        border: none !important;
+        border-radius: 0 !important;
+      }
+
+      .status--is-quote,
+      .notification-group__embedded-status {
+        background: var(--eps-surface) !important;
+        border: 1px solid var(--eps-border) !important;
+        border-radius: var(--eps-radius-md) !important;
+        box-shadow: none !important;
+        overflow: hidden;
+      }
+
+      .notification-group__embedded-status {
+        padding: 10px 12px !important;
       }
     }
 
@@ -2587,6 +2607,8 @@ body.theme-system {
     scroll-behavior: smooth !important;
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
+    padding-inline: 0 !important;
+    scroll-padding-inline: 0 !important;
 
     &::-webkit-scrollbar {
       display: none !important;
@@ -3656,7 +3678,7 @@ html.epsilon-in-app {
 // all breakpoints (the mobile top bar is gone along with its search bar).
 .epsilon-home-filter-row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   position: relative;
   z-index: 100;
 
@@ -3667,13 +3689,6 @@ html.epsilon-in-app {
 
   .epsilon-home-filter {
     margin-bottom: 0 !important;
-  }
-
-  // Right-aligned button : anchor the dropdown to its right edge, else
-  // the 240px panel overflows the column (base rule pins left: 0).
-  .epsilon-home-filter .epsilon-filter-dropdown {
-    left: auto !important;
-    right: 0 !important;
   }
 }
 
@@ -3747,9 +3762,6 @@ html.epsilon-in-app {
   }
 
   .epsilon-filter-dropdown {
-    position: absolute;
-    top: 10px !important;
-    left: 0 !important;
     z-index: 1500 !important;
     min-width: 240px !important;
     padding: 16px !important;
@@ -3761,11 +3773,6 @@ html.epsilon-in-app {
     -webkit-backdrop-filter: blur(12px) !important;
     backdrop-filter: blur(12px) !important;
     border: 1px solid var(--eps-border);
-
-    @media (width <= 768px) {
-      left: auto !important;
-      right: 0 !important;
-    }
 
     body.theme-mastodon-light & {
       border: 1px solid var(--eps-border-hover);
