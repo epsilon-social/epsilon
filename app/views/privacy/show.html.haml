@@ -4,3 +4,12 @@
   = render partial: 'shared/og'
 
 = render 'shared/web_app'
+
+-# EPSILON : CRAWLABLE PRIVACY POLICY
+  Same rendering as REST::PrivacyPolicySerializer#content, so crawlers that
+  do not execute JavaScript (e.g. Google Play User Data policy checks) can
+  read the policy from the raw HTML response.
+- if @privacy_policy.present?
+  %noscript
+    .privacy-policy-static
+      = markdown(format(@privacy_policy.text, domain: Rails.configuration.x.local_domain))

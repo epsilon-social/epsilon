@@ -50,4 +50,10 @@ Rails.application.config.to_prepare do
   # Curated feeds: keep the media of published curated items cached (they
   # outlive the remote-media retention period by design).
   Vacuum::MediaAttachmentsVacuum.prepend(Epsilon::CurationMediaVacuumExtension) if defined?(Vacuum::MediaAttachmentsVacuum)
+
+  # Google Play verification bots read the raw HTML of the declared legal
+  # URLs (/terms-of-service for child safety standards, /privacy-policy for
+  # the store listing): serve their content in a <noscript> block.
+  TermsOfServiceController.include(Epsilon::CrawlableTermsOfServiceExtension) if defined?(TermsOfServiceController)
+  PrivacyController.include(Epsilon::CrawlablePrivacyPolicyExtension) if defined?(PrivacyController)
 end

@@ -4,3 +4,12 @@
   = render partial: 'shared/og'
 
 = render 'shared/web_app'
+
+-# EPSILON : CRAWLABLE TERMS OF SERVICE
+  Same rendering as REST::TermsOfServiceSerializer#content, so crawlers that
+  do not execute JavaScript (e.g. Google Play child safety standards
+  verification) can read the terms from the raw HTML response.
+- if @terms_of_service.present?
+  %noscript
+    .terms-of-service-static
+      = markdown(format(@terms_of_service.text, domain: Rails.configuration.x.local_domain))
