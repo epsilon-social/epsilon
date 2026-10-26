@@ -277,6 +277,13 @@ $no-columns-breakpoint: 890px;
       overflow: visible;
     }
 
+    // The native accounts table drops its optional columns at 870px only —
+    // 20px after the layout already went mobile. Align it on the layout
+    // switch so there is no desktop-table-in-mobile-layout window.
+    .accounts-table tbody td.optional {
+      display: none;
+    }
+
     // Spacer: the toggle bar is fixed, reserve its in-flow height.
     .sidebar {
       height: 56px;

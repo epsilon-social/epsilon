@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-10-26
+
+### Changed
+
+- **Admin/comptes : statut de revue visible en mobile** : le badge (validé / à revoir / rejeté…) s'affiche sous le nom du compte en portrait, au lieu de la colonne dédiée qui débordait de l'écran — colonne masquée sous le breakpoint du layout (890px — la table native basculait à 870, créant une fenêtre layout mobile/table desktop), desktop inchangé (`admin/accounts/_account.html.haml` balisé, `styles/epsilon/admin_accounts.scss`).
+
 ## [0.8.1] - 2026-10-21
 
 ### Changed
