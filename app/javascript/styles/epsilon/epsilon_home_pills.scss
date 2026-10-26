@@ -22,18 +22,8 @@
 
 @media (width <= 768px) {
   .epsilon-home-pills {
-    gap: 8px;
-
-    a {
-      margin: 0 0 12px !important;
-
-      &:first-child {
-        margin-inline-start: auto !important;
-      }
-
-      &:last-child {
-        margin-inline-end: auto !important;
-      }
-    }
+    gap: 0 !important;
+    padding-inline: 0 !important;
+    margin-inline: 0 !important;
   }
 }

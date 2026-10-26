@@ -5,6 +5,14 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Toutes les barres de pilules adaptatives** (home, Explorer/Recherche, Tendances, Notifications, Firehose) : collées sans espacement quand elles débordent (barre scrollable, retrait de colonne uniforme 8px en mobile), réparties façon space-around quand elles tiennent — mécanique de marges auto généralisée depuis les pilules home au bloc partagé ; corrige au passage le côté gauche inatteignable au scroll (bug latent du space-around en overflow) et le double retrait mobile des `account__section-headline` (`styles/epsilon/layout.scss`, `styles/epsilon/epsilon_home_pills.scss`).
+
+### Fixed
+
+- **Les pilules bougeaient au changement d'onglet** (home, Explorer, Notifications, Firehose, profil…) : le gras de l'onglet actif (400→800) élargissait la pilule et décalait toute la rangée ; remplacé par un faux-gras en `-webkit-text-stroke` qui épaissit les glyphes sans toucher aux métriques — zéro reflow, toutes les barres d'onglets couvertes par la même règle (`styles/epsilon/layout.scss`).
+
 ## [0.8.1] - 2026-10-21
 
 ### Changed

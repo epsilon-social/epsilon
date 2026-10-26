@@ -2867,7 +2867,7 @@ body.theme-system {
 .tabs-bar {
   display: flex !important;
   flex-direction: row !important;
-  justify-content: space-around !important;
+  justify-content: flex-start !important;
   align-items: center !important;
   width: 100% !important;
 
@@ -2876,7 +2876,7 @@ body.theme-system {
   // 8px hors de l'écran → scroll-X au niveau de la page (flux en direct,
   // notifs, profils…). La home n'a pas de section-headline, d'où « OK sur home ».
   box-sizing: border-box !important;
-  gap: 12px !important;
+  gap: 0 !important;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -2897,7 +2897,8 @@ body.theme-system {
 .account__section-headline button,
 .notification__filter-bar a,
 .notification__filter-bar button {
-  flex: 0 1 auto !important;
+  flex: 0 0 auto !important;
+  margin-inline: auto !important;
   width: auto !important;
   white-space: nowrap !important;
   display: inline-flex !important;
@@ -2931,7 +2932,7 @@ body.theme-system {
   /* État Actif */
   &.active,
   &--active {
-    font-weight: 800 !important;
+    -webkit-text-stroke: 1px currentcolor;
     color: #16171a !important;
     background: linear-gradient(90deg, #ccdbff 0%, #a6c4ff 100%) !important;
   }
@@ -3269,7 +3270,6 @@ body.theme-system {
   }
 
   .epsilon-layout__center #tabs-bar__portal .column-header,
-  .account__section-headline,
   .explore__search-header {
     padding-inline: 8px !important;
   }
