@@ -1,3 +1,6 @@
+-# EPSILON : SIGNUP REVIEW (lookup shared by the mobile badge and the column)
+- epsilon_review = epsilon_account_reviews[account.id]
+- epsilon_infos = epsilon_review_infos(account, epsilon_review)
 .batch-table__row{ class: [!account.unavailable? && account.user_pending? && 'batch-table__row--attention', (account.unavailable? || account.user_unconfirmed?) && 'batch-table__row--muted'] }
   %label.batch-table__row__select.batch-table__row__select--aligned.batch-checkbox
     - if local_assigns[:f].present?
@@ -8,6 +11,10 @@
         %tr
           %td
             = account_link_to account, path: admin_account_path(account.id)
+            -# EPSILON : SIGNUP REVIEW BADGE (mobile — the dedicated column overflows portrait screens)
+            - if epsilon_review.present?
+              .epsilon-account-review__mobile
+                %span{ class: "epsilon-account-review__badge epsilon-account-review__badge--#{epsilon_review.status}" }= t("admin.epsilon.account_reviews.statuses.#{epsilon_review.status}")
           %td.accounts-table__count.optional
             - if account.unavailable? || account.user_pending?
               \-
@@ -40,8 +47,6 @@
               %br/
               %samp.ellipsized-ip= relevant_account_ip(account, params[:ip])
           -# EPSILON : SIGNUP REVIEW COLUMN
-          - epsilon_review = epsilon_account_reviews[account.id]
-          - epsilon_infos = epsilon_review_infos(account, epsilon_review)
           %td.accounts-table__count.epsilon-account-review{ data: { infos: epsilon_infos.presence&.join("\n"), epsilon_copy: epsilon_account_copy_line(account) } }
             - if epsilon_review.present?
               %span{ class: "epsilon-account-review__badge epsilon-account-review__badge--#{epsilon_review.status}" }= t("admin.epsilon.account_reviews.statuses.#{epsilon_review.status}")

@@ -30,3 +30,21 @@ td.epsilon-account-review {
   .batch-table__row__content {
   overflow: visible;
 }
+
+.epsilon-account-review__mobile {
+  display: none;
+}
+
+// 890px = $no-columns-breakpoint, the settings/admin layout switch — NOT the
+// table's own 870px (.optional columns): between the two the layout is
+// already mobile, the badge must already be under the name.
+@media screen and (width <= 890px) {
+  .accounts-table td.epsilon-account-review {
+    display: none;
+  }
+
+  .epsilon-account-review__mobile {
+    display: block;
+    margin-top: 6px;
+  }
+}

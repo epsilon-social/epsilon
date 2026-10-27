@@ -21,6 +21,16 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 - **Pilules home : la rangée ne bouge plus au changement d'onglet** — le gras de la pilule active (800) élargissait son texte de quelques pixels et redistribuait la rangée ; un double du libellé en gras invisible (`::after` nourri par `data-text`) réserve d'emblée la largeur « gras » dans chaque pilule, qui garde donc sa taille dans les deux états. Vrai `font-weight: 800` conservé (le faux-gras `text-stroke` tassait les lettres). Barres natives (notifications, Explorer…) inchangées. (`epsilon/components/epsilon_home_feed_pills.jsx`, `styles/epsilon/epsilon_home_pills.scss`)
 
+## [0.8.2] - 2026-10-26
+
+### Fixed
+
+- **Pages légales lisibles sans JavaScript** : `/terms-of-service` et `/privacy-policy` ne servaient que la coquille SPA (HTML vide) — le bot de vérification Google Play (Child Safety Standards sur l'URL des CGU, User Data sur l'URL de confidentialité) n'y voyait aucun texte, d'où le rejet du 23/10. Le contenu courant est désormais embarqué dans un bloc `<noscript>` (même rendu que l'API, toujours en synchro avec la version publiée en admin) ; invisible pour les utilisateurs avec JS. Sidecar : `concerns/epsilon/crawlable_terms_of_service_extension.rb`, `concerns/epsilon/crawlable_privacy_policy_extension.rb` ; vues natives balisées : `terms_of_service/show.html.haml`, `privacy/show.html.haml`.
+
+### Changed
+
+- **Admin/comptes : statut de revue visible en mobile** : le badge (validé / à revoir / rejeté…) s'affiche sous le nom du compte en portrait, au lieu de la colonne dédiée qui débordait de l'écran — colonne masquée sous le breakpoint du layout (890px — la table native basculait à 870, créant une fenêtre layout mobile/table desktop), desktop inchangé (`admin/accounts/_account.html.haml` balisé, `styles/epsilon/admin_accounts.scss`).
+
 ## [0.8.1] - 2026-10-21
 
 ### Changed
