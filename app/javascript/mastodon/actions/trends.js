@@ -22,7 +22,9 @@ export const fetchTrendingHashtags = () => (dispatch) => {
   dispatch(fetchTrendingHashtagsRequest());
 
   api()
-    .get('/api/v1/trends/tags')
+    // EPSILON: 20 tags instead of the server default of 10 (20 = the API cap,
+    // limit_param clamps at twice the default).
+    .get('/api/v1/trends/tags', { params: { limit: 20 } })
     .then(({ data }) => dispatch(fetchTrendingHashtagsSuccess(data)))
     .catch(err => dispatch(fetchTrendingHashtagsFail(err)));
 };

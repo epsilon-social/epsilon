@@ -17,6 +17,7 @@ import { fetchNotificationPolicy } from 'mastodon/actions/notification_policies'
 import { fetchServer } from 'mastodon/actions/server';
 import { Icon } from 'mastodon/components/icon';
 import type { MastodonLocationDescriptor } from 'mastodon/components/router';
+import { useHomeFeedLabel } from 'mastodon/epsilon/hooks/use_home_feed_label';
 import { useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 import { useIdentity } from 'mastodon/identity_context';
 import { registrationsOpen, sso_redirect } from 'mastodon/initial_state';
@@ -24,7 +25,6 @@ import { selectUnreadNotificationGroupsCount } from 'mastodon/selectors/notifica
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
 export const messages = defineMessages({
-  home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
   explore: { id: 'explore.title', defaultMessage: 'Explore' },
   search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
   publish: { id: 'tabs_bar.publish', defaultMessage: 'New Post' },
@@ -184,6 +184,7 @@ const LoginOrSignUp: React.FC = () => {
 export const EpsilonNavigationBar: React.FC = () => {
   const { signedIn } = useIdentity();
   const intl = useIntl();
+  const homeFeedLabel = useHomeFeedLabel();
 
   return (
     <div className='epsilon-bottom-navbar'>
@@ -197,7 +198,7 @@ export const EpsilonNavigationBar: React.FC = () => {
         {signedIn && (
           <>
             <IconLabelButton
-              title={intl.formatMessage(messages.home)}
+              title={homeFeedLabel}
               to='/home'
               icon={<Icon id='' icon={HomeIcon} />}
               activeIcon={<Icon id='' icon={HomeActiveIcon} />}

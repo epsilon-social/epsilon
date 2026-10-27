@@ -408,7 +408,7 @@ class StatusActionBar extends ImmutablePureComponent {
       // everywhere else it opens the picker modal (queue into feed drafts).
       // Public, non-reblog posts only; own posts included.
       // ==========================================
-      if ((permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
+      if ((permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && ['public', 'unlisted'].includes(status.get('visibility')) && !status.get('reblog')) {
         if (this.props.epsilonCuratedSlug && this.props.onEpsilonCuratedRemove) {
           menu.unshift(null);
           menu.unshift({ text: intl.formatMessage(messages.epsilonCuratedRemove), action: this.handleEpsilonCuratedRemoveClick, dangerous: true });

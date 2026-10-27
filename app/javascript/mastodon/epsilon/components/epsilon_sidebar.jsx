@@ -41,6 +41,7 @@ import { useLocation, Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { openModal } from 'mastodon/actions/modal';
 import { useAppDispatch } from 'mastodon/store';
+import { useHomeFeedLabel } from 'mastodon/epsilon/hooks/use_home_feed_label';
 import { useEpsilonCompose } from 'mastodon/features/epsilon/compose_modal';
 
 import { ColumnLink } from 'mastodon/features/ui/components/column_link';
@@ -72,7 +73,6 @@ import {
 } from 'mastodon/initial_state';
 
 const messages = defineMessages({
-  home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
   profile: { id: 'navigation_bar.profile', defaultMessage: 'Profile' },
   search: { id: 'tabs_bar.search', defaultMessage: 'Search' },
   notifications: { id: 'tabs_bar.notifications', defaultMessage: 'Notifications' },
@@ -190,6 +190,7 @@ const EpsilonNotificationsLink = ({ getNavClass, intl }) => {
 
 const EpsilonSidebar = () => {
   const intl = useIntl();
+  const homeFeedLabel = useHomeFeedLabel();
   const { signedIn, permissions, disabledAccountId } = useIdentity();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -273,7 +274,7 @@ const EpsilonSidebar = () => {
         )}
 
         {signedIn && (
-          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={intl.formatMessage(messages.home)} className={getNavClass('/home', true)} />
+          <ColumnLink to='/home' icon='home' iconComponent={HomeIcon} activeIconComponent={HomeActiveIcon} text={homeFeedLabel} className={getNavClass('/home', true)} />
         )}
 
         {signedIn && showFirehose && (
