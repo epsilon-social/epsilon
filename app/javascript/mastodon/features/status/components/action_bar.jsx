@@ -345,7 +345,7 @@ class ActionBar extends PureComponent {
       // queue into feed drafts). Public, non-reblog posts only; own posts
       // included.
       // ==========================================
-      if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && status.get('visibility') === 'public' && !status.get('reblog')) {
+      if (this.props.onEpsilonCuratedFeeds && (permissions & PERMISSION_MANAGE_TAXONOMIES) === PERMISSION_MANAGE_TAXONOMIES && ['public', 'unlisted'].includes(status.get('visibility')) && !status.get('reblog')) {
         menu.unshift(null);
         menu.unshift({ text: intl.formatMessage(messages.epsilonCuratedFeeds), action: this.handleEpsilonCuratedFeedsClick });
       }

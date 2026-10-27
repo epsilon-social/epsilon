@@ -33,7 +33,12 @@ module Api
         feed = ::Epsilon::Curation::CuratedFeed.find(params[:feed_id])
         status = Status.find(params[:status_id])
 
-        return render json: { error: 'Only public, non-reblog statuses can be curated' }, status: 422 unless status.public_visibility? && !status.reblog?
+        # Moderators pick the content deliberately, so unlisted statuses are
+        # eligible too (media/bot accounts commonly post unlisted). We check
+        # the visibility inline rather than touching the native
+        # `public_visibility?` (used across core: trends, federation, reach).
+        # Private/direct stay excluded.
+        return render json: { error: 'Only public or unlisted, non-reblog statuses can be curated' }, status: 422 unless %w(public unlisted).include?(status.visibility) && !status.reblog?
 
         item = if params[:mode] == 'publish'
                  feed.add_published!(status, added_by: current_account)
