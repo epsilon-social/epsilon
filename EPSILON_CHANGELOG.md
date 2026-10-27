@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-27
+
 ### Added
 
 - **Pilules home : fade de débordement** — quand les fils curés débordent, le bord qui cache du contenu s'estompe en dégradé (masque piloté par le scroll, jamais de rangée qui a l'air « complète ») + pose douce `scroll-snap` sur une frontière de pilule après un swipe (`epsilon/components/epsilon_home_feed_pills.jsx`, `styles/epsilon/epsilon_home_pills.scss`).
