@@ -5,13 +5,21 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Pilules home : fade de débordement** — quand les fils curés débordent, le bord qui cache du contenu s'estompe en dégradé (masque piloté par le scroll, jamais de rangée qui a l'air « complète ») + pose douce `scroll-snap` sur une frontière de pilule après un swipe (`epsilon/components/epsilon_home_feed_pills.jsx`, `styles/epsilon/epsilon_home_pills.scss`).
+- **Curation : posts non listés éligibles aux fils d'actu** — le menu « Fils d'actu… » et l'API acceptent `unlisted` en plus de `public` (sélection délibérée d'un modérateur ; privé/direct toujours exclus). Fichiers : `api/v1/epsilon/curation/items_controller.rb`, `components/status_action_bar/index.jsx` + `features/status/components/action_bar.jsx` (balisés).
+
 ### Changed
 
+- **« Accueil » devient « Mon fil » / « Your feed »** (pilule home, sidebar et son drawer mobile, aria de la nav basse) — uniquement en fr/en via le hook `epsilon/hooks/use_home_feed_label.ts`, les autres langues gardent leur traduction native de `tabs_bar.home` ; nouvelle clé `epsilon_home.your_feed` (`fr.json`/`fr-CA.json` à la main, `en.json` extrait).
+- **Tendances : 20 hashtags au lieu de 10** sur Explorer → Hashtags — `limit: 20` demandé explicitement, soit le plafond de l'API native (`actions/trends.js`, balisé).
+- **Logo wordmark agrandi dans la topbar mobile** (28 → 34px, hauteur de barre inchangée) (`styles/epsilon/layout.scss`).
 - **Toutes les barres de pilules adaptatives** (home, Explorer/Recherche, Tendances, Notifications, Firehose) : collées sans espacement quand elles débordent (barre scrollable, retrait de colonne uniforme 8px en mobile), réparties façon space-around quand elles tiennent — mécanique de marges auto généralisée depuis les pilules home au bloc partagé ; corrige au passage le côté gauche inatteignable au scroll (bug latent du space-around en overflow) et le double retrait mobile des `account__section-headline` (`styles/epsilon/layout.scss`, `styles/epsilon/epsilon_home_pills.scss`).
 
 ### Fixed
 
-- **Les pilules bougeaient au changement d'onglet** (home, Explorer, Notifications, Firehose, profil…) : le gras de l'onglet actif (400→800) élargissait la pilule et décalait toute la rangée ; remplacé par un faux-gras en `-webkit-text-stroke` qui épaissit les glyphes sans toucher aux métriques — zéro reflow, toutes les barres d'onglets couvertes par la même règle (`styles/epsilon/layout.scss`).
+- **Pilules home : la rangée ne bouge plus au changement d'onglet** — le gras de la pilule active (800) élargissait son texte de quelques pixels et redistribuait la rangée ; un double du libellé en gras invisible (`::after` nourri par `data-text`) réserve d'emblée la largeur « gras » dans chaque pilule, qui garde donc sa taille dans les deux états. Vrai `font-weight: 800` conservé (le faux-gras `text-stroke` tassait les lettres). Barres natives (notifications, Explorer…) inchangées. (`epsilon/components/epsilon_home_feed_pills.jsx`, `styles/epsilon/epsilon_home_pills.scss`)
 
 ## [0.8.1] - 2026-10-21
 

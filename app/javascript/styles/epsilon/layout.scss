@@ -2932,7 +2932,7 @@ body.theme-system {
   /* État Actif */
   &.active,
   &--active {
-    -webkit-text-stroke: 1px currentcolor;
+    font-weight: 800 !important;
     color: #16171a !important;
     background: linear-gradient(90deg, #ccdbff 0%, #a6c4ff 100%) !important;
   }

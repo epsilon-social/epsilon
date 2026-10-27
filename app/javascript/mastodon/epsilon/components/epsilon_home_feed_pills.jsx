@@ -77,21 +77,32 @@ export const EpsilonHomeFeedPills = () => {
         'epsilon-home-pills--fade-right': fadeRight,
       })}
     >
+      {/* data-text feeds the hidden bold ghost (CSS ::after) that reserves
+          the active-state width — the row no longer shifts when the bold
+          active pill is a few pixels wider. */}
       <NavLink exact to='/home'>
-        {homeLabel}
+        <span className='epsilon-pill-label' data-text={homeLabel}>
+          {homeLabel}
+        </span>
       </NavLink>
 
-      {feeds.map((feed) => (
-        <NavLink key={feed.id} exact to={`/home/${feed.slug}`}>
-          {categoryDisplayName(intl, feed)}
-          {/* Non-live feed: the API only serves it to staff curators. */}
-          {feed.state === 'draft' && (
-            <span className='epsilon-curated-feed-badge'>
-              <FormattedMessage id='epsilon_curated.feed_state_badge' defaultMessage='Draft' />
+      {feeds.map((feed) => {
+        const label = categoryDisplayName(intl, feed);
+
+        return (
+          <NavLink key={feed.id} exact to={`/home/${feed.slug}`}>
+            <span className='epsilon-pill-label' data-text={label}>
+              {label}
             </span>
-          )}
-        </NavLink>
-      ))}
+            {/* Non-live feed: the API only serves it to staff curators. */}
+            {feed.state === 'draft' && (
+              <span className='epsilon-curated-feed-badge'>
+                <FormattedMessage id='epsilon_curated.feed_state_badge' defaultMessage='Draft' />
+              </span>
+            )}
+          </NavLink>
+        );
+      })}
     </div>
   );
 };

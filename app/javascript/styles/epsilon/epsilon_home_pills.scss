@@ -45,6 +45,23 @@
     flex-shrink: 0;
     margin: 0 auto 12px !important;
     scroll-snap-align: start;
+    scroll-margin-inline: 24px;
+  }
+
+  .epsilon-pill-label {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+
+    &::after {
+      content: attr(data-text);
+      height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+      font-weight: 800;
+    }
   }
 }
 
