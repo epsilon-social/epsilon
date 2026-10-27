@@ -14,9 +14,37 @@
   justify-content: flex-start !important;
   padding-inline: 4px !important;
 
+  --eps-pills-fade-left: 0px;
+  --eps-pills-fade-right: 0px;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--eps-pills-fade-left),
+    #000 calc(100% - var(--eps-pills-fade-right)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 var(--eps-pills-fade-left),
+    #000 calc(100% - var(--eps-pills-fade-right)),
+    transparent 100%
+  );
+  scroll-snap-type: x proximity;
+
+  &--fade-left {
+    --eps-pills-fade-left: 48px;
+  }
+
+  &--fade-right {
+    --eps-pills-fade-right: 48px;
+  }
+
   a {
     flex-shrink: 0;
     margin: 0 auto 12px !important;
+    scroll-snap-align: start;
   }
 }
 

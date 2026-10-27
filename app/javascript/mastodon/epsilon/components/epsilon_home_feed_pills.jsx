@@ -7,10 +7,11 @@
 // .account__section-headline pills — same gradient active state as the
 // Explore tabs.
 
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
 
+import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 
 import { fetchEpsilonCuratedFeeds, selectEpsilonCuratedFeedsWithContent } from 'mastodon/epsilon/store/curated_feeds_slice';
@@ -28,16 +29,56 @@ export const EpsilonHomeFeedPills = () => {
   // and with zero non-empty feeds the whole bar disappears.
   const feeds = useAppSelector(selectEpsilonCuratedFeedsWithContent);
 
+  const barRef = useRef(null);
+  const [fadeLeft, setFadeLeft] = useState(false);
+  const [fadeRight, setFadeRight] = useState(false);
+
+  const updateFades = useCallback(() => {
+    const el = barRef.current;
+
+    if (!el) {
+      return;
+    }
+
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setFadeLeft(el.scrollLeft > 2);
+    setFadeRight(el.scrollLeft < maxScroll - 2);
+  }, []);
+
   useEffect(() => {
     dispatch(fetchEpsilonCuratedFeeds());
   }, [dispatch]);
+
+  useEffect(() => {
+    const el = barRef.current;
+
+    if (!el) {
+      return undefined;
+    }
+
+    updateFades();
+    const observer = new ResizeObserver(updateFades);
+    observer.observe(el);
+    el.addEventListener('scroll', updateFades, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      el.removeEventListener('scroll', updateFades);
+    };
+  }, [updateFades, feeds]);
 
   if (feeds.length === 0) {
     return null;
   }
 
   return (
-    <div className='account__section-headline epsilon-home-pills'>
+    <div
+      ref={barRef}
+      className={classNames('account__section-headline epsilon-home-pills', {
+        'epsilon-home-pills--fade-left': fadeLeft,
+        'epsilon-home-pills--fade-right': fadeRight,
+      })}
+    >
       <NavLink exact to='/home'>
         {intl.formatMessage(messages.home)}
       </NavLink>
