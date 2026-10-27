@@ -776,6 +776,7 @@
   "epsilon_curated.studio.tab_drafts": "Drafts",
   "epsilon_curated.studio.tab_search": "Search",
   "epsilon_curated.studio.title": "Curation studio",
+  "epsilon_home.your_feed": "Your feed",
   "error.no_hashtag_feed_access": "Join or log in to view and follow this hashtag.",
   "error.unexpected_crash.explanation": "Due to a bug in our code or a browser compatibility issue, this page could not be displayed correctly.",
   "error.unexpected_crash.explanation_addons": "This page could not be displayed correctly. This error is likely caused by a browser add-on or automatic translation tools.",

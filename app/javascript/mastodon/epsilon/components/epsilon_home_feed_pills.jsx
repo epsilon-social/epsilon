@@ -9,21 +9,19 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { defineMessages, useIntl, FormattedMessage } from 'react-intl';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 import classNames from 'classnames';
 import { NavLink } from 'react-router-dom';
 
+import { useHomeFeedLabel } from 'mastodon/epsilon/hooks/use_home_feed_label';
 import { fetchEpsilonCuratedFeeds, selectEpsilonCuratedFeedsWithContent } from 'mastodon/epsilon/store/curated_feeds_slice';
 import { categoryDisplayName } from 'mastodon/features/epsilon/category_names';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 
-const messages = defineMessages({
-  home: { id: 'tabs_bar.home', defaultMessage: 'Home' },
-});
-
 export const EpsilonHomeFeedPills = () => {
   const intl = useIntl();
+  const homeLabel = useHomeFeedLabel();
   const dispatch = useAppDispatch();
   // Feeds with published content only — an empty feed never gets a pill,
   // and with zero non-empty feeds the whole bar disappears.
@@ -80,7 +78,7 @@ export const EpsilonHomeFeedPills = () => {
       })}
     >
       <NavLink exact to='/home'>
-        {intl.formatMessage(messages.home)}
+        {homeLabel}
       </NavLink>
 
       {feeds.map((feed) => (
