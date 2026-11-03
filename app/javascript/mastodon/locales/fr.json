@@ -704,6 +704,8 @@
   "epsilon.about.contact.legal": "Consultez nos {terms} et notre {privacy}.",
   "epsilon.about.contact.terms": "Conditions d'utilisation",
   "epsilon.about.contact.privacy": "Politique de confidentialité",
+  "epsilon.about.rules.title": "Règles du serveur",
+  "epsilon.about.rules.lead": "Chacun accepte ces règles en créant son compte.",
   "epsilon_cat.column.title": "Paramètres des catégories",
   "epsilon_cat.column_settings.categories": "Catégories",
   "epsilon_cat.settings.clear_search": "Effacer la recherche",

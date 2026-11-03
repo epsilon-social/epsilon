@@ -5,6 +5,12 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **Règles serveur sans page d'acceptation à l'inscription** : les règles définies dans `/admin/rules` alimentent l'option « Ça enfreint les règles » du signalement in-app (demande Google Play : catégorie explicite sécurité des mineurs) et la page À propos, mais la page native « Acceptez les règles » du parcours d'inscription est neutralisée — la case CGU obligatoire couvre déjà ces règles (art. 8.1). Sidecar : `concerns/epsilon/skip_rules_interstitial_extension.rb`.
+- **Règles du serveur sur la page À propos** : section carte entre le manifeste et le contact — liste numérotée (badges tabulaires), traduction automatique selon la langue de l'interface (logique du composant natif, sans sélecteur de langue), masquée si aucune règle. Fichiers : `features/epsilon/about/components/rules_section.jsx`, `styles/epsilon/about.scss`.
+- **Case d'inscription : mention explicite des règles** : le libellé FR/EN devient « … les conditions d'utilisation, la politique de confidentialité et les règles du serveur » (lien vers /about) ; les autres langues gardent le libellé natif. Clé native `auth.user_agreement_html` éditée dans `en.yml`/`fr.yml` (pas de flag inline possible, traçabilité ici).
+
 ## [0.9.0] - 2026-10-27
 
 ### Added

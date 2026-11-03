@@ -20,6 +20,8 @@ import { LinkFooter } from '@/mastodon/features/ui/components/link_footer';
 
 import { getColumnSkipLinkId } from '../../ui/components/skip_links';
 
+import { EpsilonRulesSection } from './components/rules_section';
+
 const SUPPORT_EMAIL = 'support@epsilon.social';
 const MODERATION_EMAIL = 'moderation@epsilon.social';
 
@@ -127,6 +129,8 @@ const EpsilonAbout = ({ multiColumn }) => {
             />
           </p>
         </section>
+
+        <EpsilonRulesSection />
 
         <section className='epsilon-about__contact'>
           <h2 className='epsilon-about__contact-title'>

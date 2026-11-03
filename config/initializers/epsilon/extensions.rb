@@ -56,4 +56,9 @@ Rails.application.config.to_prepare do
   # the store listing): serve their content in a <noscript> block.
   TermsOfServiceController.include(Epsilon::CrawlableTermsOfServiceExtension) if defined?(TermsOfServiceController)
   PrivacyController.include(Epsilon::CrawlablePrivacyPolicyExtension) if defined?(PrivacyController)
+
+  # Server rules exist for the in-app report categories and /about, but must
+  # not add a redundant acceptance page to the sign-up funnel (the mandatory
+  # terms checkbox already covers them).
+  Auth::RegistrationsController.prepend(Epsilon::SkipRulesInterstitialExtension) if defined?(Auth::RegistrationsController)
 end
