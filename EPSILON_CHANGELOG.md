@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-03
+
 ### Added
 
 - **Règles serveur sans page d'acceptation à l'inscription** : les règles définies dans `/admin/rules` alimentent l'option « Ça enfreint les règles » du signalement in-app (demande Google Play : catégorie explicite sécurité des mineurs) et la page À propos, mais la page native « Acceptez les règles » du parcours d'inscription est neutralisée — la case CGU obligatoire couvre déjà ces règles (art. 8.1). Sidecar : `concerns/epsilon/skip_rules_interstitial_extension.rb`.
