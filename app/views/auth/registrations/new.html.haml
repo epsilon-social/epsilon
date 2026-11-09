@@ -9,6 +9,8 @@
 
   %h1.title= t('auth.sign_up.title', domain: site_hostname)
   %p.lead= t('auth.sign_up.preamble')
+  -# EPSILON : SIGNUP UX — warn that sign-ups behind a VPN are more likely to be rejected
+  %p.hint= t('auth.sign_up.vpn_warning')
 
   = render 'shared/error_messages', object: resource
 

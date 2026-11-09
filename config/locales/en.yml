@@ -1714,6 +1714,7 @@ en:
       preamble: With an account on this Epsilon server, you'll be able to follow any other person on the fediverse, regardless of where their account is hosted.
       title: Let's get you set up on %{domain}.
       username_example: "Example: john_smith75"
+      vpn_warning: 'Please note: if you are using a VPN, your sign-up is more likely to be rejected.'
     status:
       account_status: Account status
       confirming: Waiting for email confirmation to be completed.

@@ -1714,6 +1714,7 @@ fr:
       preamble: Avec un compte sur ce serveur Epsilon, vous pourrez suivre n'importe quelle autre personne du fediverse, quel que soit l'endroit où son compte est hébergé.
       title: Mettons les choses en place pour %{domain}.
       username_example: "Exemple : jean_dupont75"
+      vpn_warning: 'À noter : si vous utilisez un VPN, votre inscription a plus de chances d''être refusée.'
     status:
       account_status: État du compte
       confirming: En attente de la confirmation par courrier électronique.
