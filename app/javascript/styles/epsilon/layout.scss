@@ -4456,3 +4456,42 @@ html:not(.reduce-motion) {
 // END EPSILON EXPERIMENT : NAV HIERARCHY BY WEIGHT
 
 /* ========================================== */
+
+/* ========================================== */
+
+/* EPSILON : FEED SHRINK PLACEHOLDERS (in-app) */
+
+/* ========================================== */
+
+// Skeleton card at the exact measured footprint of an un-rendered post
+// (see mastodon/epsilon/feed_shrink.ts). Landing on these after a hard
+// fling reads as "cards loading", not a blank page; real content replaces
+// them in place on the next sweep.
+.epsilon-feed-placeholder {
+  background: var(--eps-surface);
+  border: 1px solid var(--eps-border);
+  border-radius: var(--eps-radius);
+  box-shadow: var(--eps-shadow-card);
+
+  > * {
+    visibility: hidden;
+  }
+}
+
+// Gentle pulse to read as "loading" rather than an empty card. The start
+@keyframes epsilon-feed-placeholder-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+html:not(.reduce-motion) .epsilon-feed-placeholder {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: epsilon-feed-placeholder-pulse 1.6s ease-in-out 0.15s infinite;
+  }
+}

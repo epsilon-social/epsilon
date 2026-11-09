@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { cloneElement, Component } from 'react';
 
+import { registerShrinkableArticle } from '../../epsilon/feed_shrink';
 import getRectFromEntry from '../../features/ui/util/get_rect_from_entry';
 import scheduleIdleTask from '../../features/ui/util/schedule_idle_task';
 import { Article } from './components';
@@ -35,6 +36,7 @@ export default class IntersectionObserverArticle extends Component {
 
   state = {
     isHidden: false, // set to true in requestIdleCallback to trigger un-render
+    epsilonShrunk: false, // EPSILON : un-rendered by the in-app feed shrink (see epsilon/feed_shrink)
   };
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -62,8 +64,10 @@ export default class IntersectionObserverArticle extends Component {
 
     this.componentMounted = true;
 
-    // EPSILON : no virtualisation in-app → don't observe (see header)
+    // EPSILON : no virtualisation in-app → don't observe (see header);
+    // register with the feed shrink instead (bounded DOM, see epsilon/feed_shrink)
     if (EPSILON_IN_APP_WEBKIT) {
+      this.epsilonUnregisterShrink = registerShrinkableArticle(this);
       return;
     }
 
@@ -78,8 +82,125 @@ export default class IntersectionObserverArticle extends Component {
     const { intersectionObserverWrapper, id } = this.props;
     intersectionObserverWrapper.unobserve(id, this.node);
 
+    // EPSILON : feed shrink (see epsilon/feed_shrink)
+    if (this.epsilonUnregisterShrink) {
+      this.epsilonUnregisterShrink();
+    }
+
     this.componentMounted = false;
   }
+
+  // ==========================================
+  // EPSILON : SCROLL — feed shrink (see epsilon/feed_shrink)
+  // Called on every sweep: un-render into an exact-height placeholder beyond
+  // `shrinkScreens` viewport-heights from the viewport, re-render once back
+  // within `restoreScreens`. The placeholder is pinned to the height
+  // measured at shrink time, so layout and scroll position cannot move.
+  // On restore, that height is kept as a min-height floor until the content
+  // has grown back to it — otherwise the article renders shorter while its
+  // images re-load, shifting everything below it (visible jump).
+  // ==========================================
+  // Layout-affecting images only: custom emojis are loading="lazy" (they
+  // never load while far offscreen, so img.complete would stay false
+  // forever and block the shrink) AND they are fixed-size via CSS, so
+  // their loading can't move the layout. A failed load counts as complete,
+  // so dead media can't hold an article un-shrinkable forever.
+  epsilonImagesLoaded = () => {
+    const images = this.node.querySelectorAll('img:not([loading="lazy"])');
+
+    for (const image of images) {
+      if (!image.complete) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  epsilonEvaluateShrink = (restoreScreens, shrinkScreens) => {
+    if (!this.componentMounted || !this.node) {
+      return;
+    }
+
+    const restoreOnly = shrinkScreens === Number.POSITIVE_INFINITY;
+
+    // Mid-flight (restore-only) sweeps: a rendered article with no pending
+    // pin cannot change state — skip before any DOM read.
+    if (restoreOnly && !this.state.epsilonShrunk && !this.epsilonPinnedHeight) {
+      return;
+    }
+
+    // Release the min-height pin once every layout-affecting image has
+    // (re)loaded — bridging image reloads is the pin's only job. The box
+    // height can't be used as the signal: min-height forces it to the
+    // pinned value, so it would always pass. Settle sweeps only: releasing
+    // mid-fling could collapse a legitimately-shorter article above the
+    // viewport. Done before measuring, so the rect below is pin-free.
+    if (!restoreOnly && this.epsilonPinnedHeight && this.epsilonImagesLoaded()) {
+      this.epsilonPinnedHeight = null;
+      this.node.style.minHeight = '';
+    }
+
+    const rect = this.node.getBoundingClientRect();
+
+    // rect.height of 0 means we're not laid out (display: none ancestor,
+    // detached tab...) — no trustworthy geometry, leave the article alone.
+    if (rect.height === 0) {
+      return;
+    }
+
+    const viewportHeight = window.innerHeight;
+    const distance =
+      rect.bottom < 0 ? -rect.bottom : Math.max(0, rect.top - viewportHeight);
+
+    if (this.state.epsilonShrunk) {
+      if (distance <= viewportHeight * restoreScreens) {
+        this.epsilonPinnedHeight = this.epsilonShrunkHeight;
+        this.setState({ epsilonShrunk: false });
+      }
+      return;
+    }
+
+    if (distance > viewportHeight * shrinkScreens) {
+      // Never shrink while an image is still loading: the measured height
+      // would be the pre-image one, and the article would grow past its
+      // placeholder after restore — shifting the viewport content when it
+      // happens above it.
+      if (!this.epsilonImagesLoaded()) {
+        return;
+      }
+
+      // The inter-card spacing is a margin on .status INSIDE the article,
+      // which escapes through the auto-height article by margin collapse.
+      // The fixed-height placeholder blocks that collapse and would swallow
+      // the spacing (a layout drift of ~16px per un-rendered post), so the
+      // real gap to the next sibling is measured and reproduced as an
+      // explicit margin — except in flex/grid lists (notifications), where
+      // the container's own `gap` survives the swap untouched.
+      let gapBelow = 0;
+      const parent = this.node.parentElement;
+      const parentDisplay = parent
+        ? window.getComputedStyle(parent).display
+        : '';
+
+      if (!parentDisplay.includes('flex') && !parentDisplay.includes('grid')) {
+        const next = this.node.nextElementSibling;
+
+        if (next) {
+          gapBelow = Math.max(
+            0,
+            next.getBoundingClientRect().top - rect.bottom,
+          );
+        }
+      }
+
+      this.epsilonShrunkHeight = rect.height;
+      this.epsilonShrunkGap = gapBelow;
+      this.epsilonPinnedHeight = null;
+      this.setState({ epsilonShrunk: true });
+    }
+  };
+  // ==========================================
 
   handleIntersection = (entry) => {
     this.entry = entry;
@@ -127,7 +248,29 @@ export default class IntersectionObserverArticle extends Component {
 
   render () {
     const { children, id, index, listLength, cachedHeight } = this.props;
-    const { isIntersecting, isHidden } = this.state;
+    const { isIntersecting, isHidden, epsilonShrunk } = this.state;
+
+    // ==========================================
+    // EPSILON : SCROLL — feed shrink placeholder (see epsilon/feed_shrink)
+    // ==========================================
+    if (EPSILON_IN_APP_WEBKIT && epsilonShrunk) {
+      return (
+        <Article
+          ref={this.handleRef}
+          aria-posinset={index + 1}
+          aria-setsize={listLength}
+          className='epsilon-feed-placeholder'
+          style={{
+            height: `${this.epsilonShrunkHeight}px`,
+            marginBottom: this.epsilonShrunkGap ? `${this.epsilonShrunkGap}px` : undefined,
+            overflow: 'hidden',
+          }}
+          data-id={id}
+        >
+          {children && cloneElement(children, { hidden: true })}
+        </Article>
+      );
+    }
 
     // EPSILON : in-app, never hide (no invisible placeholder)
     if (!EPSILON_IN_APP_WEBKIT && !isIntersecting && (isHidden || cachedHeight)) {
@@ -144,8 +287,17 @@ export default class IntersectionObserverArticle extends Component {
       );
     }
 
+    // EPSILON : feed shrink — the style prop carries the min-height floor
+    // while images re-load after a restore (see epsilonEvaluateShrink);
+    // undefined outside the in-app context, so browsers are untouched.
     return (
-      <Article ref={this.handleRef} aria-posinset={index + 1} aria-setsize={listLength} data-id={id}>
+      <Article
+        ref={this.handleRef}
+        aria-posinset={index + 1}
+        aria-setsize={listLength}
+        data-id={id}
+        style={EPSILON_IN_APP_WEBKIT && this.epsilonPinnedHeight ? { minHeight: `${this.epsilonPinnedHeight}px` } : undefined}
+      >
         {children && cloneElement(children, { hidden: false })}
       </Article>
     );
