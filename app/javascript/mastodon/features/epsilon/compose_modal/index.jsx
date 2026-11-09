@@ -163,6 +163,17 @@ export const EpsilonComposeProvider = ({ children }) => {
   }, [open]);
 
   useEffect(() => {
+    if (!open && !hasNativeModal) {
+      return undefined;
+    }
+
+    document.documentElement.classList.add('epsilon-modal-open');
+    return () => {
+      document.documentElement.classList.remove('epsilon-modal-open');
+    };
+  }, [open, hasNativeModal]);
+
+  useEffect(() => {
     if (location.pathname === prevPath.current) {
       return;
     }

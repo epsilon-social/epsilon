@@ -11,6 +11,7 @@
   // viewport overflows above the scroll area and gets truncated/unreachable.
   // margin auto centers when it fits, and top-aligns + scrolls when it doesn't.
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: max(16px, env(safe-area-inset-top)) 16px
     max(16px, env(safe-area-inset-bottom));
 
@@ -128,6 +129,11 @@ html[data-contrast='high'] .epsilon-compose-overlay {
   // overflow: hidden the media clips cleanly to the rounded corners.
   border: 1px solid var(--eps-border) !important;
   border-radius: var(--eps-radius-md) !important;
+}
+
+html.epsilon-modal-open,
+html.epsilon-modal-open body {
+  overflow: hidden !important;
 }
 
 body.epsilon-compose-open .modal-root__overlay {

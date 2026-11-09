@@ -15,6 +15,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 - **Trim du fil in-app (WebKit)** : le DOM du fil non virtualisé est désormais borné — les posts à plus de 14 écrans du viewport sont dé-rendus en squelettes de cartes pulsants à l'empreinte exacte (hauteur + espacement inter-cartes mesurés : aucun décalage de layout), re-rendus dès 10 écrans. Le scroll WebKit étant asynchrone (géométrie en retard pendant un fling), le dé-rendu n'a lieu qu'à l'arrêt du scroll (settle en deux phases : bande proche d'abord, commit léger) ; en vol, restauration uniquement. Hauteur épinglée en `min-height` au re-rendu le temps que les médias rechargent (relâchée quand les images éligibles — hors émojis lazy — ont fini de charger), et marge resserrée à 2 écrans quand l'app passe en arrière-plan (fenêtre où iOS tue les plus gros process WebKit — cause des écrans noirs Home/Notifications ; le fix définitif `onContentProcessDidTerminate` reste côté coque). Fichiers : `epsilon/feed_shrink.ts`, `styles/epsilon/layout.scss`, `components/scrollable_list/intersection_observer_article.jsx` (balisé).
 
+### Fixed
+
+- **La page ne défile plus derrière les modales** : le layout Epsilon fait défiler le document lui-même, donc ni la modale compose ni les modales natives (visionneuse média, boost, signalement…) ne verrouillaient le fond. Le provider compose pose désormais une classe de verrou sur `<html>` dès qu'une modale est ouverte (la sienne ou la stack native, déjà observée via Redux) — `overflow: hidden` sur `<html>` car iOS/WebKit ignore le verrou posé sur `body` seul ; `overscroll-behavior: contain` sur l'overlay compose contre le chaînage tactile. Position de scroll préservée (pas de `position: fixed`). Fichiers : `features/epsilon/compose_modal/index.jsx`, `styles/epsilon/epsilon_compose_modal.scss`.
+
 ## [0.9.1] - 2026-11-03
 
 ### Added
