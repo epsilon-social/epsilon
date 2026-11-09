@@ -79,6 +79,18 @@ RSpec.describe '/api/v1/accounts' do
     let(:agreement) { nil }
     let(:date_of_birth) { nil }
 
+    # ==========================================
+    # EPSILON : API REGISTRATION GATE
+    # API sign-ups are refused unless the app is allowlisted
+    # (Epsilon::ApiRegistrationGateExtension): allowlist the test app so the
+    # native behaviour below stays testable.
+    # ==========================================
+    before do
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch).with('EPSILON_SIGNUP_APP_IDS', '').and_return(client_app.id.to_s)
+    end
+    # ==========================================
+
     context 'when not using client credentials token' do
       let(:token) { Fabricate(:accessible_access_token, application: client_app, scopes: 'read write', resource_owner_id: user.id) }
 

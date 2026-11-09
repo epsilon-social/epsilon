@@ -5,6 +5,10 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+### Security
+
+- **Inscriptions via API fermées** : `POST /api/v1/accounts` → 403 — toutes les inscriptions légitimes passent par le formulaire web (apps mobiles comprises, via webview) ; ce canal, sans captcha, ne servait qu'aux bots. Allowlist de secours `EPSILON_SIGNUP_APP_IDS` (ids Doorkeeper, séparés par virgules). Connexion OAuth et clients tiers des comptes existants non affectés. Sidecar : `concerns/epsilon/api_registration_gate_extension.rb`.
+
 ### Added
 
 - **Fil home : langue du contenu suggéré (FR / EN / Toutes)** — le contenu injecté par les catégories respecte désormais une préférence de langue par compte, filtrée à l'écriture (le zset Redis ne reçoit que du contenu voulu, pas de pages creuses) ; les posts des comptes suivis ne sont jamais filtrés (le follow est un choix éditorial de l'utilisateur), posts sans langue détectée non distribués dès qu'une restriction est active (fail-closed — le fédéré type Pixelfed arrive souvent sans métadonnée de langue). Bouton dédié à côté de « Filtres » sur la home (pill icône traduction + valeur courante, popover avec texte explicatif + choix FR/EN/Toutes ; à la bascule : purge immédiate des posts injectés hors langue + re-backfill des catégories abonnées, fermeture du popover puis rechargement du fil ; anti double-clic pendant la requête). Préférence stockée en base → web et apps (coques WebView) toujours synchrones. Table `epsilon_feed_language_preferences`, API `GET/PUT /api/v1/epsilon/categorization/feed_language_preference`, worker `Epsilon::Categorization::FeedLanguageCleanupWorker` ; filtres dans `categorize_status_worker.rb` + `subscribe_backfill_worker.rb` ; UI `epsilon/components/epsilon_feed_language.jsx`.

@@ -61,4 +61,9 @@ Rails.application.config.to_prepare do
   # not add a redundant acceptance page to the sign-up funnel (the mandatory
   # terms checkbox already covers them).
   Auth::RegistrationsController.prepend(Epsilon::SkipRulesInterstitialExtension) if defined?(Auth::RegistrationsController)
+
+  # API sign-ups are a bot-only channel here (every official app signs up
+  # through the web form in a webview): refuse them unless the OAuth app is
+  # explicitly allowlisted via EPSILON_SIGNUP_APP_IDS.
+  Api::V1::AccountsController.prepend(Epsilon::ApiRegistrationGateExtension) if defined?(Api::V1::AccountsController)
 end
