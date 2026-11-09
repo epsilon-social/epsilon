@@ -28,7 +28,17 @@ class Epsilon::Categorization::SubscribeBackfillWorker
 
     statuses = Status.where(id: status_ids).includes(:account, reblog: :account).to_a
 
-    filter_home_statuses(account, cap_per_author(statuses))
+    filter_home_statuses(account, cap_per_author(filter_by_language(account, statuses)))
+  end
+
+  # Category injection honours the subscriber's feed language preference.
+  # Fail-closed: statuses without a detected language are skipped when a
+  # restriction is set.
+  def filter_by_language(account, statuses)
+    languages = account.epsilon_feed_language_preference&.languages
+    return statuses if languages.blank?
+
+    statuses.select { |status| languages.include?(status.language) }
   end
 
   # Keep at most MAX_PER_AUTHOR of the newest statuses per author so a

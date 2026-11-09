@@ -5,6 +5,42 @@ require 'rails_helper'
 RSpec.describe Epsilon::Categorization::SubscribeBackfillWorker do
   let(:feed_manager) { FeedManager.instance }
 
+  describe '#perform' do
+    let(:account) { Fabricate(:account) }
+    let(:category) { Fabricate(:epsilon_category_master) }
+
+    def categorized_status(language:)
+      status = Fabricate(:status, language: language)
+      Fabricate(:epsilon_local_post_categorization, status: status, category_master: category)
+      status
+    end
+
+    def home_feed_ids
+      redis.zrange(feed_manager.key(:home, account.id), 0, -1).map(&:to_i)
+    end
+
+    it 'backfills every language without a preference' do
+      french = categorized_status(language: 'fr')
+      english = categorized_status(language: 'en')
+
+      described_class.new.perform(account.id, category.id)
+
+      expect(home_feed_ids).to include(french.id, english.id)
+    end
+
+    it 'skips statuses outside the subscriber feed language preference, including undetected ones' do
+      Fabricate(:epsilon_feed_language_preference, account: account, languages: ['fr'])
+      french = categorized_status(language: 'fr')
+      english = categorized_status(language: 'en')
+      undetected = categorized_status(language: nil)
+
+      described_class.new.perform(account.id, category.id)
+
+      expect(home_feed_ids).to include(french.id)
+      expect(home_feed_ids).to_not include(english.id, undetected.id)
+    end
+  end
+
   describe 'contract with the private FeedManager#build_crutches API' do
     subject(:parameters) { feed_manager.method(:build_crutches).parameters }
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_153847) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_03_094612) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -685,6 +685,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_153847) do
     t.datetime "updated_at", null: false
     t.index ["parent_id"], name: "index_epsilon_curated_feeds_on_parent_id"
     t.index ["slug"], name: "index_epsilon_curated_feeds_on_slug", unique: true
+  end
+
+  create_table "epsilon_feed_language_preferences", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "languages", array: true
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_epsilon_feed_language_preferences_on_account_id", unique: true
   end
 
   create_table "epsilon_live_invitations", force: :cascade do |t|
@@ -1880,6 +1888,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_153847) do
   add_foreign_key "epsilon_curated_feed_items", "epsilon_curated_feeds", column: "curated_feed_id", on_delete: :cascade
   add_foreign_key "epsilon_curated_feed_items", "statuses", on_delete: :cascade
   add_foreign_key "epsilon_curated_feeds", "epsilon_curated_feeds", column: "parent_id", on_delete: :cascade
+  add_foreign_key "epsilon_feed_language_preferences", "accounts", on_delete: :cascade
   add_foreign_key "epsilon_live_questions", "accounts"
   add_foreign_key "epsilon_live_questions", "live_sessions"
   add_foreign_key "epsilon_phone_verifications", "users"

@@ -92,6 +92,61 @@ RSpec.describe Epsilon::Categorization::CategorizeStatusWorker do
 
         expect(FeedInsertWorker).to_not have_received(:push_bulk)
       end
+
+      context 'with a subscriber feed language preference' do
+        let(:subscriber) { Fabricate(:account) }
+
+        def tagged_status_in(language)
+          status = Fabricate(:status, text: 'A neutral post', language: language)
+          status.tags << Tag.find_or_create_by_names('science').first
+          status
+        end
+
+        before do
+          Fabricate(:epsilon_category_subscription, account: subscriber, category_master: category)
+          allow(FeedInsertWorker).to receive(:push_bulk)
+        end
+
+        it 'does not push statuses in a language the subscriber excluded' do
+          Fabricate(:epsilon_feed_language_preference, account: subscriber, languages: ['fr'])
+
+          worker.perform(tagged_status_in('en').id)
+
+          expect(FeedInsertWorker).to_not have_received(:push_bulk)
+        end
+
+        it 'pushes statuses in a language the subscriber wants' do
+          Fabricate(:epsilon_feed_language_preference, account: subscriber, languages: ['fr'])
+
+          worker.perform(tagged_status_in('fr').id)
+
+          expect(FeedInsertWorker).to have_received(:push_bulk).with([subscriber.id])
+        end
+
+        it 'does not push statuses without a detected language (fail-closed)' do
+          Fabricate(:epsilon_feed_language_preference, account: subscriber, languages: ['fr'])
+
+          worker.perform(tagged_status_in(nil).id)
+
+          expect(FeedInsertWorker).to_not have_received(:push_bulk)
+        end
+
+        it 'pushes statuses without a detected language when the preference has no restriction' do
+          Fabricate(:epsilon_feed_language_preference, account: subscriber, languages: nil)
+
+          worker.perform(tagged_status_in(nil).id)
+
+          expect(FeedInsertWorker).to have_received(:push_bulk).with([subscriber.id])
+        end
+
+        it 'pushes everything when the preference has no restriction' do
+          Fabricate(:epsilon_feed_language_preference, account: subscriber, languages: nil)
+
+          worker.perform(tagged_status_in('en').id)
+
+          expect(FeedInsertWorker).to have_received(:push_bulk).with([subscriber.id])
+        end
+      end
     end
 
     describe 'hourly distribution cap' do

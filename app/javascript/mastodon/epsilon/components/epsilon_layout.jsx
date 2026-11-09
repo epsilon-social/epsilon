@@ -9,6 +9,7 @@ import { EpsilonNavigationBar } from './epsilon_navigation_bar'
 import classNames from 'classnames';
 import { useAppDispatch, useAppSelector } from 'mastodon/store';
 import { toggleNavigation } from 'mastodon/actions/navigation';
+import { EpsilonFeedLanguage } from './epsilon_feed_language';
 import { EpsilonHomeFilter } from './epsilon_home_filter';
 import { EpsilonHomeFeedPills } from './epsilon_home_feed_pills';
 import EpsilonStoreBadges from './epsilon_store_badges';
@@ -113,6 +114,7 @@ const EpsilonLayoutContent = ({ children }) => {
             {isHome && (
               <div className='epsilon-home-filter-row'>
                 <EpsilonHomeFilter />
+                <EpsilonFeedLanguage />
               </div>
             )}
             {showCompose && <EpsilonAnnouncements />}
@@ -124,6 +126,7 @@ const EpsilonLayoutContent = ({ children }) => {
             {isHome && (
               <div className='epsilon-home-filter-row'>
                 <EpsilonHomeFilter />
+                <EpsilonFeedLanguage />
               </div>
             )}
             {showCompose && <EpsilonAnnouncements />}

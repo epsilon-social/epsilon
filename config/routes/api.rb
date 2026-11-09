@@ -92,6 +92,11 @@ namespace :api, format: false do
         post 'subscriptions/:category_id', to: 'subscriptions#create', as: :subscription
         delete 'subscriptions/:category_id', to: 'subscriptions#destroy'
         # ==========================================
+
+        # ==========================================
+        # EPSILON : CATEGORY FEED LANGUAGE PREFERENCE
+        # ==========================================
+        resource :feed_language_preference, only: [:show, :update]
       end
 
       # ==========================================

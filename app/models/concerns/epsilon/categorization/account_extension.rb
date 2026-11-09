@@ -9,5 +9,7 @@ module Epsilon::Categorization::AccountExtension
 
     has_many :category_subscriptions, class_name: 'Epsilon::Categorization::CategorySubscription', dependent: :destroy
     has_many :subscribed_categories, through: :category_subscriptions, source: :category_master
+
+    has_one :epsilon_feed_language_preference, class_name: 'Epsilon::Categorization::FeedLanguagePreference', dependent: :destroy
   end
 end

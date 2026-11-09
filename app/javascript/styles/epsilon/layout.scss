@@ -3679,6 +3679,7 @@ html.epsilon-in-app {
 .epsilon-home-filter-row {
   display: flex;
   justify-content: flex-start;
+  gap: 8px;
   position: relative;
   z-index: 100;
 
@@ -3814,6 +3815,71 @@ html.epsilon-in-app {
         cursor: pointer !important;
         user-select: none !important;
         margin: 0 !important;
+      }
+    }
+
+    .epsilon-filter-dropdown__title {
+      color: var(--eps-text-primary) !important;
+      font-size: 0.8125rem !important;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .epsilon-filter-dropdown__hint {
+      margin: 0;
+      color: var(--eps-text-secondary) !important;
+      font-size: 0.75rem !important;
+      line-height: 1.5;
+    }
+
+    .epsilon-filter-segmented {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+      padding: 3px;
+      border: 1px solid var(--eps-border);
+      border-radius: 9999px;
+      background: var(--eps-surface);
+
+      &__option {
+        flex: 1 1 0;
+        padding: 6px 10px;
+        border: 0;
+        border-radius: 9999px;
+        background: transparent;
+        color: var(--eps-text-secondary);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background var(--eps-dur-base) ease,
+          color var(--eps-dur-base) ease;
+
+        &:disabled {
+          cursor: default;
+          opacity: 0.6;
+        }
+
+        &.active {
+          background: var(--eps-brand-primary);
+          color: var(--eps-text-on-brand);
+        }
+
+        @media (hover: hover) {
+          &:hover:not(.active, :disabled) {
+            color: var(--eps-text-primary);
+          }
+        }
+      }
+    }
+
+    .epsilon-feed-language__dropdown {
+      max-width: 260px;
+
+      // The dropdown's 16px flex gap is right for control rows but too
+      // airy between the title and its hint — tighten just that pair.
+      .epsilon-filter-dropdown__hint {
+        margin-top: -6px;
       }
     }
   }

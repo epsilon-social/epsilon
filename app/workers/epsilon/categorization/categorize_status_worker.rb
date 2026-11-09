@@ -174,14 +174,28 @@ class Epsilon::Categorization::CategorizeStatusWorker
   def subscriber_account_ids(status, category_ids)
     already_following = Follow.where(target_account_id: status.account_id).select(:account_id)
 
-    Epsilon::Categorization::CategorySubscription
+    scope = Epsilon::Categorization::CategorySubscription
       .where(category_master_id: category_ids)
       .where.not(account_id: status.account_id)
       .where.not(account_id: already_following)
       .joins(:account)
       .merge(Account.local)
+
+    scope
+      .where.not(account_id: language_mismatch_account_ids(status.language))
       .distinct
       .pluck(:account_id)
+  end
+
+  # Subscribers whose feed language preference excludes this status' language.
+  # Fail-closed: a status without a detected language (common on federated
+  # content, e.g. Pixelfed captions) only reaches subscribers with no
+  # restriction. Followers are untouched by design: this only scopes
+  # platform-recommended content.
+  def language_mismatch_account_ids(language)
+    scope = Epsilon::Categorization::FeedLanguagePreference.where.not(languages: nil)
+    scope = scope.where.not('? = ANY(languages)', language) if language.present?
+    scope.select(:account_id)
   end
   # ==========================================
 end
