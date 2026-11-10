@@ -9,6 +9,8 @@ import { Icon } from 'mastodon/components/icon';
 import TranslateIcon from '@/material-icons/400-24px/translate.svg?react';
 import classNames from 'classnames';
 
+import { useDropdownDismiss } from '../hooks/use_dropdown_dismiss';
+
 // Language scope for category-injected content. Content from followed
 // accounts is never filtered: this only scopes platform recommendations.
 // The preference is stored server-side, so web and the mobile shells
@@ -38,8 +40,10 @@ export const EpsilonFeedLanguage = () => {
     });
   }, [open, feedLanguage]);
 
-  const handleClick = useCallback(() => setOpen(true), []);
+  const handleClick = useCallback(() => setOpen((value) => !value), []);
   const handleHide = useCallback(() => setOpen(false), []);
+
+  useDropdownDismiss(open, handleHide, containerRef, buttonRef);
 
   const handleLanguageClick = useCallback((event) => {
     const { language } = event.currentTarget.dataset;
@@ -83,8 +87,6 @@ export const EpsilonFeedLanguage = () => {
         target={buttonRef}
         placement='bottom-start'
         popperConfig={{ modifiers: [{ name: 'offset', options: { offset: [0, 10] } }] }}
-        rootClose
-        onHide={handleHide}
         container={containerRef}
       >
         {({ props }) => (

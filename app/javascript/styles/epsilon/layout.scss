@@ -1773,6 +1773,13 @@ body.theme-system {
       opacity: 0.9;
     }
 
+    // Native a:focus (basics.scss) forces border-radius: 4px on every
+    // anchor for its focus ring — it outranks our class, so the pill
+    // snapped square on click. Keep the native focus outline, keep ours.
+    &:focus {
+      border-radius: var(--eps-radius-pill);
+    }
+
     &--secondary {
       background: transparent;
       color: var(--eps-text-primary);
@@ -1782,6 +1789,13 @@ body.theme-system {
       &:hover {
         background: var(--eps-nav-hover);
         opacity: 1;
+      }
+
+      // Same native rule hides the outline after a pointer click
+      // (:focus without :focus-visible) — but this button's outline is
+      // its border, restore it in that state.
+      &:focus:not(:focus-visible) {
+        outline: 1px solid var(--eps-border-hover);
       }
     }
   }

@@ -5,6 +5,15 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-11-10
+
+### Fixed
+
+- **Popovers Filtres/Langue : le clic extérieur est consommé** — taper hors du popover le ferme sans activer ce qu'il y a dessous (premier tap ferme, second agit, comme les menus natifs iOS) ; Échap ferme ; fermeture automatique quand le bouton sort de l'écran au scroll ; re-cliquer le bouton referme (toggle). Même recette que le `DropdownMenu` natif, extraite en hook réutilisable en remplacement du `rootClose` de react-overlays qui laissait passer le clic (`epsilon/hooks/use_dropdown_dismiss.js`, `epsilon_home_filter.jsx`, `epsilon_feed_language.jsx`).
+- **Sidebar invitée : les boutons Inscription/Connexion ne perdent plus leur arrondi au clic** — le `a:focus` natif (`basics.scss`) force `border-radius: 4px` sur toute ancre ; surcharge `:focus` sur la pill (ring clavier conservé, désormais arrondi), et restauration de la bordure-outline du bouton « Se connecter » que `:focus:not(:focus-visible)` effaçait pendant le clic souris (`styles/epsilon/layout.scss`).
+
+## [0.10.0] - 2026-11-10
+
 ### Security
 
 - **Inscriptions via API fermées** : `POST /api/v1/accounts` → 403 — toutes les inscriptions légitimes passent par le formulaire web (apps mobiles comprises, via webview) ; ce canal, sans captcha, ne servait qu'aux bots. Allowlist de secours `EPSILON_SIGNUP_APP_IDS` (ids Doorkeeper, séparés par virgules). Connexion OAuth et clients tiers des comptes existants non affectés. Sidecar : `concerns/epsilon/api_registration_gate_extension.rb`.

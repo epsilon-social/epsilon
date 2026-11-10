@@ -9,6 +9,7 @@ import { Icon } from 'mastodon/components/icon';
 import TuneIcon from '@/material-icons/400-24px/tune.svg?react';
 import classNames from 'classnames';
 
+import { useDropdownDismiss } from '../hooks/use_dropdown_dismiss';
 
 export const EpsilonHomeFilter = () => {
   const dispatch = useAppDispatch();
@@ -22,8 +23,10 @@ export const EpsilonHomeFilter = () => {
   const showsQuotes = useAppSelector((state) => state.settings.getIn(['home', 'shows', 'quote'], true));
   const stacksEnabled = useAppSelector((state) => state.settings.getIn(['home', 'epsilon', 'stacks'], true));
 
-  const handleClick = useCallback(() => setOpen(true), []);
+  const handleClick = useCallback(() => setOpen((value) => !value), []);
   const handleHide = useCallback(() => setOpen(false), []);
+
+  useDropdownDismiss(open, handleHide, containerRef, buttonRef);
 
   const handleChange = useCallback((event) => {
     const { name, checked } = event.target;
@@ -53,8 +56,6 @@ export const EpsilonHomeFilter = () => {
         target={buttonRef}
         placement='bottom-start'
         popperConfig={{ modifiers: [{ name: 'offset', options: { offset: [0, 10] } }] }}
-        rootClose
-        onHide={handleHide}
         container={containerRef}
       >
         {({ props }) => (
