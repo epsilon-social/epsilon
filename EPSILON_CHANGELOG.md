@@ -5,6 +5,8 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-11-10
+
 ### Security
 
 - **Inscriptions via API fermées** : `POST /api/v1/accounts` → 403 — toutes les inscriptions légitimes passent par le formulaire web (apps mobiles comprises, via webview) ; ce canal, sans captcha, ne servait qu'aux bots. Allowlist de secours `EPSILON_SIGNUP_APP_IDS` (ids Doorkeeper, séparés par virgules). Connexion OAuth et clients tiers des comptes existants non affectés. Sidecar : `concerns/epsilon/api_registration_gate_extension.rb`.
